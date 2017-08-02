@@ -59,16 +59,16 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile project(':library')
-    
+
+
     compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:26.0.0-alpha1'
-    testCompile 'junit:junit:4.12'
-
     compile 'net.dean.jraw:JRAW:0.9.0'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.jakewharton:butterknife:8.7.0'
     compile 'com.jakewharton.timber:timber:4.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     compile 'org.slf4j:slf4j-android:1.7.25'
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 }

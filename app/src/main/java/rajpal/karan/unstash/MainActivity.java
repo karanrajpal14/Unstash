@@ -1,44 +1,66 @@
 package rajpal.karan.unstash;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
-import timber.log.Timber;
+import net.dean.jraw.auth.AuthenticationManager;
+import net.dean.jraw.auth.AuthenticationState;
+import net.dean.jraw.auth.NoSuchTokenException;
+import net.dean.jraw.http.oauth.Credentials;
+import net.dean.jraw.http.oauth.OAuthException;
 
 public class MainActivity extends AppCompatActivity {
+	public static final String TAG = MainActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		if (BuildConfig.DEBUG) {
-			Timber.plant(new Timber.DebugTree());
-		} else {
-			Timber.plant(new CrashReportingTree());
-
-		}
-
 	}
 
-	private static class CrashReportingTree extends Timber.Tree {
-		@Override
-		protected void log(int priority, String tag, String message, Throwable t) {
-			if (priority == Log.VERBOSE || priority == Log.DEBUG) {
-				return;
-			}
+	public void login(View view) { startActivity(new Intent(this, LoginActivity.class)); }
+	public void userInfo(View view) { startActivity(new Intent(this, UserInfoActivity.class)); }
 
-//			FakeCrashLibrary.log(priority, tag, message);
+	@Override
+	protected void onResume() {
+		super.onResume();
+		AuthenticationState state = AuthenticationManager.get().checkAuthState();
+		Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
-			if (t != null) {
-				if (priority == Log.ERROR) {
-//					FakeCrashLibrary.logError(t);
-				} else if (priority == Log.WARN) {
-//					FakeCrashLibrary.logWarning(t);
-				}
-			}
+		switch (state) {
+			case READY:
+				break;
+			case NONE:
+				Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
+				break;
+			case NEED_REFRESH:
+				refreshAccessTokenAsync();
+				break;
 		}
+	}
+
+	private void refreshAccessTokenAsync() {
+		new AsyncTask<Credentials, Void, Void>() {
+			@Override
+			protected Void doInBackground(Credentials... params) {
+				try {
+					AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
+				} catch (NoSuchTokenException | OAuthException e) {
+					Log.e(TAG, "Could not refresh access token", e);
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void v) {
+				Log.d(TAG, "Reauthenticated");
+			}
+		}.execute();
 	}
 
 }

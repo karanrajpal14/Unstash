@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 		accountManager = new AccountManager(redditClient);
 	}
 
-	public void login(View view) { startActivity(new Intent(this, LoginActivity.class)); }
 	public void userInfo(View view) { startActivity(new Intent(this, UserInfoActivity.class)); }
 
 	public void savePost(View view) {
@@ -77,19 +76,37 @@ public class MainActivity extends AppCompatActivity {
 		}.execute();
 	}
 
-	public void fetchMetadataFromIDs(String id) {
-		Submission submission = redditClient.getSubmission(id);
-		String author = submission.getAuthor();
-		Date created = submission.getCreated();
-		String domain = submission.getDomain();
-		String permalink = submission.getPermalink();
-		Submission.PostHint postHint = submission.getPostHint();
-		Integer score = submission.getScore();
-		String subredditName = submission.getSubredditName();
-		String title = submission.getTitle();
-		String url = submission.getUrl();
-		Boolean nsfw = submission.isNsfw();
-		Boolean saved = submission.isSaved();
+	public void fetchMetadataFromIDs(final String id) {
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... voids) {
+				Submission submission = redditClient.getSubmission(id);
+				String author = submission.getAuthor();
+				Date created = submission.getCreated();
+				String domain = submission.getDomain();
+				String permalink = submission.getPermalink();
+				Submission.PostHint postHint = submission.getPostHint();
+				Integer score = submission.getScore();
+				String subredditName = submission.getSubredditName();
+				String title = submission.getTitle();
+				String url = submission.getUrl();
+				Boolean nsfw = submission.isNsfw();
+				Boolean saved = submission.isSaved();
+				Timber.d("Author " + author);
+				Timber.d("Created " + created);
+				Timber.d("Domain " + domain);
+				Timber.d("Permalink " + permalink);
+				Timber.d("PostHint " + postHint);
+				Timber.d("Score " + score);
+				Timber.d("SubredditName " + subredditName);
+				Timber.d("Title " + title);
+				Timber.d("Url " + url);
+				Timber.d("NSFW " + nsfw);
+				Timber.d("Saved " + saved);
+				return null;
+			}
+		}.execute();
 	}
 
 	public void getSavedPostIDs(View view) {
@@ -101,13 +118,15 @@ public class MainActivity extends AppCompatActivity {
 				RedditClient redditClient = AuthenticationManager.get().getRedditClient();
 				UserContributionPaginator saved = new UserContributionPaginator(redditClient,"saved",redditClient.me().getFullName());
 				Timber.d(String.valueOf(saved.getTimePeriod()));
-				saved.setTimePeriod(TimePeriod.MONTH);
+				saved.setTimePeriod(TimePeriod.WEEK);
 				Timber.d(String.valueOf(saved.getTimePeriod()));
 				int i =0;
 				for (Listing<Contribution> items : saved) {
 					for (Contribution item: items){
 						JsonNode dataNode = item.getDataNode();
-						Timber.d("Item " + i + dataNode.get("id"));
+						String id = dataNode.get("id").asText();
+						Timber.d("Item " + i + id);
+						fetchMetadataFromIDs(id);
 						i++;
 					}
 					saved.next();

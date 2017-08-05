@@ -12,10 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="net.dean.jraw.REDDIT_USERNAME" android:value="artemis73" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -24,7 +25,6 @@
         <activity android:name=".UserInfoActivity">
         </activity>
 
-        <meta-data android:name="net.dean.jraw.REDDIT_USERNAME" android:value="artemis73" />
     </application>
 
 </manifest>

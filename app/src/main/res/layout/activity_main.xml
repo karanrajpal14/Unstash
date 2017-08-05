@@ -8,24 +8,12 @@
     tools:context="rajpal.karan.unstash.MainActivity">
 
     <Button
-        android:id="@+id/loginButton"
-        android:text="Login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="login"
-        app:layout_constraintBottom_toTopOf="@+id/userInfoButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintRight_toRightOf="parent"/>
-
-    <Button
         android:id="@+id/userInfoButton"
         android:text="User information"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="userInfo"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/getSavedPosts"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -36,7 +24,7 @@
         android:id="@+id/getSavedPosts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="getSavedPosts"
+        android:onClick="getSavedPostIDs"
         android:text="Get Saved Posts"
         app:layout_constraintTop_toBottomOf="@+id/userInfoButton"
         app:layout_constraintBottom_toBottomOf="parent"

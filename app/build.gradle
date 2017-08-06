@@ -68,6 +68,7 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
     compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
     compile "org.slf4j:slf4j-android:$rootProject.sl4jVersion"
+    debugCompile "com.facebook.stetho:stetho:$rootProject.stethoVersion"
 
     testCompile 'junit:junit:4.12'
 }

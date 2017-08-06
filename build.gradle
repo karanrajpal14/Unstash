@@ -35,5 +35,6 @@ ext {
     butterKnifeVersion = '8.7.0'
     timberVersion = '4.5.1'
     sl4jVersion = '1.7.25'
+    stethoVersion = '1.5.0'
 
 }

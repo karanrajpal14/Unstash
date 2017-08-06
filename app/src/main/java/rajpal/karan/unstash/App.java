@@ -3,6 +3,8 @@ package rajpal.karan.unstash;
 import android.app.Application;
 import android.util.Log;
 
+import com.facebook.stetho.Stetho;
+
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.android.AndroidRedditClient;
 import net.dean.jraw.android.AndroidTokenStore;
@@ -20,6 +22,7 @@ public class App extends Application {
 
 		if (BuildConfig.DEBUG) {
 			Timber.plant(new Timber.DebugTree());
+			Stetho.initializeWithDefaults(this);
 		} else {
 			Timber.plant(new CrashReportingTree());
 		}

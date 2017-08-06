@@ -10,7 +10,7 @@ import timber.log.Timber;
 public class SavedPostContract {
 
 	static final String CONTENT_AUTHORITY = App.class.getPackage().getName();
-	static final String PATH_POST = "savedpost";
+	static final String PATH_POST = "savedposts";
 
 	/* Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
 	 the content provider.*/

@@ -51,5 +51,11 @@ public class SavedPostContract {
 			Timber.d("buildPostUri: " + id);
 			return ContentUris.withAppendedId(CONTENT_URI, id);
 		}
+
+		public static String getPostIDFromUri(Uri postUriWithID) {
+			String id = postUriWithID.getPathSegments().get(2);
+			Timber.d("Post ID from URI: " + id);
+			return id;
+		}
 	}
 }

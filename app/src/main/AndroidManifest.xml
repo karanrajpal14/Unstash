@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="rajpal.karan.unstash">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".App"
@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data android:name="net.dean.jraw.REDDIT_USERNAME" android:value="artemis73" />
+        <meta-data
+            android:name="net.dean.jraw.REDDIT_USERNAME"
+            android:value="artemis73"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

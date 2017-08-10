@@ -9,15 +9,15 @@
 
     <Button
         android:id="@+id/userInfoButton"
-        android:text="User information"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="userInfo"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="User information"
         app:layout_constraintBottom_toTopOf="@+id/getSavedPosts"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <Button
@@ -26,32 +26,32 @@
         android:layout_height="wrap_content"
         android:onClick="getSavedPostIDs"
         android:text="Get Saved Posts"
-        app:layout_constraintTop_toBottomOf="@+id/userInfoButton"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toBottomOf="@+id/userInfoButton"
         app:layout_constraintVertical_chainStyle="packed"
         />
 
     <Button
         android:id="@+id/save"
-        android:text="save"
-        android:onClick="savePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="0dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="savePost"
+        android:text="save"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"/>
+        tools:layout_editor_absoluteX="0dp"/>
 
     <Button
         android:id="@+id/unsave"
-        android:text="unsave"
-        android:onClick="unsavePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="16dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"/>
+        android:onClick="unsavePost"
+        android:text="unsave"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="16dp"/>
 
 </android.support.constraint.ConstraintLayout>

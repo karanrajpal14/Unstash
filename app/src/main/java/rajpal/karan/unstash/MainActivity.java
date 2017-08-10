@@ -41,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
 		accountManager = new AccountManager(redditClient);
 	}
 
-	public void userInfo(View view) { startActivity(new Intent(this, UserInfoActivity.class)); }
+	public void userInfo(View view) {
+		startActivity(new Intent(this, UserInfoActivity.class));
+	}
 
 	public void savePost(View view) {
-		new AsyncTask<Void, Void, Void>(){
+		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... voids) {
 				String id = "15lrh7";
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void unsavePost(View view) {
-		new AsyncTask<Void, Void, Void>(){
+		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... voids) {
 				String id = "15lrh7";
@@ -111,18 +113,18 @@ public class MainActivity extends AppCompatActivity {
 
 	public void getSavedPostIDs(View view) {
 		Timber.d("Saved posts");
-		new AsyncTask<Object, Object, UserContributionPaginator>(){
+		new AsyncTask<Object, Object, UserContributionPaginator>() {
 
 			@Override
 			protected UserContributionPaginator doInBackground(Object... voids) {
 				RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-				UserContributionPaginator saved = new UserContributionPaginator(redditClient,"saved",redditClient.me().getFullName());
+				UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
 				Timber.d(String.valueOf(saved.getTimePeriod()));
 				saved.setTimePeriod(TimePeriod.WEEK);
 				Timber.d(String.valueOf(saved.getTimePeriod()));
-				int i =0;
+				int i = 0;
 				for (Listing<Contribution> items : saved) {
-					for (Contribution item: items){
+					for (Contribution item : items) {
 						JsonNode dataNode = item.getDataNode();
 						String id = dataNode.get("id").asText();
 						Timber.d("Item " + i + id);

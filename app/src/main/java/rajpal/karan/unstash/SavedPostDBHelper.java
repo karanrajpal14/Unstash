@@ -34,8 +34,7 @@ public class SavedPostDBHelper extends SQLiteOpenHelper {
 						SavedPostContract.SavedPostEntry.COLUMN_IS_NSFW + " IN (0,1) )," +
 						SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED + " INTEGER NOT NULL CHECK ( " +
 						SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED + " IN (0,1) )"
-						+ " );"
-				;
+						+ " );";
 		Timber.d("Creating table" + SQL_CREATE_SAVED_POSTS_TABLE);
 		sqLiteDatabase.execSQL(SQL_CREATE_SAVED_POSTS_TABLE);
 

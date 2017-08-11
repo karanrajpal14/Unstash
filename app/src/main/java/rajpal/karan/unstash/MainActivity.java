@@ -7,74 +7,43 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
 import net.dean.jraw.auth.NoSuchTokenException;
 import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthException;
-import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.paginators.TimePeriod;
 import net.dean.jraw.paginators.UserContributionPaginator;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 	public static final String TAG = MainActivity.class.getSimpleName();
 	private RedditClient redditClient;
-	private AccountManager accountManager;
+
+	@BindView(R.id.getSavedPosts)
+	Button getSavedPosts;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 		redditClient = AuthenticationManager.get().getRedditClient();
-		accountManager = new AccountManager(redditClient);
-	}
+		ButterKnife.bind(this);
 
-	public void userInfo(View view) {
-		startActivity(new Intent(this, UserInfoActivity.class));
-	}
-
-	public void savePost(View view) {
-		new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... voids) {
-				String id = "15lrh7";
-				Submission submission = redditClient.getSubmission(id);
-				try {
-					accountManager.save(submission);
-				} catch (ApiException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		}.execute();
-
-	}
-
-	public void unsavePost(View view) {
-		new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... voids) {
-				String id = "15lrh7";
-				Submission submission = redditClient.getSubmission(id);
-				try {
-					accountManager.unsave(submission);
-				} catch (ApiException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		}.execute();
+		getSavedPosts.setOnClickListener(this);
 	}
 
 	public void fetchMetadataFromIDs(final String id) {
@@ -86,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 				ContentValues savedPostValues = new ContentValues();
 				try {
 					submission = redditClient.getSubmission(id);
-					savedPostValues.put("id", id);
 
 					// Fetching saved post data
 					String author = submission.getAuthor();
@@ -101,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 					int isNSFW = (submission.isNsfw()) ? 1 : 0;
 					int isSaved = (submission.isSaved()) ? 1 : 0;
 
+					savedPostValues.put("id", id);
 					savedPostValues.put("author", author);
 					savedPostValues.put("created_time", created_time);
 					savedPostValues.put("domain", domain);
@@ -127,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 		}.execute();
 	}
 
-	public void getSavedPostIDs(View view) {
+	public void getSavedPostIDs() {
 		Timber.d("Saved posts");
 		new AsyncTask<Object, Object, UserContributionPaginator>() {
 
@@ -187,9 +156,15 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			protected void onPostExecute(Void v) {
-				Log.d(TAG, "Reauthenticated");
+				Log.d(TAG, "Re-authenticated");
 			}
 		}.execute();
 	}
 
+	@Override
+	public void onClick(View view) {
+		if (view.getId() == R.id.getSavedPosts) {
+			getSavedPostIDs();
+		}
+	}
 }

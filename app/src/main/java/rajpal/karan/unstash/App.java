@@ -28,7 +28,7 @@ public class App extends Application {
 		}
 
 		RedditClient reddit = new AndroidRedditClient(this);
-		reddit.setLoggingMode(LoggingMode.ALWAYS);
+		reddit.setLoggingMode(LoggingMode.ON_FAIL);
 		AuthenticationManager.get().init(reddit, new RefreshTokenHandler(new AndroidTokenStore(this), reddit));
 	}
 

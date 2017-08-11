@@ -127,18 +127,16 @@ public class SavedPostProvider extends ContentProvider {
 
 		final SQLiteDatabase database = postDBHelper.getWritableDatabase();
 		final int match = URI_MATCHER.match(uri);
-		Uri returnUri;
+		Uri returnUri = null;
 
 		switch (match) {
 			case post:
 				long _id = database.insert(SavedPostContract.SavedPostEntry.TABLE_NAME, null, contentValues);
 				if (_id > 0)
 					returnUri = SavedPostContract.SavedPostEntry.buildPostUri(_id);
-				else
-					throw new UnsupportedOperationException("Failed to insert row into" + uri);
 				break;
 			default:
-				throw new UnsupportedOperationException("Failed to insert row into" + uri);
+				throw new UnsupportedOperationException("Failed to insert row into " + uri);
 		}
 
 		getContext().getContentResolver().notifyChange(uri, null);

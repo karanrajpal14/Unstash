@@ -8,19 +8,6 @@
     tools:context="rajpal.karan.unstash.MainActivity">
 
     <Button
-        android:id="@+id/userInfoButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="userInfo"
-        android:text="User information"
-        app:layout_constraintBottom_toTopOf="@+id/getSavedPosts"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"/>
-
-    <Button
         android:id="@+id/getSavedPosts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,28 +17,8 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userInfoButton"
+        app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         />
-
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:onClick="savePost"
-        android:text="save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp"/>
-
-    <Button
-        android:id="@+id/unsave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:onClick="unsavePost"
-        android:text="unsave"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="16dp"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -10,7 +10,7 @@ import timber.log.Timber;
 public class SavedPostContract {
 
 	static final String CONTENT_AUTHORITY = App.class.getPackage().getName();
-	static final String PATH_POST = "savedposts";
+	static final String PATH_POST = "post";
 
 	/* Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
 	 the content provider.*/
@@ -39,8 +39,10 @@ public class SavedPostContract {
 		public static final String COLUMN_POST_ID = "post_id";
 		public static final String COLUMN_TITLE = "title";
 		public static final String COLUMN_AUTHOR = "author";
+		public static final String COLUMN_CREATED_TIME = "created_time";
 		public static final String COLUMN_SUBREDDIT_NAME = "subreddit_name";
 		public static final String COLUMN_DOMAIN = "domain";
+		public static final String COLUMN_POST_HINT = "post_hint";
 		public static final String COLUMN_PERMALINK = "permalink";
 		public static final String COLUMN_URL = "url";
 		public static final String COLUMN_SCORE = "score";

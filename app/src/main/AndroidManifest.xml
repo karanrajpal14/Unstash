@@ -26,6 +26,12 @@
         </activity>
         <activity android:name=".UserInfoActivity">
         </activity>
+        
+        <provider
+            android:authorities="rajpal.karan.unstash"
+            android:name=".SavedPostProvider"
+            android:enabled="true"
+            android:grantUriPermissions="true"/>
 
     </application>
 

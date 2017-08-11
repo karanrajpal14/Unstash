@@ -45,6 +45,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		getSavedPosts.setOnClickListener(this);
 	}
 
+	@Override
+	public void onClick(View view) {
+		if (view.getId() == R.id.getSavedPosts) {
+			getSavedPostIDs();
+		}
+	}
+
+	public void getSavedPostIDs() {
+		Timber.d("Saved posts");
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... voids) {
+				RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+				UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
+				Timber.d(String.valueOf(saved.getTimePeriod()));
+				saved.setTimePeriod(TimePeriod.WEEK);
+				Timber.d(String.valueOf(saved.getTimePeriod()));
+				int i = 0;
+				for (Listing<Contribution> items : saved) {
+					for (Contribution item : items) {
+						JsonNode dataNode = item.getDataNode();
+						String id = dataNode.get("id").asText();
+						fetchMetadataFromIDs(id);
+						i++;
+					}
+					saved.next();
+				}
+				Timber.d("Fetched " + i + " posts");
+				return null;
+			}
+		}.execute();
+	}
+
 	public void fetchMetadataFromIDs(final String id) {
 		new AsyncTask<String, Void, ContentValues>() {
 
@@ -97,33 +131,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		}.execute();
 	}
 
-	public void getSavedPostIDs() {
-		Timber.d("Saved posts");
-		new AsyncTask<Object, Object, UserContributionPaginator>() {
-
-			@Override
-			protected UserContributionPaginator doInBackground(Object... voids) {
-				RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-				UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
-				Timber.d(String.valueOf(saved.getTimePeriod()));
-				saved.setTimePeriod(TimePeriod.WEEK);
-				Timber.d(String.valueOf(saved.getTimePeriod()));
-				int i = 0;
-				for (Listing<Contribution> items : saved) {
-					for (Contribution item : items) {
-						JsonNode dataNode = item.getDataNode();
-						String id = dataNode.get("id").asText();
-						fetchMetadataFromIDs(id);
-						i++;
-					}
-					saved.next();
-				}
-				Timber.d("Fetched " + i + " posts");
-				return saved;
-			}
-		}.execute();
-	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -162,10 +169,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		}.execute();
 	}
 
-	@Override
-	public void onClick(View view) {
-		if (view.getId() == R.id.getSavedPosts) {
-			getSavedPostIDs();
-		}
-	}
 }

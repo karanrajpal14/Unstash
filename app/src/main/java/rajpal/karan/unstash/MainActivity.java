@@ -1,5 +1,6 @@
 package rajpal.karan.unstash;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,8 +24,6 @@ import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.paginators.TimePeriod;
 import net.dean.jraw.paginators.UserContributionPaginator;
-
-import java.util.Date;
 
 import timber.log.Timber;
 
@@ -79,34 +78,51 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void fetchMetadataFromIDs(final String id) {
-		new AsyncTask<Void, Void, Void>() {
+		new AsyncTask<String, Void, ContentValues>() {
 
 			@Override
-			protected Void doInBackground(Void... voids) {
-				Submission submission = redditClient.getSubmission(id);
-				String author = submission.getAuthor();
-				Date created = submission.getCreated();
-				String domain = submission.getDomain();
-				String permalink = submission.getPermalink();
-				Submission.PostHint postHint = submission.getPostHint();
-				Integer score = submission.getScore();
-				String subredditName = submission.getSubredditName();
-				String title = submission.getTitle();
-				String url = submission.getUrl();
-				Boolean nsfw = submission.isNsfw();
-				Boolean saved = submission.isSaved();
-				Timber.d("Author " + author);
-				Timber.d("Created " + created);
-				Timber.d("Domain " + domain);
-				Timber.d("Permalink " + permalink);
-				Timber.d("PostHint " + postHint);
-				Timber.d("Score " + score);
-				Timber.d("SubredditName " + subredditName);
-				Timber.d("Title " + title);
-				Timber.d("Url " + url);
-				Timber.d("NSFW " + nsfw);
-				Timber.d("Saved " + saved);
-				return null;
+			protected ContentValues doInBackground(String... params) {
+				Submission submission = null;
+				ContentValues savedPostValues = new ContentValues();
+				try {
+					submission = redditClient.getSubmission(id);
+					savedPostValues.put("id", id);
+
+					// Fetching saved post data
+					String author = submission.getAuthor();
+					long created_time = submission.getCreated().getTime();
+					String domain = submission.getDomain();
+					String permalink = submission.getPermalink();
+					String postHint = submission.getPostHint().toString();
+					int score = submission.getScore();
+					String subredditName = submission.getSubredditName();
+					String title = submission.getTitle();
+					String url = submission.getUrl();
+					int isNSFW = (submission.isNsfw()) ? 1 : 0;
+					int isSaved = (submission.isSaved()) ? 1 : 0;
+
+					savedPostValues.put("author", author);
+					savedPostValues.put("created_time", created_time);
+					savedPostValues.put("domain", domain);
+					savedPostValues.put("permalink", permalink);
+					savedPostValues.put("postHint", postHint);
+					savedPostValues.put("score", score);
+					savedPostValues.put("subredditName", subredditName);
+					savedPostValues.put("title", title);
+					savedPostValues.put("url", url);
+					savedPostValues.put("isNSFW", isNSFW);
+					savedPostValues.put("isSaved", isSaved);
+				} catch (Exception e) {
+					Timber.d(e.getMessage());
+				}
+
+				return savedPostValues;
+			}
+
+			@Override
+			protected void onPostExecute(ContentValues contentValues) {
+				super.onPostExecute(contentValues);
+				Timber.d(contentValues.valueSet().toString());
 			}
 		}.execute();
 	}
@@ -127,12 +143,12 @@ public class MainActivity extends AppCompatActivity {
 					for (Contribution item : items) {
 						JsonNode dataNode = item.getDataNode();
 						String id = dataNode.get("id").asText();
-						Timber.d("Item " + i + id);
 						fetchMetadataFromIDs(id);
 						i++;
 					}
 					saved.next();
 				}
+				Timber.d("Fetched " + i + " posts");
 				return saved;
 			}
 		}.execute();

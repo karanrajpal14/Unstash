@@ -30,10 +30,9 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 	public static final String TAG = MainActivity.class.getSimpleName();
-	private RedditClient redditClient;
-
 	@BindView(R.id.getSavedPosts)
 	Button getSavedPosts;
+	private RedditClient redditClient;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,36 +50,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 			@Override
 			protected ContentValues doInBackground(String... params) {
-				Submission submission = null;
+				Submission submission;
 				ContentValues savedPostValues = new ContentValues();
 				try {
 					submission = redditClient.getSubmission(id);
 
-					// Fetching saved post data
-					String author = submission.getAuthor();
-					long created_time = submission.getCreated().getTime();
-					String domain = submission.getDomain();
-					String permalink = submission.getPermalink();
-					String postHint = submission.getPostHint().toString();
-					int score = submission.getScore();
-					String subredditName = submission.getSubredditName();
-					String title = submission.getTitle();
-					String url = submission.getUrl();
-					int isNSFW = (submission.isNsfw()) ? 1 : 0;
-					int isSaved = (submission.isSaved()) ? 1 : 0;
+					if (submission != null) {
+						// Fetching saved post data
+						String author = submission.getAuthor();
+						long created_time = submission.getCreated().getTime();
+						String domain = submission.getDomain();
+						String permalink = submission.getPermalink();
+						String postHint = submission.getPostHint().toString();
+						int score = submission.getScore();
+						String subredditName = submission.getSubredditName();
+						String title = submission.getTitle();
+						String url = submission.getUrl();
+						int isNSFW = (submission.isNsfw()) ? 1 : 0;
+						int isSaved = (submission.isSaved()) ? 1 : 0;
 
-					savedPostValues.put("id", id);
-					savedPostValues.put("author", author);
-					savedPostValues.put("created_time", created_time);
-					savedPostValues.put("domain", domain);
-					savedPostValues.put("permalink", permalink);
-					savedPostValues.put("postHint", postHint);
-					savedPostValues.put("score", score);
-					savedPostValues.put("subredditName", subredditName);
-					savedPostValues.put("title", title);
-					savedPostValues.put("url", url);
-					savedPostValues.put("isNSFW", isNSFW);
-					savedPostValues.put("isSaved", isSaved);
+						savedPostValues.put("id", id);
+						savedPostValues.put("author", author);
+						savedPostValues.put("created_time", created_time);
+						savedPostValues.put("domain", domain);
+						savedPostValues.put("permalink", permalink);
+						savedPostValues.put("postHint", postHint);
+						savedPostValues.put("score", score);
+						savedPostValues.put("subredditName", subredditName);
+						savedPostValues.put("title", title);
+						savedPostValues.put("url", url);
+						savedPostValues.put("isNSFW", isNSFW);
+						savedPostValues.put("isSaved", isSaved);
+					}
 				} catch (Exception e) {
 					Timber.d(e.getMessage());
 				}

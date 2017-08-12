@@ -3,6 +3,8 @@ package rajpal.karan.unstash;
 import android.app.Application;
 import android.util.Log;
 
+import com.facebook.stetho.Stetho;
+
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.android.AndroidRedditClient;
 import net.dean.jraw.android.AndroidTokenStore;
@@ -20,12 +22,13 @@ public class App extends Application {
 
 		if (BuildConfig.DEBUG) {
 			Timber.plant(new Timber.DebugTree());
+			Stetho.initializeWithDefaults(this);
 		} else {
 			Timber.plant(new CrashReportingTree());
 		}
 
 		RedditClient reddit = new AndroidRedditClient(this);
-		reddit.setLoggingMode(LoggingMode.ALWAYS);
+		reddit.setLoggingMode(LoggingMode.ON_FAIL);
 		AuthenticationManager.get().init(reddit, new RefreshTokenHandler(new AndroidTokenStore(this), reddit));
 	}
 

@@ -1,111 +1,121 @@
 package rajpal.karan.unstash;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
 import net.dean.jraw.auth.NoSuchTokenException;
 import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthException;
-import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
+import net.dean.jraw.paginators.Sorting;
+import net.dean.jraw.paginators.TimePeriod;
 import net.dean.jraw.paginators.UserContributionPaginator;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 	public static final String TAG = MainActivity.class.getSimpleName();
-	String id = "15lrh7";
+	@BindView(R.id.getSavedPosts)
+	Button getSavedPosts;
+	private RedditClient redditClient;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		redditClient = AuthenticationManager.get().getRedditClient();
+		ButterKnife.bind(this);
+
+		getSavedPosts.setOnClickListener(this);
 	}
 
-	public void login(View view) { startActivity(new Intent(this, LoginActivity.class)); }
-	public void userInfo(View view) { startActivity(new Intent(this, UserInfoActivity.class)); }
-	public void savePost(View view) {
-		new AsyncTask<Void, Void, Void>(){
-			@Override
-			protected Void doInBackground(Void... voids) {
-				RedditClient reddit = AuthenticationManager.get().getRedditClient();
-				AccountManager accountManager = new AccountManager(reddit);
-				Submission submission = reddit.getSubmission(id);
-				try {
-					accountManager.save(submission);
-				} catch (ApiException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		}.execute();
-
+	@Override
+	public void onClick(View view) {
+		if (view.getId() == R.id.getSavedPosts) {
+			fetchSavedPosts();
+		}
 	}
 
-	public void unsavePost(View view) {
-		new AsyncTask<Void, Void, Void>(){
-			@Override
-			protected Void doInBackground(Void... voids) {
-				RedditClient reddit = AuthenticationManager.get().getRedditClient();
-				AccountManager accountManager = new AccountManager(reddit);
-				Submission submission = reddit.getSubmission(id);
-				try {
-					accountManager.unsave(submission);
-				} catch (ApiException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		}.execute();
-	}
-	public void getSavedPosts(View view) {
-		Timber.d("SAved posts");
-		new AsyncTask<Object, Object, UserContributionPaginator>(){
+	public void fetchSavedPosts() {
+		new AsyncTask<Void, Integer, ContentValues >() {
 
 			@Override
-			protected UserContributionPaginator doInBackground(Object... voids) {
+			protected ContentValues doInBackground(Void... voids) {
 				RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-				UserContributionPaginator saved = new UserContributionPaginator(redditClient,"saved",redditClient.me().getFullName());
-				Timber.d(String.valueOf(saved.getTimePeriod()));
-				/*saved.setTimePeriod(TimePeriod.MONTH);
-				Timber.d(String.valueOf(saved.getTimePeriod()));*/
+				UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
+				saved.setTimePeriod(TimePeriod.ALL);
+				saved.setLimit(0);
+				saved.setSorting(Sorting.NEW);
+				ContentValues savedPostValues = null;
 				for (Listing<Contribution> items : saved) {
-					for (Contribution item: items){
+					for (Contribution item : items) {
 						JsonNode dataNode = item.getDataNode();
-						Timber.d("Item1" + dataNode.get("author"));
-						Timber.d("Item2" + dataNode.get("created").getClass());
-						Timber.d("Item3" + dataNode.get("domain"));
-						Timber.d("Item4" + dataNode.get("permalink"));
-						Timber.d("Item5" + dataNode.get("post_hint"));
-						Timber.d("Item6" + dataNode.get("score"));
-						Timber.d("Item7" + dataNode.get("subreddit"));
-						Timber.d("Item8" + dataNode.get("title"));
-						Timber.d("Item9" + dataNode.get("url"));
-						Timber.d("Item10" + dataNode.get("over_18"));
-						Timber.d("Item11" + dataNode.get("saved"));
-						Timber.d("Item11" + dataNode.get("id"));
+						String id = dataNode.get("id").asText();
+
+						try {
+							Submission submission = redditClient.getSubmission(id);
+
+							if (submission != null) {
+
+								savedPostValues = new ContentValues();
+
+								// Fetching saved post data
+								String author = submission.getAuthor();
+								long created_time = submission.getCreated().getTime();
+								String domain = submission.getDomain();
+								String permalink = submission.getPermalink();
+								String postHint = submission.getPostHint().toString();
+								int score = submission.getScore();
+								String subredditName = submission.getSubredditName();
+								String title = submission.getTitle();
+								String url = submission.getUrl();
+								int isNSFW = (submission.isNsfw()) ? 1 : 0;
+								int isSaved = (submission.isSaved()) ? 1 : 0;
+
+								savedPostValues.put("post_id", id);
+								savedPostValues.put("title", title);
+								savedPostValues.put("author", author);
+								savedPostValues.put("created_time", created_time);
+								savedPostValues.put("subreddit_name", subredditName);
+								savedPostValues.put("domain", domain);
+								savedPostValues.put("post_hint", postHint);
+								savedPostValues.put("permalink", permalink);
+								savedPostValues.put("url", url);
+								savedPostValues.put("score", score);
+								savedPostValues.put("is_nsfw", isNSFW);
+								savedPostValues.put("is_saved", isSaved);
+
+								getContentResolver().insert(SavedPostContract.SavedPostEntry.CONTENT_URI, savedPostValues);
+							}
+						} catch (Exception e) {
+							Timber.d(e.getMessage());
+						}
 					}
-					saved.next();
+					saved.next(true);
 				}
-				return saved;
+				return savedPostValues;
 			}
 
 			@Override
-			protected void onPostExecute(UserContributionPaginator listings) {
-				super.onPostExecute(listings);
+			protected void onPostExecute(ContentValues contentValues) {
+				super.onPostExecute(contentValues);
 			}
 		}.execute();
 	}
@@ -121,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 				break;
 			case NONE:
 				Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 				break;
 			case NEED_REFRESH:
 				refreshAccessTokenAsync();
@@ -142,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			protected void onPostExecute(Void v) {
-				Log.d(TAG, "Reauthenticated");
+				Log.d(TAG, "Re-authenticated");
 			}
 		}.execute();
 	}

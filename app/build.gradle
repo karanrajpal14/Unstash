@@ -5,12 +5,12 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
     defaultConfig {
         applicationId "rajpal.karan.unstash"
-        minSdkVersion 21
-        targetSdkVersion 26
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -60,15 +60,15 @@ dependencies {
     })
     compile project(':library')
 
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
+    compile "net.dean.jraw:JRAW:$rootProject.JRAWVersion"
+    compile "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
+    compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    compile "org.slf4j:slf4j-android:$rootProject.sl4jVersion"
+    debugCompile "com.facebook.stetho:stetho:$rootProject.stethoVersion"
 
-    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:26.0.0-alpha1'
-    compile 'net.dean.jraw:JRAW:0.9.0'
-    compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.jakewharton:butterknife:8.7.0'
-    compile 'com.jakewharton.timber:timber:4.5.1'
-    compile 'org.slf4j:slf4j-android:1.7.25'
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 }

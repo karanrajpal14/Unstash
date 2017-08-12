@@ -21,3 +21,20 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+
+    compileSdkVersion = 26
+    buildToolsVersion = '26.0.1'
+    minSdkVersion = 21
+    targetSdkVersion = 26
+
+    supportLibraryVersion = '26.0.0-alpha1'
+    constraintLayoutVersion = '1.0.2'
+    JRAWVersion = '0.9.0'
+    butterKnifeVersion = '8.7.0'
+    timberVersion = '4.5.1'
+    sl4jVersion = '1.7.25'
+    stethoVersion = '1.5.0'
+
+}

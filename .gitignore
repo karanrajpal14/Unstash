@@ -65,3 +65,5 @@ gen-external-apklibs
 /gradle.properties
 
 \.idea/misc\.xml
+
+\.idea/codeStyleSettings\.xml

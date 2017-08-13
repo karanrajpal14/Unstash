@@ -10,13 +10,13 @@ import timber.log.Timber;
 public class SavedPostContract {
 
 	static final String CONTENT_AUTHORITY = App.class.getPackage().getName();
-	static final String PATH_POST = "post";
+	static final String PATH_POST = "posts";
 
 	/* Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
 	 the content provider.*/
 	private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-	//Inner class that defines the contents of "savedpost" table
+	//Inner class that defines the contents of "posts" table
 	public static final class SavedPostEntry implements BaseColumns {
 
 		public static final Uri CONTENT_URI =

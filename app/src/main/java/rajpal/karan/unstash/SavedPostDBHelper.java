@@ -9,7 +9,7 @@ import timber.log.Timber;
 public class SavedPostDBHelper extends SQLiteOpenHelper {
 
 	private final static String DB_NAME = SavedPostContract.SavedPostEntry.TABLE_NAME.concat(".db");
-	private final static int DB_VERSION = 6;
+	private final static int DB_VERSION = 7;
 
 	public SavedPostDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);

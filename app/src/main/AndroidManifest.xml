@@ -28,6 +28,7 @@
         </activity>
         
         <provider
+            android:exported="true"
             android:authorities="rajpal.karan.unstash"
             android:name=".SavedPostProvider"
             android:enabled="true"

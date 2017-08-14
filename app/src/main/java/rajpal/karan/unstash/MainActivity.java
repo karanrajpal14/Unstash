@@ -2,12 +2,19 @@ package rajpal.karan.unstash;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,11 +36,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity
+		implements SavedPostsAdapter.ListItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+
 	public static final String TAG = MainActivity.class.getSimpleName();
-	@BindView(R.id.getSavedPosts)
-	Button getSavedPosts;
+
 	private RedditClient redditClient;
+	int position = RecyclerView.NO_POSITION;
+	static final int MAIN_LOADER_ID = 0;
+
+	private Toast mToast;
+
+	/*
+	 * References to RecyclerView and Adapter to reset the list to its
+	 * "pretty" state when the reset menu item is clicked.
+	 */
+	private SavedPostsAdapter mAdapter;
+	@BindView(R.id.posts_list_rv)
+	RecyclerView mNumbersList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +63,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		redditClient = AuthenticationManager.get().getRedditClient();
 		ButterKnife.bind(this);
 
-		getSavedPosts.setOnClickListener(this);
-	}
+        /*
+         * A LinearLayoutManager is responsible for measuring and positioning item views within a
+         * RecyclerView into a linear list. This means that it can produce either a horizontal or
+         * vertical list depending on which parameter you pass in to the LinearLayoutManager
+         * constructor. By default, if you don't specify an orientation, you get a vertical list.
+         * In our case, we want a vertical list, so we don't need to pass in an orientation flag to
+         * the LinearLayoutManager constructor.
+         *
+         * There are other LayoutManagers available to display your data in uniform grids,
+         * staggered grids, and more! See the developer documentation for more details.
+         */
+		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+		mNumbersList.setLayoutManager(layoutManager);
 
-	@Override
-	public void onClick(View view) {
-		if (view.getId() == R.id.getSavedPosts) {
-			fetchSavedPosts();
-		}
+        /*
+         * Use this setting to improve performance if you know that changes in content do not
+         * change the child layout size in the RecyclerView
+         */
+		mNumbersList.setHasFixedSize(true);
+
+        /*
+         * The SavedPostsAdapter is responsible for displaying each item in the list.
+         */
+		mAdapter = new SavedPostsAdapter(this , this);
+		mNumbersList.setAdapter(mAdapter);
+
+		getSupportLoaderManager().initLoader(MAIN_LOADER_ID, null, this);
+
 	}
 
 	public void fetchSavedPosts() {
@@ -58,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 			@Override
 			protected ContentValues doInBackground(Void... voids) {
-				RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+				redditClient = AuthenticationManager.get().getRedditClient();
 				UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
 				saved.setTimePeriod(TimePeriod.ALL);
 				saved.setLimit(0);
@@ -158,4 +198,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		}.execute();
 	}
 
+	@Override
+	public void onListItemClick(int clickedItemIndex) {
+		/*
+         * Even if a Toast isn't showing, it's okay to cancel it. Doing so
+         * ensures that our new Toast will show immediately, rather than
+         * being delayed while other pending Toasts are shown.
+         *
+         * Comment out these three lines, run the app, and click on a bunch of
+         * different items if you're not sure what I'm talking about.
+         */
+
+		if (mToast != null) {
+			mToast.cancel();
+		}
+
+        /*
+         * Create a Toast and store it in our Toast field.
+         * The Toast that shows up will have a message similar to the following:
+         *
+         *                     Item #42 clicked.
+         */
+		String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+		mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+		mToast.show();
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		switch (id) {
+			case MAIN_LOADER_ID:
+
+				return new CursorLoader(
+						this,
+						SavedPostContract.SavedPostEntry.CONTENT_URI,
+						null,
+						null,
+						null,
+						null
+				);
+			default:
+				throw new RuntimeException("Loader not implemented: " + id);
+		}
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mAdapter.swapCursor(data);
+		if(position == RecyclerView.NO_POSITION) position = 0;
+		mNumbersList.smoothScrollToPosition(position);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.swapCursor(null);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		switch (id) {
+			case R.id.action_fetch:
+				fetchSavedPosts();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

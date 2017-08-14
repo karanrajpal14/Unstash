@@ -1,7 +1,6 @@
 package rajpal.karan.unstash;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -9,7 +8,7 @@ import timber.log.Timber;
 
 public class SavedPostContract {
 
-	static final String CONTENT_AUTHORITY = App.class.getPackage().getName();
+	static final String CONTENT_AUTHORITY = SavedPostContract.class.getPackage().getName();
 	static final String PATH_POST = "posts";
 
 	/* Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
@@ -34,8 +33,7 @@ public class SavedPostContract {
 
 		public static final String TABLE_NAME = PATH_POST;
 
-		//columns
-		public static final String _ID = "_id";
+		// columns
 		public static final String COLUMN_POST_ID = "post_id";
 		public static final String COLUMN_TITLE = "title";
 		public static final String COLUMN_AUTHOR = "author";
@@ -49,10 +47,19 @@ public class SavedPostContract {
 		public static final String COLUMN_IS_NSFW = "is_nsfw";
 		public static final String COLUMN_IS_SAVED = "is_saved";
 
-		public static Uri buildPostUri(long id) {
-			Timber.d("buildPostUri: " + id);
-			return ContentUris.withAppendedId(CONTENT_URI, id);
-		}
+		// index positions of columns
+		public static final int INDEX_POST_ID = 0;
+		public static final int INDEX_TITLE = 1;
+		public static final int INDEX_AUTHOR = 2;
+		public static final int INDEX_CREATED_TIME = 3;
+		public static final int INDEX_SUBREDDIT_NAME = 4;
+		public static final int INDEX_DOMAIN = 5;
+		public static final int INDEX_POST_HINT = 6;
+		public static final int INDEX_PERMALINK = 7;
+		public static final int INDEX_URL = 8;
+		public static final int INDEX_SCORE = 9;
+		public static final int INDEX_IS_NSFW = 10;
+		public static final int INDEX_IS_SAVED = 11;
 
 		public static String getPostIDFromUri(Uri postUriWithID) {
 			String id = postUriWithID.getPathSegments().get(2);

@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onListItemClick(int clickedItemIndex) {
+	public void onListItemClick(String string) {
 		/*
          * Even if a Toast isn't showing, it's okay to cancel it. Doing so
          * ensures that our new Toast will show immediately, rather than
@@ -217,10 +217,10 @@ public class MainActivity extends AppCompatActivity
          * Create a Toast and store it in our Toast field.
          * The Toast that shows up will have a message similar to the following:
          *
-         *                     Item #42 clicked.
+         *                     Not yet implemented
          */
-		String toastMessage = "Item #" + clickedItemIndex + " clicked.";
-		mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+		mToast = Toast.makeText(this, string, Toast.LENGTH_LONG);
 
 		mToast.show();
 	}

@@ -3,6 +3,7 @@ package rajpal.karan.unstash;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	 * The interface that receives onClick messages.
 	 */
 	public interface ListItemClickListener {
-		void onListItemClick(int clickedItemIndex);
+		void onListItemClick(String string);
 	}
 
 	/**
@@ -92,27 +93,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	 */
 	@Override
 	public void onBindViewHolder(SavedPostsViewHolder holder, int position) {
-
-		cursor.moveToPosition(position);
-		String postID = cursor.getString(INDEX_POST_ID);
-		String title = cursor.getString(INDEX_TITLE);
-		String author = cursor.getString(INDEX_AUTHOR);
-		int createdTime = cursor.getInt(INDEX_CREATED_TIME);
-		String subName = cursor.getString(INDEX_SUBREDDIT_NAME);
-		String domain = cursor.getString(INDEX_DOMAIN);
-		String postHint = cursor.getString(INDEX_POST_HINT);
-		String permalink = cursor.getString(INDEX_PERMALINK);
-		String url = cursor.getString(INDEX_URL);
-		int score = cursor.getInt(INDEX_SCORE);
-		int isNSFW  = cursor.getInt(INDEX_IS_NSFW);
-		int isSaved = cursor.getInt(INDEX_IS_SAVED);
-
-		holder.titleTV.setText(title);
-		holder.authorTV.setText(author);
-		holder.createdTimeTV.setText(String.valueOf(createdTime));
-		holder.subNameTV.setText(subName);
-
-//		holder.bind(position);
+		holder.bind(position);
 
 	}
 
@@ -162,11 +143,35 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
 		/**
 		 * A method we wrote for convenience. This method will take an integer as input and
-		 * use that integer to display the appropriate text within a list item.
-		 * @param listIndex Position of the item in the list
+		 * use that integer to fetch the appropriate values of the post from the cursor.
+		 * @param position Position of the post in the cursor
 		 */
-		void bind(int listIndex) {
-//			listItemNumberView.setText(String.valueOf(listIndex));
+		void bind(int position) {
+			cursor.moveToPosition(position);
+			String postID = cursor.getString(INDEX_POST_ID);
+			String title = cursor.getString(INDEX_TITLE);
+			String author = cursor.getString(INDEX_AUTHOR);
+			long createdTime = cursor.getLong(INDEX_CREATED_TIME);
+			String subName = cursor.getString(INDEX_SUBREDDIT_NAME);
+			String domain = cursor.getString(INDEX_DOMAIN);
+			String postHint = cursor.getString(INDEX_POST_HINT);
+			String permalink = cursor.getString(INDEX_PERMALINK);
+			String url = cursor.getString(INDEX_URL);
+			int score = cursor.getInt(INDEX_SCORE);
+			int isNSFW  = cursor.getInt(INDEX_IS_NSFW);
+			int isSaved = cursor.getInt(INDEX_IS_SAVED);
+
+			titleTV.setText(title);
+			authorTV.setText(author);
+			createdTimeTV.setText(
+					DateUtils.getRelativeTimeSpanString(
+							createdTime,
+							System.currentTimeMillis(),
+							DateUtils.MINUTE_IN_MILLIS,
+							DateUtils.FORMAT_ABBREV_RELATIVE
+					)
+			);
+			subNameTV.setText(subName);
 		}
 
 		/**
@@ -175,7 +180,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		 */
 		@Override
 		public void onClick(View v) {
-			mOnClickListener.onListItemClick(112143);
+			mOnClickListener.onListItemClick("Not implemented yet");
 		}
 	}
 }

@@ -3,7 +3,6 @@ package rajpal.karan.unstash;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,14 +162,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
 			titleTV.setText(title);
 			authorTV.setText(author);
-			createdTimeTV.setText(
-					DateUtils.getRelativeTimeSpanString(
-							createdTime,
-							System.currentTimeMillis(),
-							DateUtils.MINUTE_IN_MILLIS,
-							DateUtils.FORMAT_ABBREV_RELATIVE
-					)
-			);
+			createdTimeTV.setText(Utils.getRelativeTime(createdTime));
 			subNameTV.setText(subName);
 		}
 

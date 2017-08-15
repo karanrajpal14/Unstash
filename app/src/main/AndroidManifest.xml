@@ -19,6 +19,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -26,12 +27,14 @@
         </activity>
 
         <provider
-            android:exported="true"
-            android:authorities="rajpal.karan.unstash"
             android:name=".SavedPostProvider"
+            android:authorities="rajpal.karan.unstash"
             android:enabled="true"
+            android:exported="true"
             android:grantUriPermissions="true"/>
 
+        <activity android:name=".PostDetailActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -24,9 +24,7 @@
         </activity>
         <activity android:name=".LoginActivity">
         </activity>
-        <activity android:name=".UserInfoActivity">
-        </activity>
-        
+
         <provider
             android:exported="true"
             android:authorities="rajpal.karan.unstash"

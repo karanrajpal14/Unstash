@@ -141,8 +141,10 @@ public class TestSavedPostProvider {
 	// Test Insert
 	//================================================================================
 
+	public String postID = "Test ID";
+
 	public ContentValues putTestContentValues(ContentValues testTaskValues) {
-		testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_POST_ID, "Test ID");
+		testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_POST_ID, postID);
 		testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_TITLE, "Test Title");
 		testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_AUTHOR, "Test Author");
 		testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_CREATED_TIME, 123456);
@@ -212,7 +214,7 @@ public class TestSavedPostProvider {
      * Inserts data, then tests if a query for the posts directory returns that data as a Cursor
      */
     @Test
-    public void testQuery() {
+    public void testQueryAll() {
 
         /* Get access to a writable database */
         SavedPostDBHelper dbHelper = new SavedPostDBHelper(mContext);
@@ -255,6 +257,64 @@ public class TestSavedPostProvider {
         /* We are done with the cursor, close it now. */
         taskCursor.close();
     }
+
+	//================================================================================
+	// Test Query (for single post)
+	//================================================================================
+
+
+	/**
+	 * Inserts data, then tests if a query for the posts directory for a specified post_id returns that row or not
+	 */
+	@Test
+	public void testQuerySingle() {
+
+        /* Get access to a writable database */
+		SavedPostDBHelper dbHelper = new SavedPostDBHelper(mContext);
+		SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        /* Create values to insert */
+		ContentValues testTaskValues = new ContentValues();
+		testTaskValues = putTestContentValues(testTaskValues);
+
+        /* Insert ContentValues into database and get a row ID back */
+		long taskRowId = database.insert(
+                /* Table to insert values into */
+				SavedPostContract.SavedPostEntry.TABLE_NAME,
+				null,
+                /* Values to insert into table */
+				testTaskValues);
+
+		String insertFailed = "Unable to insert directly into the database";
+		assertTrue(insertFailed, taskRowId != -1);
+
+        /* We are done with the database, close it now. */
+		database.close();
+
+		String selection = "post_id=?";
+		String[] selectionArgs = new String[]{postID};
+		int initialPosition = 0;
+
+	    /* Perform the ContentProvider query */
+		Cursor taskCursor = mContext.getContentResolver().query(
+				SavedPostContract.SavedPostEntry.CONTENT_URI,
+                /* Columns; leaving this null returns every column in the table */
+				null,
+                /* Optional specification for columns in the "where" clause above */
+				selection,
+                /* Values for "where" clause */
+				selectionArgs,
+                /* Sort order to return in Cursor */
+				null);
+
+
+		String queryFailed = "Query failed to return a valid Cursor";
+		taskCursor.moveToPosition(initialPosition);
+		assertTrue(queryFailed, taskCursor.getString(initialPosition).equals(postID));
+
+        /* We are done with the cursor, close it now. */
+		taskCursor.close();
+	}
 
 	//================================================================================
 	// Test Delete (for a single item)
@@ -305,8 +365,8 @@ public class TestSavedPostProvider {
 
 
 
-        /* The delete method deletes the previously inserted row with id = 1 */
-        Uri uriToDelete = SavedPostContract.SavedPostEntry.CONTENT_URI.buildUpon().appendPath("1").build();
+        /* The delete method deletes the previously inserted row with post_id = "Test ID" */
+        Uri uriToDelete = SavedPostContract.SavedPostEntry.CONTENT_URI.buildUpon().appendPath(postID).build();
         int tasksDeleted = contentResolver.delete(uriToDelete, null, null);
 
         String deleteFailed = "Unable to delete item in the database";

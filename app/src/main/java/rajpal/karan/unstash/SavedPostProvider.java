@@ -11,20 +11,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.Arrays;
-
 import timber.log.Timber;
 
-import static android.content.ContentValues.TAG;
-
 public class SavedPostProvider extends ContentProvider {
-
-	private SavedPostDBHelper postDBHelper;
 
 	// Mapping uris to functions
 	static final int POSTS = 100;
 	static final int POST_WITH_ID = 101;
-
+	private SavedPostDBHelper postDBHelper;
+	// post_id = ?
+	private static final String postWithID = SavedPostContract.SavedPostEntry.COLUMN_POST_ID + " = ? ";
 	// Adding a uri matcher to map the uri calls to respective queries
 	private static final UriMatcher URI_MATCHER = buildUriMatcher();
 
@@ -45,11 +41,6 @@ public class SavedPostProvider extends ContentProvider {
 		return builtUriMatcher;
 	}
 
-	// POSTS.id = ?
-	private static final String postWithID =
-			SavedPostContract.SavedPostEntry.TABLE_NAME + "." +
-					SavedPostContract.SavedPostEntry.COLUMN_POST_ID + " = ? ";
-
 	// Initializing the DbHelper while creating the provider
 	@Override
 	public boolean onCreate() {
@@ -58,21 +49,20 @@ public class SavedPostProvider extends ContentProvider {
 		return true;
 	}
 
-	private Cursor getPostByID(Uri uri, String[] columns, String sortOrder) {
-		// POSTS.id = ?
-		String selection = postWithID;
-		String[] selectionArgs = new String[]{SavedPostContract.SavedPostEntry.getPostIDFromUri(uri)};
-		Timber.d(TAG, "getPostByID: Selection: " + selection + "\n Selection args: " + Arrays.toString(selectionArgs));
+	@Nullable
+	@Override
+	public String getType(@NonNull Uri uri) {
+		Timber.d("Fetching uri type");
+		final int match = URI_MATCHER.match(uri);
 
-		return postDBHelper.getReadableDatabase().query(
-				SavedPostContract.SavedPostEntry.TABLE_NAME,
-				columns,
-				selection,
-				selectionArgs,
-				null,
-				null,
-				sortOrder
-		);
+		switch (match) {
+			case POSTS:
+				return SavedPostContract.SavedPostEntry.CONTENT_TYPE;
+			case POST_WITH_ID:
+				return SavedPostContract.SavedPostEntry.CONTENT_ITEM_TYPE;
+			default:
+				throw new UnsupportedOperationException("Invalid query uri" + uri);
+		}
 	}
 
 	@Nullable
@@ -97,7 +87,20 @@ public class SavedPostProvider extends ContentProvider {
 				);
 				break;
 			case POST_WITH_ID:
-				resultCursor = getPostByID(uri, projection, sortOrder);
+				String id = uri.getPathSegments().get(1);
+				Timber.d("Query: ID of post: " + id);
+				// Selection is the post_id column = ?, and selectionArgs is the post_id from the uri
+				String selectionTemp = "post_id=?";
+				String[] selectionArgsTemp = new String[]{id};
+				resultCursor = database.query(
+						SavedPostContract.SavedPostEntry.TABLE_NAME,
+						projection,
+						selectionTemp,
+						selectionArgsTemp,
+						null,
+						null,
+						sortOrder
+				);
 				break;
 			default:
 				throw new UnsupportedOperationException("Unknown query uri " + uri);
@@ -106,22 +109,6 @@ public class SavedPostProvider extends ContentProvider {
 		resultCursor.setNotificationUri(getContext().getContentResolver(), uri);
 		Timber.d("Querying complete");
 		return resultCursor;
-	}
-
-	@Nullable
-	@Override
-	public String getType(@NonNull Uri uri) {
-		Timber.d("Fetching uri type");
-		final int match = URI_MATCHER.match(uri);
-
-		switch (match) {
-			case POSTS:
-				return SavedPostContract.SavedPostEntry.CONTENT_TYPE;
-			case POST_WITH_ID:
-				return SavedPostContract.SavedPostEntry.CONTENT_ITEM_TYPE;
-			default:
-				throw new UnsupportedOperationException("Invalid query uri" + uri);
-		}
 	}
 
 	@Nullable
@@ -188,13 +175,32 @@ public class SavedPostProvider extends ContentProvider {
 		final int match = URI_MATCHER.match(uri);
 		int numberOfDeletedRows = 0;
 		Timber.d("Deleting rows");
+		String id = null;
 
-		if (selection == null)
+		if (selection == null) {
 			selection = "1";
+			selectionArgs = null;
+		} else {
+			selection = postWithID;
+			id = uri.getPathSegments().get(1);
+			selectionArgs = new String[]{id};
+		}
 
 		switch (match) {
+			case POSTS:
+				numberOfDeletedRows = database.delete(
+						SavedPostContract.SavedPostEntry.TABLE_NAME,
+						selection,
+						selectionArgs
+				);
+				break;
 			case POST_WITH_ID:
-				numberOfDeletedRows = database.delete(SavedPostContract.SavedPostEntry.TABLE_NAME, selection, selectionArgs);
+				Timber.d("Delete: ID of post: " + id);
+				numberOfDeletedRows = database.delete(
+						SavedPostContract.SavedPostEntry.TABLE_NAME,
+						selection,
+						selectionArgs
+				);
 				break;
 			default:
 				throw new UnsupportedOperationException("Cannot perform delete. Unknown Uri: " + uri);

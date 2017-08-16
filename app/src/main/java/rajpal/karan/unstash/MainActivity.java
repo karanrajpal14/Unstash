@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.webkit.CookieManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -172,17 +173,21 @@ public class MainActivity extends AppCompatActivity
 		appTitle.setText(R.string.app_name);
 		TextView username = (TextView) findViewById(R.id.username_main_tv);
 
+		if (redditClient.isAuthenticated()) {
+			username.setText(redditClient.getAuthenticatedUser());
+		}
+		else {
+			username.setText(R.string.toolbar_not_logged_in);
+		}
+
 		switch (state) {
 			case READY:
-				username.setText(redditClient.getAuthenticatedUser());
 				break;
 			case NONE:
-				username.setText(R.string.toolbar_not_logged_in);
 				Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 				break;
 			case NEED_REFRESH:
-				username.setText(R.string.toolbar_not_logged_in);
 				refreshAccessTokenAsync();
 				break;
 		}
@@ -279,7 +284,26 @@ public class MainActivity extends AppCompatActivity
 			case R.id.action_fetch:
 				fetchSavedPosts();
 				return true;
+			case R.id.action_logout:
+				Timber.d("Action logout");
+				logout();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	private void logout() {
+			new AsyncTask<Void, Void, Boolean>() {
+				@Override
+				protected Boolean doInBackground(Void... voids) {
+					Timber.d("logging out");
+					redditClient.getOAuthHelper().revokeAccessToken(LoginActivity.CREDENTIALS);
+					redditClient.deauthenticate();
+					CookieManager.getInstance().removeAllCookies(null);
+					return redditClient.isAuthenticated();
+				}
+
+			}.execute();
+
+		}
 }

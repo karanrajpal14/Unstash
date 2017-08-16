@@ -11,10 +11,12 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(myToolbar);
 
 		redditClient = AuthenticationManager.get().getRedditClient();
 		ButterKnife.bind(this);
@@ -166,14 +171,21 @@ public class MainActivity extends AppCompatActivity
 		AuthenticationState state = AuthenticationManager.get().checkAuthState();
 		Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
+		TextView appTitle = (TextView) findViewById(R.id.app_title_main_tv);
+		appTitle.setText(R.string.app_name);
+		TextView username = (TextView) findViewById(R.id.username_main_tv);
+
 		switch (state) {
 			case READY:
+				username.setText(redditClient.getAuthenticatedUser());
 				break;
 			case NONE:
+				username.setText("Not logged in");
 				Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 				break;
 			case NEED_REFRESH:
+				username.setText("Not logged in");
 				refreshAccessTokenAsync();
 				break;
 		}

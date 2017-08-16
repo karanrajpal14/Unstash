@@ -42,20 +42,17 @@ public class MainActivity extends AppCompatActivity
 		implements SavedPostsAdapter.ListItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String TAG = MainActivity.class.getSimpleName();
-
-	private RedditClient redditClient;
-	int position = RecyclerView.NO_POSITION;
 	static final int MAIN_LOADER_ID = 0;
-
+	int position = RecyclerView.NO_POSITION;
+	@BindView(R.id.posts_list_rv)
+	RecyclerView mNumbersList;
+	private RedditClient redditClient;
 	private Toast mToast;
-
 	/*
 	 * References to RecyclerView and Adapter to reset the list to its
 	 * "pretty" state when the reset menu item is clicked.
 	 */
 	private SavedPostsAdapter mAdapter;
-	@BindView(R.id.posts_list_rv)
-	RecyclerView mNumbersList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * The SavedPostsAdapter is responsible for displaying each item in the list.
          */
-		mAdapter = new SavedPostsAdapter(this , this);
+		mAdapter = new SavedPostsAdapter(this, this);
 		mNumbersList.setAdapter(mAdapter);
 
 		getSupportLoaderManager().initLoader(MAIN_LOADER_ID, null, this);
@@ -99,7 +96,7 @@ public class MainActivity extends AppCompatActivity
 	}
 
 	public void fetchSavedPosts() {
-		new AsyncTask<Void, Integer, ContentValues >() {
+		new AsyncTask<Void, Integer, ContentValues>() {
 
 			@Override
 			protected ContentValues doInBackground(Void... voids) {
@@ -180,12 +177,12 @@ public class MainActivity extends AppCompatActivity
 				username.setText(redditClient.getAuthenticatedUser());
 				break;
 			case NONE:
-				username.setText("Not logged in");
+				username.setText(R.string.toolbar_not_logged_in);
 				Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 				break;
 			case NEED_REFRESH:
-				username.setText("Not logged in");
+				username.setText(R.string.toolbar_not_logged_in);
 				refreshAccessTokenAsync();
 				break;
 		}
@@ -213,7 +210,7 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public void onListItemClick(String string) {
 		/*
-         * Even if a Toast isn't showing, it's okay to cancel it. Doing so
+	     * Even if a Toast isn't showing, it's okay to cancel it. Doing so
          * ensures that our new Toast will show immediately, rather than
          * being delayed while other pending Toasts are shown.
          *
@@ -258,7 +255,7 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
-		if(position == RecyclerView.NO_POSITION) position = 0;
+		if (position == RecyclerView.NO_POSITION) position = 0;
 		mNumbersList.smoothScrollToPosition(position);
 	}
 

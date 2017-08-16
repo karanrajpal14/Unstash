@@ -18,11 +18,11 @@ public class SavedPostProvider extends ContentProvider {
 	// Mapping uris to functions
 	static final int POSTS = 100;
 	static final int POST_WITH_ID = 101;
-	private SavedPostDBHelper postDBHelper;
 	// post_id = ?
 	private static final String postWithID = SavedPostContract.SavedPostEntry.COLUMN_POST_ID + " = ? ";
 	// Adding a uri matcher to map the uri calls to respective queries
 	private static final UriMatcher URI_MATCHER = buildUriMatcher();
+	private SavedPostDBHelper postDBHelper;
 
 	static UriMatcher buildUriMatcher() {
 		Timber.d("Building Uri Matcher");

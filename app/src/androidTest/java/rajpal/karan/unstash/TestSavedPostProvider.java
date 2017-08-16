@@ -25,8 +25,16 @@ import static junit.framework.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class TestSavedPostProvider {
 
+	private static final Uri TEST_POSTS = SavedPostContract.SavedPostEntry.CONTENT_URI;
+	// Content URI for a single task with id = 1
+	private static final Uri TEST_POST_WITH_ID = TEST_POSTS.buildUpon().appendPath("1").build();
 	/* Context used to access various parts of the system */
 	private final Context mContext = InstrumentationRegistry.getTargetContext();
+
+	//================================================================================
+	// Test UriMatcher
+	//================================================================================
+	public String postID = "Test ID";
 
 	/**
 	 * Because we annotate this method with the @Before annotation, this method will be called
@@ -35,7 +43,7 @@ public class TestSavedPostProvider {
 	 */
 	@Before
 	public void setUp() {
-        /* Use TaskDbHelper to get access to a writable database */
+	    /* Use TaskDbHelper to get access to a writable database */
 		SavedPostDBHelper dbHelper = new SavedPostDBHelper(mContext);
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		database.delete(SavedPostContract.SavedPostEntry.TABLE_NAME, null, null);
@@ -99,49 +107,37 @@ public class TestSavedPostProvider {
 	}
 
 	//================================================================================
-	// Test UriMatcher
-	//================================================================================
-
-
-    private static final Uri TEST_POSTS = SavedPostContract.SavedPostEntry.CONTENT_URI;
-    // Content URI for a single task with id = 1
-    private static final Uri TEST_POST_WITH_ID = TEST_POSTS.buildUpon().appendPath("1").build();
-
-
-    /**
-     * This function tests that the UriMatcher returns the correct integer value for
-     * each of the Uri types that the ContentProvider can handle. Uncomment this when you are
-     * ready to test your UriMatcher.
-     */
-    @Test
-    public void testUriMatcher() {
-
-        /* Create a URI matcher that the TaskContentProvider uses */
-        UriMatcher testMatcher = SavedPostProvider.buildUriMatcher();
-
-        /* Test that the code returned from our matcher matches the expected POSTS int */
-        String tasksUriDoesNotMatch = "Error: The POSTS URI was matched incorrectly.";
-        int actualTasksMatchCode = testMatcher.match(TEST_POSTS);
-        int expectedTasksMatchCode = SavedPostProvider.POSTS;
-        assertEquals(tasksUriDoesNotMatch,
-                actualTasksMatchCode,
-                expectedTasksMatchCode);
-
-        /* Test that the code returned from our matcher matches the expected POST_WITH_ID */
-        String taskWithIdDoesNotMatch =
-                "Error: The POST_WITH_ID URI was matched incorrectly.";
-        int actualTaskWithIdCode = testMatcher.match(TEST_POST_WITH_ID);
-        int expectedTaskWithIdCode = SavedPostProvider.POST_WITH_ID;
-        assertEquals(taskWithIdDoesNotMatch,
-                actualTaskWithIdCode,
-                expectedTaskWithIdCode);
-    }
-
-	//================================================================================
 	// Test Insert
 	//================================================================================
 
-	public String postID = "Test ID";
+	/**
+	 * This function tests that the UriMatcher returns the correct integer value for
+	 * each of the Uri types that the ContentProvider can handle. Uncomment this when you are
+	 * ready to test your UriMatcher.
+	 */
+	@Test
+	public void testUriMatcher() {
+
+        /* Create a URI matcher that the TaskContentProvider uses */
+		UriMatcher testMatcher = SavedPostProvider.buildUriMatcher();
+
+        /* Test that the code returned from our matcher matches the expected POSTS int */
+		String tasksUriDoesNotMatch = "Error: The POSTS URI was matched incorrectly.";
+		int actualTasksMatchCode = testMatcher.match(TEST_POSTS);
+		int expectedTasksMatchCode = SavedPostProvider.POSTS;
+		assertEquals(tasksUriDoesNotMatch,
+				actualTasksMatchCode,
+				expectedTasksMatchCode);
+
+        /* Test that the code returned from our matcher matches the expected POST_WITH_ID */
+		String taskWithIdDoesNotMatch =
+				"Error: The POST_WITH_ID URI was matched incorrectly.";
+		int actualTaskWithIdCode = testMatcher.match(TEST_POST_WITH_ID);
+		int expectedTaskWithIdCode = SavedPostProvider.POST_WITH_ID;
+		assertEquals(taskWithIdDoesNotMatch,
+				actualTaskWithIdCode,
+				expectedTaskWithIdCode);
+	}
 
 	public ContentValues putTestContentValues(ContentValues testTaskValues) {
 		testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_POST_ID, postID);
@@ -159,104 +155,104 @@ public class TestSavedPostProvider {
 		return testTaskValues;
 	}
 
-    /**
-     * Tests inserting a single row of data via a ContentResolver
-     */
-    @Test
-    public void testInsert() {
+	/**
+	 * Tests inserting a single row of data via a ContentResolver
+	 */
+	@Test
+	public void testInsert() {
 
         /* Create values to insert */
-        ContentValues testTaskValues = new ContentValues();
-	    testTaskValues = putTestContentValues(testTaskValues);
+		ContentValues testTaskValues = new ContentValues();
+		testTaskValues = putTestContentValues(testTaskValues);
 
         /* TestContentObserver allows us to test if notifyChange was called appropriately */
-        TestUtilities.TestContentObserver taskObserver = TestUtilities.getTestContentObserver();
+		TestUtilities.TestContentObserver taskObserver = TestUtilities.getTestContentObserver();
 
-        ContentResolver contentResolver = mContext.getContentResolver();
+		ContentResolver contentResolver = mContext.getContentResolver();
 
         /* Register a content observer to be notified of changes to data at a given URI (posts) */
-        contentResolver.registerContentObserver(
+		contentResolver.registerContentObserver(
                 /* URI that we would like to observe changes to */
-                SavedPostContract.SavedPostEntry.CONTENT_URI,
+				SavedPostContract.SavedPostEntry.CONTENT_URI,
                 /* Whether or not to notify us if descendants of this URI change */
-                true,
+				true,
                 /* The observer to register (that will receive notifyChange callbacks) */
-                taskObserver);
+				taskObserver);
 
 
-        Uri uri = contentResolver.insert(SavedPostContract.SavedPostEntry.CONTENT_URI, testTaskValues);
+		Uri uri = contentResolver.insert(SavedPostContract.SavedPostEntry.CONTENT_URI, testTaskValues);
 
 
-        Uri expectedUri = ContentUris.withAppendedId(SavedPostContract.SavedPostEntry.CONTENT_URI, 1);
+		Uri expectedUri = ContentUris.withAppendedId(SavedPostContract.SavedPostEntry.CONTENT_URI, 1);
 
-        String insertProviderFailed = "Unable to insert item through Provider";
-        assertEquals(insertProviderFailed, uri, expectedUri);
+		String insertProviderFailed = "Unable to insert item through Provider";
+		assertEquals(insertProviderFailed, uri, expectedUri);
 
         /*
          * If this fails, it's likely you didn't call notifyChange in your insert method from
          * your ContentProvider.
          */
-        taskObserver.waitForNotificationOrFail();
+		taskObserver.waitForNotificationOrFail();
 
         /*
          * waitForNotificationOrFail is synchronous, so after that call, we are done observing
          * changes to content and should therefore unregister this observer.
          */
-        contentResolver.unregisterContentObserver(taskObserver);
-    }
+		contentResolver.unregisterContentObserver(taskObserver);
+	}
 
 	//================================================================================
 	// Test Query (for posts directory)
 	//================================================================================
 
 
-    /**
-     * Inserts data, then tests if a query for the posts directory returns that data as a Cursor
-     */
-    @Test
-    public void testQueryAll() {
+	/**
+	 * Inserts data, then tests if a query for the posts directory returns that data as a Cursor
+	 */
+	@Test
+	public void testQueryAll() {
 
         /* Get access to a writable database */
-        SavedPostDBHelper dbHelper = new SavedPostDBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+		SavedPostDBHelper dbHelper = new SavedPostDBHelper(mContext);
+		SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         /* Create values to insert */
-        ContentValues testTaskValues = new ContentValues();
-	    testTaskValues = putTestContentValues(testTaskValues);
+		ContentValues testTaskValues = new ContentValues();
+		testTaskValues = putTestContentValues(testTaskValues);
 
         /* Insert ContentValues into database and get a row ID back */
-        long taskRowId = database.insert(
+		long taskRowId = database.insert(
                 /* Table to insert values into */
-                SavedPostContract.SavedPostEntry.TABLE_NAME,
-                null,
+				SavedPostContract.SavedPostEntry.TABLE_NAME,
+				null,
                 /* Values to insert into table */
-                testTaskValues);
+				testTaskValues);
 
-        String insertFailed = "Unable to insert directly into the database";
-        assertTrue(insertFailed, taskRowId != -1);
+		String insertFailed = "Unable to insert directly into the database";
+		assertTrue(insertFailed, taskRowId != -1);
 
         /* We are done with the database, close it now. */
-        database.close();
+		database.close();
 
         /* Perform the ContentProvider query */
-        Cursor taskCursor = mContext.getContentResolver().query(
-                SavedPostContract.SavedPostEntry.CONTENT_URI,
+		Cursor taskCursor = mContext.getContentResolver().query(
+				SavedPostContract.SavedPostEntry.CONTENT_URI,
                 /* Columns; leaving this null returns every column in the table */
-                null,
+				null,
                 /* Optional specification for columns in the "where" clause above */
-                null,
+				null,
                 /* Values for "where" clause */
-                null,
+				null,
                 /* Sort order to return in Cursor */
-                null);
+				null);
 
 
-        String queryFailed = "Query failed to return a valid Cursor";
-        assertTrue(queryFailed, taskCursor != null);
+		String queryFailed = "Query failed to return a valid Cursor";
+		assertTrue(queryFailed, taskCursor != null);
 
         /* We are done with the cursor, close it now. */
-        taskCursor.close();
-    }
+		taskCursor.close();
+	}
 
 	//================================================================================
 	// Test Query (for single post)
@@ -321,68 +317,68 @@ public class TestSavedPostProvider {
 	//================================================================================
 
 
-    /**
-     * Tests deleting a single row of data via a ContentResolver
-     */
-    @Test
-    public void testDelete() {
+	/**
+	 * Tests deleting a single row of data via a ContentResolver
+	 */
+	@Test
+	public void testDelete() {
         /* Access writable database */
-        SavedPostDBHelper helper = new SavedPostDBHelper(InstrumentationRegistry.getTargetContext());
-        SQLiteDatabase database = helper.getWritableDatabase();
+		SavedPostDBHelper helper = new SavedPostDBHelper(InstrumentationRegistry.getTargetContext());
+		SQLiteDatabase database = helper.getWritableDatabase();
 
         /* Create a new row of post data */
-        ContentValues testTaskValues = new ContentValues();
-	    testTaskValues = putTestContentValues(testTaskValues);
+		ContentValues testTaskValues = new ContentValues();
+		testTaskValues = putTestContentValues(testTaskValues);
 
 	    /* Insert ContentValues into database and get a row ID back */
-        long taskRowId = database.insert(
+		long taskRowId = database.insert(
                 /* Table to insert values into */
-                SavedPostContract.SavedPostEntry.TABLE_NAME,
-                null,
+				SavedPostContract.SavedPostEntry.TABLE_NAME,
+				null,
                 /* Values to insert into table */
-                testTaskValues);
+				testTaskValues);
 
         /* Always close the database when you're through with it */
-        database.close();
+		database.close();
 
-        String insertFailed = "Unable to insert into the database";
-        assertTrue(insertFailed, taskRowId != -1);
+		String insertFailed = "Unable to insert into the database";
+		assertTrue(insertFailed, taskRowId != -1);
 
 
         /* TestContentObserver allows us to test if notifyChange was called appropriately */
-        TestUtilities.TestContentObserver taskObserver = TestUtilities.getTestContentObserver();
+		TestUtilities.TestContentObserver taskObserver = TestUtilities.getTestContentObserver();
 
-        ContentResolver contentResolver = mContext.getContentResolver();
+		ContentResolver contentResolver = mContext.getContentResolver();
 
         /* Register a content observer to be notified of changes to data at a given URI (posts) */
-        contentResolver.registerContentObserver(
+		contentResolver.registerContentObserver(
                 /* URI that we would like to observe changes to */
-                SavedPostContract.SavedPostEntry.CONTENT_URI,
+				SavedPostContract.SavedPostEntry.CONTENT_URI,
                 /* Whether or not to notify us if descendants of this URI change */
-                true,
+				true,
                 /* The observer to register (that will receive notifyChange callbacks) */
-                taskObserver);
+				taskObserver);
 
 
 
         /* The delete method deletes the previously inserted row with post_id = "Test ID" */
-        Uri uriToDelete = SavedPostContract.SavedPostEntry.CONTENT_URI.buildUpon().appendPath(postID).build();
-        int tasksDeleted = contentResolver.delete(uriToDelete, null, null);
+		Uri uriToDelete = SavedPostContract.SavedPostEntry.CONTENT_URI.buildUpon().appendPath(postID).build();
+		int tasksDeleted = contentResolver.delete(uriToDelete, null, null);
 
-        String deleteFailed = "Unable to delete item in the database";
-        assertTrue(deleteFailed, tasksDeleted != 0);
+		String deleteFailed = "Unable to delete item in the database";
+		assertTrue(deleteFailed, tasksDeleted != 0);
 
         /*
          * If this fails, it's likely you didn't call notifyChange in your delete method from
          * your ContentProvider.
          */
-        taskObserver.waitForNotificationOrFail();
+		taskObserver.waitForNotificationOrFail();
 
         /*
          * waitForNotificationOrFail is synchronous, so after that call, we are done observing
          * changes to content and should therefore unregister this observer.
          */
-        contentResolver.unregisterContentObserver(taskObserver);
-    }
+		contentResolver.unregisterContentObserver(taskObserver);
+	}
 
 }

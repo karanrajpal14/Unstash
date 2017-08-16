@@ -31,22 +31,13 @@ import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_URL;
 public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.SavedPostsViewHolder> {
 
 	private static final String TAG = SavedPostsAdapter.class.getSimpleName();
-
-	private Context context;
-	private Cursor cursor;
-
 	/*
-     * An on-click handler that we've defined to make it easy for an Activity to interface with
+	 * An on-click handler that we've defined to make it easy for an Activity to interface with
      * our RecyclerView
      */
 	final private ListItemClickListener mOnClickListener;
-
-	/**
-	 * The interface that receives onClick messages.
-	 */
-	public interface ListItemClickListener {
-		void onListItemClick(String string);
-	}
+	private Context context;
+	private Cursor cursor;
 
 	/**
 	 * Constructor for SavedPostsAdapter that accepts a context and the specification
@@ -58,7 +49,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	}
 
 	/**
-	 *
 	 * This gets called when each new ViewHolder is created. This happens when the RecyclerView
 	 * is laid out. Enough ViewHolders will be created to fill the screen and allow for scrolling.
 	 *
@@ -114,9 +104,16 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	}
 
 	/**
+	 * The interface that receives onClick messages.
+	 */
+	public interface ListItemClickListener {
+		void onListItemClick(String string);
+	}
+
+	/**
 	 * Cache of the children views for a list item.
 	 */
-	class SavedPostsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	class SavedPostsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		@BindView(R.id.post_title_text_view)
 		TextView titleTV;
@@ -131,6 +128,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		 * Constructor for our ViewHolder. Within this constructor, we get a reference to our
 		 * TextViews and set an onClickListener to listen for clicks. Those will be handled in the
 		 * onClick method below.
+		 *
 		 * @param itemView The View that you inflated in
 		 *                 {@link SavedPostsAdapter#onCreateViewHolder(ViewGroup, int)}
 		 */
@@ -143,6 +141,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		/**
 		 * A method we wrote for convenience. This method will take an integer as input and
 		 * use that integer to fetch the appropriate values of the post from the cursor.
+		 *
 		 * @param position Position of the post in the cursor
 		 */
 		void bind(int position) {
@@ -157,7 +156,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 			String permalink = cursor.getString(INDEX_PERMALINK);
 			String url = cursor.getString(INDEX_URL);
 			int score = cursor.getInt(INDEX_SCORE);
-			int isNSFW  = cursor.getInt(INDEX_IS_NSFW);
+			int isNSFW = cursor.getInt(INDEX_IS_NSFW);
 			int isSaved = cursor.getInt(INDEX_IS_SAVED);
 
 			titleTV.setText(title);
@@ -168,6 +167,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
 		/**
 		 * Called whenever a user clicks on an item in the list.
+		 *
 		 * @param v The View that was clicked
 		 */
 		@Override

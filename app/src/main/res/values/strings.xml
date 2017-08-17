@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Unstash</string>
     <string name="toolbar_not_logged_in">Not logged in</string>
+    <string name="details_toolbar_title">Details</string>
 </resources>

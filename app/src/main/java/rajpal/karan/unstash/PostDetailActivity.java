@@ -3,6 +3,7 @@ package rajpal.karan.unstash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -34,7 +35,11 @@ public class PostDetailActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_post_detail);
 
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar2);
+		setSupportActionBar(myToolbar);
+		getSupportActionBar().setTitle(R.string.details_toolbar_title);
 		ButterKnife.bind(this);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Intent receivedPostIntent = getIntent();
 		String title = receivedPostIntent.getStringExtra("intentTitle");

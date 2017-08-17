@@ -1,6 +1,7 @@
 package rajpal.karan.unstash;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,6 +39,19 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	final private ListItemClickListener mOnClickListener;
 	private Context context;
 	private Cursor cursor;
+
+	String postID;
+	String title;
+	String author;
+	long createdTime;
+	String subName;
+	String domain;
+	String postHint;
+	String permalink;
+	String url;
+	int score;
+	int isNSFW;
+	int isSaved;
 
 	/**
 	 * Constructor for SavedPostsAdapter that accepts a context and the specification
@@ -107,7 +121,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	 * The interface that receives onClick messages.
 	 */
 	public interface ListItemClickListener {
-		void onListItemClick(String string);
+		void onListItemClick(Intent intent);
 	}
 
 	/**
@@ -146,18 +160,18 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		 */
 		void bind(int position) {
 			cursor.moveToPosition(position);
-			String postID = cursor.getString(INDEX_POST_ID);
-			String title = cursor.getString(INDEX_TITLE);
-			String author = cursor.getString(INDEX_AUTHOR);
-			long createdTime = cursor.getLong(INDEX_CREATED_TIME);
-			String subName = cursor.getString(INDEX_SUBREDDIT_NAME);
-			String domain = cursor.getString(INDEX_DOMAIN);
-			String postHint = cursor.getString(INDEX_POST_HINT);
-			String permalink = cursor.getString(INDEX_PERMALINK);
-			String url = cursor.getString(INDEX_URL);
-			int score = cursor.getInt(INDEX_SCORE);
-			int isNSFW = cursor.getInt(INDEX_IS_NSFW);
-			int isSaved = cursor.getInt(INDEX_IS_SAVED);
+			postID = cursor.getString(INDEX_POST_ID);
+			title = cursor.getString(INDEX_TITLE);
+			author = cursor.getString(INDEX_AUTHOR);
+			createdTime = cursor.getLong(INDEX_CREATED_TIME);
+			subName = cursor.getString(INDEX_SUBREDDIT_NAME);
+			domain = cursor.getString(INDEX_DOMAIN);
+			postHint = cursor.getString(INDEX_POST_HINT);
+			permalink = cursor.getString(INDEX_PERMALINK);
+			url = cursor.getString(INDEX_URL);
+			score = cursor.getInt(INDEX_SCORE);
+			isNSFW = cursor.getInt(INDEX_IS_NSFW);
+			isSaved = cursor.getInt(INDEX_IS_SAVED);
 
 			titleTV.setText(title);
 			authorTV.setText(author);
@@ -172,7 +186,17 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		 */
 		@Override
 		public void onClick(View v) {
-			mOnClickListener.onListItemClick("Not implemented yet");
+			Intent postIntent = new Intent(v.getContext(), PostDetailActivity.class);
+			postIntent.putExtra("intentTitle",title);
+			postIntent.putExtra("intentAuthor",author);
+			postIntent.putExtra("intentCreatedTime",createdTime);
+			postIntent.putExtra("intentSubName",subName);
+			postIntent.putExtra("intentDomain",domain);
+			postIntent.putExtra("intentPostHint",postHint);
+			postIntent.putExtra("intentPermalink",permalink);
+			postIntent.putExtra("intentUrl",url);
+			postIntent.putExtra("intentScore",score);
+			mOnClickListener.onListItemClick(postIntent);
 		}
 	}
 }

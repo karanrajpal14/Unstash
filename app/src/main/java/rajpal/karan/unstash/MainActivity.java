@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity
 	@BindView(R.id.posts_list_rv)
 	RecyclerView mNumbersList;
 	private RedditClient redditClient;
-	private Toast mToast;
 	/*
 	 * References to RecyclerView and Adapter to reset the list to its
 	 * "pretty" state when the reset menu item is clicked.
@@ -213,30 +212,8 @@ public class MainActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onListItemClick(String string) {
-		/*
-	     * Even if a Toast isn't showing, it's okay to cancel it. Doing so
-         * ensures that our new Toast will show immediately, rather than
-         * being delayed while other pending Toasts are shown.
-         *
-         * Comment out these three lines, run the app, and click on a bunch of
-         * different items if you're not sure what I'm talking about.
-         */
-
-		if (mToast != null) {
-			mToast.cancel();
-		}
-
-        /*
-         * Create a Toast and store it in our Toast field.
-         * The Toast that shows up will have a message similar to the following:
-         *
-         *                     Not yet implemented
-         */
-
-		mToast = Toast.makeText(this, string, Toast.LENGTH_LONG);
-
-		mToast.show();
+	public void onListItemClick(Intent intent) {
+		startActivity(intent);
 	}
 
 	@Override

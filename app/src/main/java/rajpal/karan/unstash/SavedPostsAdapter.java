@@ -37,9 +37,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
      * our RecyclerView
      */
 	final private ListItemClickListener mOnClickListener;
-	private Context context;
-	private Cursor cursor;
-
 	String postID;
 	String title;
 	String author;
@@ -52,6 +49,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	int score;
 	int isNSFW;
 	int isSaved;
+	private Context context;
+	private Cursor cursor;
 
 	/**
 	 * Constructor for SavedPostsAdapter that accepts a context and the specification
@@ -131,12 +130,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
 		@BindView(R.id.post_title_text_view)
 		TextView titleTV;
-		@BindView(R.id.created_time_text_view)
-		TextView createdTimeTV;
 		@BindView(R.id.author_text_view)
-		TextView authorTV;
-		@BindView(R.id.subreddit_name_text_view)
-		TextView subNameTV;
+		TextView postDetailsTV;
 
 		/**
 		 * Constructor for our ViewHolder. Within this constructor, we get a reference to our
@@ -174,9 +169,14 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 			isSaved = cursor.getInt(INDEX_IS_SAVED);
 
 			titleTV.setText(title);
-			authorTV.setText(author);
-			createdTimeTV.setText(Utils.getRelativeTime(createdTime));
-			subNameTV.setText(subName);
+			postDetailsTV.setText(
+					context.getResources().getString(
+							R.string.post_details_textview,
+							author,
+							Utils.getRelativeTime(createdTime),
+							subName
+					)
+			);
 		}
 
 		/**
@@ -187,15 +187,15 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		@Override
 		public void onClick(View v) {
 			Intent postIntent = new Intent(v.getContext(), PostDetailActivity.class);
-			postIntent.putExtra("intentTitle",title);
-			postIntent.putExtra("intentAuthor",author);
-			postIntent.putExtra("intentCreatedTime",createdTime);
-			postIntent.putExtra("intentSubName",subName);
-			postIntent.putExtra("intentDomain",domain);
-			postIntent.putExtra("intentPostHint",postHint);
-			postIntent.putExtra("intentPermalink",permalink);
-			postIntent.putExtra("intentUrl",url);
-			postIntent.putExtra("intentScore",score);
+			postIntent.putExtra("intentTitle", title);
+			postIntent.putExtra("intentAuthor", author);
+			postIntent.putExtra("intentCreatedTime", createdTime);
+			postIntent.putExtra("intentSubName", subName);
+			postIntent.putExtra("intentDomain", domain);
+			postIntent.putExtra("intentPostHint", postHint);
+			postIntent.putExtra("intentPermalink", permalink);
+			postIntent.putExtra("intentUrl", url);
+			postIntent.putExtra("intentScore", score);
 			mOnClickListener.onListItemClick(postIntent);
 		}
 	}

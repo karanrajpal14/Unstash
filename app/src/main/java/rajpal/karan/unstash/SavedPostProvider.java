@@ -83,7 +83,7 @@ public class SavedPostProvider extends ContentProvider {
 						selectionArgs,
 						null,
 						null,
-						sortOrder
+						"created_time DESC"
 				);
 				break;
 			case POST_WITH_ID:
@@ -99,7 +99,7 @@ public class SavedPostProvider extends ContentProvider {
 						selectionArgsTemp,
 						null,
 						null,
-						sortOrder
+						"created_time DESC"
 				);
 				break;
 			default:

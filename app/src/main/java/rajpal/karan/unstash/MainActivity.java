@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
 
 								// Fetching saved post data
 								String author = submission.getAuthor();
-								long created_time = submission.getCreated().getTime();
+								long created_time = submission.getEdited().getTime();
 								String domain = submission.getDomain();
 								String permalink = submission.getPermalink();
 								String postHint = submission.getPostHint().toString();
@@ -174,8 +174,7 @@ public class MainActivity extends AppCompatActivity
 
 		if (redditClient.isAuthenticated()) {
 			username.setText(redditClient.getAuthenticatedUser());
-		}
-		else {
+		} else {
 			username.setText(R.string.toolbar_not_logged_in);
 		}
 
@@ -270,17 +269,17 @@ public class MainActivity extends AppCompatActivity
 	}
 
 	private void logout() {
-			new AsyncTask<Void, Void, Boolean>() {
-				@Override
-				protected Boolean doInBackground(Void... voids) {
-					Timber.d("logging out");
-					redditClient.getOAuthHelper().revokeAccessToken(LoginActivity.CREDENTIALS);
-					redditClient.deauthenticate();
-					CookieManager.getInstance().removeAllCookies(null);
-					return redditClient.isAuthenticated();
-				}
+		new AsyncTask<Void, Void, Boolean>() {
+			@Override
+			protected Boolean doInBackground(Void... voids) {
+				Timber.d("logging out");
+				redditClient.getOAuthHelper().revokeAccessToken(LoginActivity.CREDENTIALS);
+				redditClient.deauthenticate();
+				CookieManager.getInstance().removeAllCookies(null);
+				return redditClient.isAuthenticated();
+			}
 
-			}.execute();
+		}.execute();
 
-		}
+	}
 }

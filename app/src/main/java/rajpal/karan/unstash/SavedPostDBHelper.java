@@ -9,7 +9,7 @@ import timber.log.Timber;
 public class SavedPostDBHelper extends SQLiteOpenHelper {
 
 	private final static String DB_NAME = SavedPostContract.SavedPostEntry.TABLE_NAME.concat(".db");
-	private final static int DB_VERSION = 7;
+	private final static int DB_VERSION = 10;
 
 	public SavedPostDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -24,6 +24,7 @@ public class SavedPostDBHelper extends SQLiteOpenHelper {
 						SavedPostContract.SavedPostEntry.COLUMN_POST_ID + " TEXT PRIMARY KEY ON CONFLICT IGNORE, " +
 						SavedPostContract.SavedPostEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
 						SavedPostContract.SavedPostEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
+						SavedPostContract.SavedPostEntry.COLUMN_THUMBNAIL + " TEXT, " +
 						SavedPostContract.SavedPostEntry.COLUMN_CREATED_TIME + " INTEGER NOT NULL, " +
 						SavedPostContract.SavedPostEntry.COLUMN_SUBREDDIT_NAME + " TEXT NOT NULL, " +
 						SavedPostContract.SavedPostEntry.COLUMN_DOMAIN + " TEXT NOT NULL, " +

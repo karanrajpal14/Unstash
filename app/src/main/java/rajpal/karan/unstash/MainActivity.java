@@ -120,20 +120,22 @@ public class MainActivity extends AppCompatActivity
 
 								// Fetching saved post data
 								String author = submission.getAuthor();
-								long created_time = submission.getEdited().getTime();
+								long created_time = submission.getCreated().getTime();
 								String domain = submission.getDomain();
 								String permalink = submission.getPermalink();
 								String postHint = submission.getPostHint().toString();
 								int score = submission.getScore();
 								String subredditName = submission.getSubredditName();
 								String title = submission.getTitle();
-								String url = submission.getUrl();
+								String url = submission.getShortURL();
 								int isNSFW = (submission.isNsfw()) ? 1 : 0;
 								int isSaved = (submission.isSaved()) ? 1 : 0;
+								String thumbnailURL = submission.getThumbnail();
 
 								savedPostValues.put("post_id", id);
 								savedPostValues.put("title", title);
 								savedPostValues.put("author", author);
+								savedPostValues.put("thumbnail_url", thumbnailURL);
 								savedPostValues.put("created_time", created_time);
 								savedPostValues.put("subreddit_name", subredditName);
 								savedPostValues.put("domain", domain);

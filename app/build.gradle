@@ -69,6 +69,9 @@ dependencies {
     compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
     compile "org.slf4j:slf4j-android:$rootProject.sl4jVersion"
     debugCompile "com.facebook.stetho:stetho:$rootProject.stethoVersion"
+    compile "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
 
     testCompile 'junit:junit:4.12'
 }

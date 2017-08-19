@@ -4,8 +4,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import timber.log.Timber;
-
 public class SavedPostContract {
 
 	static final String CONTENT_AUTHORITY = SavedPostContract.class.getPackage().getName();
@@ -37,6 +35,7 @@ public class SavedPostContract {
 		public static final String COLUMN_POST_ID = "post_id";
 		public static final String COLUMN_TITLE = "title";
 		public static final String COLUMN_AUTHOR = "author";
+		public static final String COLUMN_THUMBNAIL = "thumbnail_url";
 		public static final String COLUMN_CREATED_TIME = "created_time";
 		public static final String COLUMN_SUBREDDIT_NAME = "subreddit_name";
 		public static final String COLUMN_DOMAIN = "domain";
@@ -51,20 +50,15 @@ public class SavedPostContract {
 		public static final int INDEX_POST_ID = 0;
 		public static final int INDEX_TITLE = 1;
 		public static final int INDEX_AUTHOR = 2;
-		public static final int INDEX_CREATED_TIME = 3;
-		public static final int INDEX_SUBREDDIT_NAME = 4;
-		public static final int INDEX_DOMAIN = 5;
-		public static final int INDEX_POST_HINT = 6;
-		public static final int INDEX_PERMALINK = 7;
-		public static final int INDEX_URL = 8;
-		public static final int INDEX_SCORE = 9;
-		public static final int INDEX_IS_NSFW = 10;
-		public static final int INDEX_IS_SAVED = 11;
-
-		public static String getPostIDFromUri(Uri postUriWithID) {
-			String id = postUriWithID.getPathSegments().get(2);
-			Timber.d("Post ID from URI: " + id);
-			return id;
-		}
+		public static final int INDEX_THUMBNAIL = 3;
+		public static final int INDEX_CREATED_TIME = 4;
+		public static final int INDEX_SUBREDDIT_NAME = 5;
+		public static final int INDEX_DOMAIN = 6;
+		public static final int INDEX_POST_HINT = 7;
+		public static final int INDEX_PERMALINK = 8;
+		public static final int INDEX_URL = 9;
+		public static final int INDEX_SCORE = 10;
+		public static final int INDEX_IS_NSFW = 11;
+		public static final int INDEX_IS_SAVED = 12;
 	}
 }

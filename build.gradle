@@ -36,5 +36,6 @@ ext {
     timberVersion = '4.5.1'
     sl4jVersion = '1.7.25'
     stethoVersion = '1.5.0'
+    glideVersion = '4.0.0'
 
 }

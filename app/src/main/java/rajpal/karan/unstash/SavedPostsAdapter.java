@@ -7,7 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,6 +26,7 @@ import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_POST_H
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_POST_ID;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_SCORE;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_SUBREDDIT_NAME;
+import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_THUMBNAIL;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_TITLE;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_URL;
 
@@ -46,6 +51,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	String postHint;
 	String permalink;
 	String url;
+	String thumbnailURL;
 	int score;
 	int isNSFW;
 	int isSaved;
@@ -132,6 +138,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		TextView titleTV;
 		@BindView(R.id.author_text_view)
 		TextView postDetailsTV;
+		@BindView(R.id.thumbnail_main_image_view)
+		ImageView thumbnailImageView;
 
 		/**
 		 * Constructor for our ViewHolder. Within this constructor, we get a reference to our
@@ -158,6 +166,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 			postID = cursor.getString(INDEX_POST_ID);
 			title = cursor.getString(INDEX_TITLE);
 			author = cursor.getString(INDEX_AUTHOR);
+			thumbnailURL = cursor.getString(INDEX_THUMBNAIL);
 			createdTime = cursor.getLong(INDEX_CREATED_TIME);
 			subName = cursor.getString(INDEX_SUBREDDIT_NAME);
 			domain = cursor.getString(INDEX_DOMAIN);
@@ -177,6 +186,17 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 							subName
 					)
 			);
+
+			RequestOptions requestOptions = new RequestOptions();
+			requestOptions.placeholder(R.drawable.ic_file_download);
+			requestOptions.error(R.drawable.ic_cancel);
+			requestOptions.fitCenter();
+
+			Glide.with(context)
+					.setDefaultRequestOptions(requestOptions)
+					.load(thumbnailURL)
+					.thumbnail(0.8f)
+					.into(thumbnailImageView);
 		}
 
 		/**

@@ -72,6 +72,7 @@ dependencies {
     compile "com.github.bumptech.glide:glide:$rootProject.glideVersion"
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
+    compile "com.github.zagum:Android-SwitchIcon:$rootProject.switchIconVersion"
 
     testCompile 'junit:junit:4.12'
 }

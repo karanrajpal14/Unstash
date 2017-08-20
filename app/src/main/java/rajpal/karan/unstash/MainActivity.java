@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.santalu.emptyview.EmptyView;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
@@ -46,7 +47,11 @@ public class MainActivity extends AppCompatActivity
 	static final int MAIN_LOADER_ID = 0;
 	int position = RecyclerView.NO_POSITION;
 	@BindView(R.id.posts_list_rv)
-	RecyclerView mNumbersList;
+	RecyclerView postsListRecyclerView;
+	@BindView(R.id.empty_view)
+	EmptyView emptyView;
+	@BindView(R.id.toolbar)
+	Toolbar myToolbar;
 	private RedditClient redditClient;
 	/*
 	 * References to RecyclerView and Adapter to reset the list to its
@@ -58,12 +63,10 @@ public class MainActivity extends AppCompatActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+		ButterKnife.bind(this);
 		setSupportActionBar(myToolbar);
 
 		redditClient = AuthenticationManager.get().getRedditClient();
-		ButterKnife.bind(this);
 
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
@@ -77,19 +80,19 @@ public class MainActivity extends AppCompatActivity
          * staggered grids, and more! See the developer documentation for more details.
          */
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-		mNumbersList.setLayoutManager(layoutManager);
+		postsListRecyclerView.setLayoutManager(layoutManager);
 
         /*
          * Use this setting to improve performance if you know that changes in content do not
          * change the child layout size in the RecyclerView
          */
-		mNumbersList.setHasFixedSize(true);
+		postsListRecyclerView.setHasFixedSize(true);
 
         /*
          * The SavedPostsAdapter is responsible for displaying each item in the list.
          */
 		mAdapter = new SavedPostsAdapter(this, this);
-		mNumbersList.setAdapter(mAdapter);
+		postsListRecyclerView.setAdapter(mAdapter);
 
 		getSupportLoaderManager().initLoader(MAIN_LOADER_ID, null, this);
 
@@ -170,9 +173,15 @@ public class MainActivity extends AppCompatActivity
 		AuthenticationState state = AuthenticationManager.get().checkAuthState();
 		Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
-		TextView appTitle = (TextView) findViewById(R.id.app_title_main_tv);
+		TextView appTitle = findViewById(R.id.app_title_main_tv);
 		appTitle.setText(R.string.app_name);
-		TextView username = (TextView) findViewById(R.id.username_main_tv);
+		TextView username = findViewById(R.id.username_main_tv);
+
+		int count = mAdapter.getItemCount();
+		Timber.d(String.valueOf(count));
+		if (count == 0) {
+			emptyView.showEmpty();
+		}
 
 		if (redditClient.isAuthenticated()) {
 			username.setText(redditClient.getAuthenticatedUser());
@@ -238,8 +247,9 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
+		emptyView.showContent();
 		if (position == RecyclerView.NO_POSITION) position = 0;
-		mNumbersList.smoothScrollToPosition(position);
+		postsListRecyclerView.smoothScrollToPosition(position);
 	}
 
 	@Override

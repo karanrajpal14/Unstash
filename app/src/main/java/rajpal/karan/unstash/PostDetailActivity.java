@@ -44,7 +44,7 @@ public class PostDetailActivity extends AppCompatActivity {
 		Intent receivedPostIntent = getIntent();
 		String title = receivedPostIntent.getStringExtra("intentTitle");
 		String author = receivedPostIntent.getStringExtra("intentAuthor");
-		long createdTime = receivedPostIntent.getLongExtra("intentCreatedTime",0);
+		long createdTime = receivedPostIntent.getLongExtra("intentCreatedTime", 0);
 		String subName = receivedPostIntent.getStringExtra("intentSubName");
 		String domain = receivedPostIntent.getStringExtra("intentSubName");
 		String postHint = receivedPostIntent.getStringExtra("intentPostHint");

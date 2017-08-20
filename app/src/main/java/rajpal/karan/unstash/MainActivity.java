@@ -177,11 +177,7 @@ public class MainActivity extends AppCompatActivity
 		appTitle.setText(R.string.app_name);
 		TextView username = findViewById(R.id.username_main_tv);
 
-		int count = mAdapter.getItemCount();
-		Timber.d(String.valueOf(count));
-		if (count == 0) {
-			emptyView.showEmpty();
-		}
+		showEmpty();
 
 		if (redditClient.isAuthenticated()) {
 			username.setText(redditClient.getAuthenticatedUser());
@@ -193,6 +189,7 @@ public class MainActivity extends AppCompatActivity
 			case READY:
 				break;
 			case NONE:
+				showEmpty();
 				Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 				break;
@@ -293,5 +290,12 @@ public class MainActivity extends AppCompatActivity
 
 		}.execute();
 
+	}
+
+	public void showEmpty() {
+		Log.d(TAG, "showEmpty: Empty");
+		if (mAdapter.getItemCount() == 0) {
+			emptyView.showEmpty();
+		}
 	}
 }

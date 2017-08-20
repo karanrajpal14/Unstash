@@ -18,17 +18,10 @@ import butterknife.ButterKnife;
 
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_AUTHOR;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_CREATED_TIME;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_DOMAIN;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_IS_NSFW;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_IS_SAVED;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_PERMALINK;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_POST_HINT;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_POST_ID;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_SCORE;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_SUBREDDIT_NAME;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_THUMBNAIL;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_TITLE;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_URL;
 
 /**
  * {@link SavedPostsAdapter} exposes a list of the user's saved posts on reddit
@@ -47,14 +40,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 	String author;
 	long createdTime;
 	String subName;
-	String domain;
-	String postHint;
-	String permalink;
-	String url;
 	String thumbnailURL;
-	int score;
-	int isNSFW;
-	int isSaved;
 	private Context context;
 	private Cursor cursor;
 
@@ -163,19 +149,13 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		 */
 		void bind(int position) {
 			cursor.moveToPosition(position);
+
 			postID = cursor.getString(INDEX_POST_ID);
 			title = cursor.getString(INDEX_TITLE);
 			author = cursor.getString(INDEX_AUTHOR);
 			thumbnailURL = cursor.getString(INDEX_THUMBNAIL);
 			createdTime = cursor.getLong(INDEX_CREATED_TIME);
 			subName = cursor.getString(INDEX_SUBREDDIT_NAME);
-			domain = cursor.getString(INDEX_DOMAIN);
-			postHint = cursor.getString(INDEX_POST_HINT);
-			permalink = cursor.getString(INDEX_PERMALINK);
-			url = cursor.getString(INDEX_URL);
-			score = cursor.getInt(INDEX_SCORE);
-			isNSFW = cursor.getInt(INDEX_IS_NSFW);
-			isSaved = cursor.getInt(INDEX_IS_SAVED);
 
 			titleTV.setText(title);
 			postDetailsTV.setText(
@@ -206,17 +186,11 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		 */
 		@Override
 		public void onClick(View v) {
-			Intent postIntent = new Intent(v.getContext(), PostDetailActivity.class);
-			postIntent.putExtra("intentTitle", title);
-			postIntent.putExtra("intentAuthor", author);
-			postIntent.putExtra("intentCreatedTime", createdTime);
-			postIntent.putExtra("intentSubName", subName);
-			postIntent.putExtra("intentDomain", domain);
-			postIntent.putExtra("intentPostHint", postHint);
-			postIntent.putExtra("intentPermalink", permalink);
-			postIntent.putExtra("intentUrl", url);
-			postIntent.putExtra("intentScore", score);
-			mOnClickListener.onListItemClick(postIntent);
+			Intent postIDIntent = new Intent(v.getContext(), PostDetailActivity.class);
+			cursor.moveToPosition(getAdapterPosition());
+			String clickedPostID = cursor.getString(INDEX_POST_ID);
+			postIDIntent.putExtra("intentClickedPostID", clickedPostID);
+			mOnClickListener.onListItemClick(postIDIntent);
 		}
 	}
 }

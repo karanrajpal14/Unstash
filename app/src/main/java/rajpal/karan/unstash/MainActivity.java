@@ -1,13 +1,17 @@
 package rajpal.karan.unstash;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 	EmptyView emptyView;
 	@BindView(R.id.toolbar)
 	Toolbar myToolbar;
-	private RedditClient redditClient;
+	RedditClient redditClient;
 	/*
 	 * References to RecyclerView and Adapter to reset the list to its
 	 * "pretty" state when the reset menu item is clicked.
@@ -173,6 +177,9 @@ public class MainActivity extends AppCompatActivity
 		AuthenticationState state = AuthenticationManager.get().checkAuthState();
 		Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
+		IntentFilter filter = new IntentFilter(UnstashFetchService.ACTION);
+		LocalBroadcastManager.getInstance(this).registerReceiver(UnstashFetchReceiver,filter);
+
 		TextView appTitle = findViewById(R.id.app_title_main_tv);
 		appTitle.setText(R.string.app_name);
 		TextView username = findViewById(R.id.username_main_tv);
@@ -187,6 +194,7 @@ public class MainActivity extends AppCompatActivity
 
 		switch (state) {
 			case READY:
+				launchFetchService();
 				break;
 			case NONE:
 				showEmpty();
@@ -197,6 +205,12 @@ public class MainActivity extends AppCompatActivity
 				refreshAccessTokenAsync();
 				break;
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(UnstashFetchReceiver);
 	}
 
 	private void refreshAccessTokenAsync() {
@@ -213,7 +227,7 @@ public class MainActivity extends AppCompatActivity
 
 			@Override
 			protected void onPostExecute(Void v) {
-				Log.d(TAG, "Re-authenticated");
+				launchFetchService();
 			}
 		}.execute();
 	}
@@ -246,7 +260,6 @@ public class MainActivity extends AppCompatActivity
 		mAdapter.swapCursor(data);
 		emptyView.showContent();
 		if (position == RecyclerView.NO_POSITION) position = 0;
-		postsListRecyclerView.smoothScrollToPosition(position);
 	}
 
 	@Override
@@ -293,9 +306,24 @@ public class MainActivity extends AppCompatActivity
 	}
 
 	public void showEmpty() {
-		Log.d(TAG, "showEmpty: Empty");
 		if (mAdapter.getItemCount() == 0) {
 			emptyView.showEmpty();
 		}
 	}
+
+	public void launchFetchService() {
+		Intent i = new Intent(this, UnstashFetchService.class);
+		i.putExtra("foo", "bar");
+		startService(i);
+	}
+
+	private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int resultCode = intent.getIntExtra("ResultCode", RESULT_CANCELED);
+			if (resultCode == RESULT_OK) {
+				Toast.makeText(context, "Fetch completed successfully", Toast.LENGTH_SHORT).show();
+			}
+		}
+	};
 }

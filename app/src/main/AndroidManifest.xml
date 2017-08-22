@@ -37,6 +37,9 @@
             android:exported="true"
             android:grantUriPermissions="true"/>
 
+        <service android:name=".UnstashFetchService"
+                 android:exported="false"/>
+
     </application>
 
 </manifest>

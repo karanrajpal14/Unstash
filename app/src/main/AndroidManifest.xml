@@ -3,6 +3,7 @@
           package="rajpal.karan.unstash">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".App"
@@ -16,10 +17,10 @@
             android:name="net.dean.jraw.REDDIT_USERNAME"
             android:value="artemis73"/>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -43,7 +44,7 @@
         <service
             android:name=".TestJobService"
             android:label="UnstashFetchServiceJobScheduler"
-            android:exported="true"
+            android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver android:name="MyStartServiceReceiver" >

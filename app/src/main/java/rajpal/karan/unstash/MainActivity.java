@@ -286,6 +286,8 @@ public class MainActivity extends AppCompatActivity
 				Timber.d("Action logout");
 				logout();
 				return true;
+			case R.id.test_notification:
+				NotificationUtils.remindUserToReadSavedPost(this);
 		}
 		return super.onOptionsItemSelected(item);
 	}

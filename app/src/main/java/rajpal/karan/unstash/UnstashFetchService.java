@@ -35,6 +35,8 @@ public class UnstashFetchService extends IntentService {
 		Timber.d("Created service");
 	}
 
+
+
 	@Override
 	protected void onHandleIntent(@Nullable Intent intent) {
 

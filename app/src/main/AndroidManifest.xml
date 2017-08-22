@@ -40,6 +40,18 @@
         <service android:name=".UnstashFetchService"
                  android:exported="false"/>
 
+        <service
+            android:name=".TestJobService"
+            android:label="UnstashFetchServiceJobScheduler"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name="MyStartServiceReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity
 		AuthenticationState state = AuthenticationManager.get().checkAuthState();
 		Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
-		IntentFilter filter = new IntentFilter(UnstashFetchService.ACTION);
+		IntentFilter filter = new IntentFilter(UnstashFetchService.ACTION_START_FETCH_SERVICE);
 		LocalBroadcastManager.getInstance(this).registerReceiver(UnstashFetchReceiver,filter);
 
 		TextView appTitle = findViewById(R.id.app_title_main_tv);

@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity
 		ButterKnife.bind(this);
 		setSupportActionBar(myToolbar);
 
+        Utils.scheduleReadPostReminder(this);
+
 		redditClient = AuthenticationManager.get().getRedditClient();
 
         /*

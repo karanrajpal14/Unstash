@@ -10,6 +10,6 @@ public class MyStartServiceReceiver extends BroadcastReceiver {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onReceive(Context context, Intent intent) {
-        Utils.scheduleJob(context);
+        Utils.scheduleReadPostReminder(context);
     }
 }

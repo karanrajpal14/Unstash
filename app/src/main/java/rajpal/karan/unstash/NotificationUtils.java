@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import static rajpal.karan.unstash.UnstashFetchService.ACTION_DISMISS_NOTIFICATION;
 import static rajpal.karan.unstash.UnstashFetchService.ACTION_MARK_POST_AS_DONE;
+import static rajpal.karan.unstash.UnstashFetchService.ACTION_READ_POST_REMINDER;
 
 /**
  * Utility class for creating Saved Post notifications
@@ -45,7 +46,15 @@ public class NotificationUtils {
             case ACTION_DISMISS_NOTIFICATION:
                 clearAllCreatedNotifications(context);
                 break;
+            case ACTION_READ_POST_REMINDER:
+                notifyReadPost(context);
+                break;
         }
+    }
+
+    private static void notifyReadPost(Context context) {
+        // Add method to update read post
+        remindUserToReadSavedPost(context);
     }
 
     private static NotificationCompat.Action ignoreReminderAction(Context context) {

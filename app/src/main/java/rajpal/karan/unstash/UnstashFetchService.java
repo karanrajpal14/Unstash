@@ -12,6 +12,7 @@ public class UnstashFetchService extends IntentService {
 	public static final String ACTION_START_FETCH_SERVICE = "start-fetch";
 	public static final String ACTION_MARK_POST_AS_DONE = "mark-as-done";
 	public static final String ACTION_DISMISS_NOTIFICATION = "dismiss-notification";
+	public static final String ACTION_READ_POST_REMINDER = "read-post-reminder";
 
 	public UnstashFetchService() {
 		super(UnstashFetchService.class.getSimpleName());
@@ -28,9 +29,8 @@ public class UnstashFetchService extends IntentService {
 
 		Timber.d("Received intent");
 		assert intent != null;
-		String action = intent.getAction();
+		String action = intent.getAction() != null ? intent.getAction() : "default";
 		Log.d("onHandleIntent", "onHandleIntent: Action " + action);
-		NotificationUtils.executeTask(this, action);
 
 		switch (action) {
 			case ACTION_START_FETCH_SERVICE:

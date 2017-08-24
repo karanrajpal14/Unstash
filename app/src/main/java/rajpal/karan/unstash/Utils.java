@@ -1,12 +1,18 @@
 package rajpal.karan.unstash;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
+
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.Driver;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.Trigger;
+
+import java.util.concurrent.TimeUnit;
 
 public class Utils {
 	public static String getRelativeTime(long createdTime) {
@@ -18,17 +24,33 @@ public class Utils {
 		);
 	}
 
-	// schedule the start of the service every 10 - 30 seconds
-	@RequiresApi(api = Build.VERSION_CODES.M)
-	public static void scheduleJob(Context context) {
-		JobInfo.Builder builder = new JobInfo.Builder(0, new ComponentName(context, TestJobService.class));
-		builder.setMinimumLatency(1 * 1000); // wait at least
-		builder.setOverrideDeadline(3 * 1000); // maximum delay
-		builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
-		builder.setRequiresCharging(true); // we don't care if the device is charging or not
-		//builder.setRequiresDeviceIdle(true); // device should be idle
-		builder.setOverrideDeadline(300);
-		JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
-		jobScheduler.schedule(builder.build());
+	private static final int REMINDER_INTERVAL_MINUTES = 1;
+	private static final int REMINDER_INTERVAL_SECONDS = (int) TimeUnit.MINUTES.toSeconds(REMINDER_INTERVAL_MINUTES);
+	private static final int SYNC_FLEXTIME_SECONDS = REMINDER_INTERVAL_SECONDS;
+
+	private static final String REMINDER_JOB_TAG = "read_post_reminder_tag";
+
+	private static boolean initialized;
+
+	synchronized public static void scheduleReadPostReminder(@NonNull final Context context) {
+
+		if (initialized) return;
+
+		Driver driver = new GooglePlayDriver(context);
+		FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
+
+		Job constrainedReminderJob = dispatcher.newJobBuilder()
+				.setService(TestJobService.class)
+				.setTag(REMINDER_JOB_TAG)
+				.setConstraints(Constraint.DEVICE_CHARGING)
+				.setLifetime(Lifetime.FOREVER)
+				.setRecurring(true)
+				.setTrigger(Trigger.executionWindow(REMINDER_INTERVAL_SECONDS,
+						REMINDER_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS))
+				.setReplaceCurrent(true)
+				.build();
+
+		dispatcher.schedule(constrainedReminderJob);
+		initialized = true;
 	}
 }

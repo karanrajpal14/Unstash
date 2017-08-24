@@ -9,33 +9,33 @@ import timber.log.Timber;
 
 public class UnstashFetchService extends IntentService {
 
-	public static final String ACTION_START_FETCH_SERVICE = "start-fetch";
-	public static final String ACTION_MARK_POST_AS_DONE = "mark-as-done";
-	public static final String ACTION_DISMISS_NOTIFICATION = "dismiss-notification";
-	public static final String ACTION_READ_POST_REMINDER = "read-post-reminder";
+    public static final String ACTION_START_FETCH_SERVICE = "start-fetch";
+    public static final String ACTION_MARK_POST_AS_DONE = "mark-as-done";
+    public static final String ACTION_DISMISS_NOTIFICATION = "dismiss-notification";
+    public static final String ACTION_READ_POST_REMINDER = "read-post-reminder";
 
-	public UnstashFetchService() {
-		super(UnstashFetchService.class.getSimpleName());
-	}
+    public UnstashFetchService() {
+        super(UnstashFetchService.class.getSimpleName());
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Timber.d("Created service");
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Timber.d("Created service");
+    }
 
-	@Override
-	protected void onHandleIntent(@Nullable Intent intent) {
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
 
-		Timber.d("Received intent");
-		assert intent != null;
-		String action = intent.getAction() != null ? intent.getAction() : "default";
-		Log.d("onHandleIntent", "onHandleIntent: Action " + action);
+        Timber.d("Received intent");
+        assert intent != null;
+        String action = intent.getAction() != null ? intent.getAction() : "default";
+        Log.d("onHandleIntent", "onHandleIntent: Action " + action);
 
-		switch (action) {
-			case ACTION_START_FETCH_SERVICE:
-				Log.d("TAG", "onHandleIntent: Starting fetch");
-				/*RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+        switch (action) {
+            case ACTION_START_FETCH_SERVICE:
+                Log.d("TAG", "onHandleIntent: Starting fetch");
+                /*RedditClient redditClient = AuthenticationManager.get().getRedditClient();
 		UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
 		saved.setTimePeriod(TimePeriod.WEEK);
 		saved.setLimit(0);
@@ -87,11 +87,11 @@ public class UnstashFetchService extends IntentService {
 			}
 			saved.next(true);
 		}*/
-				break;
-			default:
-				NotificationUtils.executeTask(getApplicationContext(),action);
-				break;
-		}
+                break;
+            default:
+                NotificationUtils.executeTask(getApplicationContext(), action);
+                break;
+        }
 
 		/*assert intent != null;
 		String val = intent.getStringExtra("foo");
@@ -99,5 +99,5 @@ public class UnstashFetchService extends IntentService {
 		Intent in = new Intent(ACTION_START_FETCH_SERVICE);
 		in.putExtra("ResultCode", Activity.RESULT_OK);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(in);*/
-	}
+    }
 }

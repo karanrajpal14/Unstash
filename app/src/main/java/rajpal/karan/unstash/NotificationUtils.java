@@ -58,7 +58,7 @@ public class NotificationUtils {
     }
 
     private static NotificationCompat.Action ignoreReminderAction(Context context) {
-        Intent ignoreReminderIntent = new Intent(context,UnstashFetchService.class); //SomeService.class)
+        Intent ignoreReminderIntent = new Intent(context, UnstashFetchService.class); //SomeService.class)
         ignoreReminderIntent.setAction(ACTION_DISMISS_NOTIFICATION);
         PendingIntent ignorePendingIntent = PendingIntent.getService(context,
                 ACTION_IGNORE_PENDING_INTENT_ID,
@@ -71,7 +71,7 @@ public class NotificationUtils {
     }
 
     private static NotificationCompat.Action markAsDoneAction(Context context) {
-        Intent markAsDoneIntent = new Intent(context,UnstashFetchService.class); //SomeService.class)
+        Intent markAsDoneIntent = new Intent(context, UnstashFetchService.class); //SomeService.class)
         markAsDoneIntent.setAction(ACTION_MARK_POST_AS_DONE);
         PendingIntent donePendingIntent = PendingIntent.getService(context,
                 ACTION_MARK_POST_AS_DONE_PENDING_INTENT_ID,

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.github.zagum.switchicon.SwitchIconView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -126,6 +127,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 		TextView postDetailsTV;
 		@BindView(R.id.thumbnail_main_image_view)
 		ImageView thumbnailImageView;
+		@BindView(R.id.post_saved_state_toggle_main)
+		SwitchIconView doneButton;
 
 		/**
 		 * Constructor for our ViewHolder. Within this constructor, we get a reference to our
@@ -177,6 +180,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 					.load(thumbnailURL)
 					.thumbnail(0.8f)
 					.into(thumbnailImageView);
+
+			doneButton.setIconEnabled(false);
 		}
 
 		/**

@@ -39,9 +39,9 @@
 
     <com.github.zagum.switchicon.SwitchIconView
         android:id="@+id/post_saved_state_toggle_main"
-        app:si_no_dash="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:si_no_dash="true"
         app:srcCompat="@drawable/ic_done"/>
 
 </LinearLayout>

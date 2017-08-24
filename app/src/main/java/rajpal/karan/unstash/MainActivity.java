@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(myToolbar);
 
+//        checkConnection();
         Utils.scheduleReadPostReminder(this);
 
         redditClient = AuthenticationManager.get().getRedditClient();
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void fetchSavedPosts() {
+        Log.d(TAG, "fetchSavedPosts: Fetching posts");
         new AsyncTask<Void, Integer, ContentValues>() {
 
             @Override
@@ -216,6 +220,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void refreshAccessTokenAsync() {
+        Log.d(TAG, "refreshAccessTokenAsync: Refreshing");
         new AsyncTask<Credentials, Void, Void>() {
             @Override
             protected Void doInBackground(Credentials... params) {
@@ -312,6 +317,19 @@ public class MainActivity extends AppCompatActivity
     public void showEmpty() {
         if (mAdapter.getItemCount() == 0) {
             emptyView.showEmpty();
+        }
+    }
+
+    public void checkConnection() {
+        ConnectivityManager manager =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
+        boolean isConnected = activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+        if (isConnected) {
+            emptyView.showContent();
+        } else {
+            Log.d(TAG, "checkConnection: No internet");
+            emptyView.showError("No Internet :(");
         }
     }
 

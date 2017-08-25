@@ -1,47 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/saved_post_list_item"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:layout_margin="4dp">
 
-    <ImageView
-        android:id="@+id/thumbnail_main_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingEnd="4dp"
-        android:paddingStart="4dp"/>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/post_title_text_view"
+        <android.support.constraint.Guideline
+            android:id="@+id/left_guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"/>
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="0dp"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/right_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85"
+            tools:layout_editor_absoluteX="299dp"
+            tools:layout_editor_absoluteY="0dp"/>
+
+        <ImageView
+            android:id="@+id/thumbnail_main_image_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_file_download"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/left_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
+            android:paddingTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:id="@+id/post_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+            app:layout_constraintBottom_toTopOf="@+id/author_text_view"
+            app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+            app:layout_constraintRight_toLeftOf="@+id/right_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="An unnecessarily long post title that I will be using just for testing"/>
+
+        <TextView
+            android:padding="8dp"
             android:id="@+id/author_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"/>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+            app:layout_constraintRight_toLeftOf="@+id/right_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/post_title_text_view"
+            tools:text="An unnecessarily long author name that I will be using just for testing"/>
 
-    </LinearLayout>
+        <com.github.zagum.switchicon.SwitchIconView
+            android:id="@+id/post_saved_state_toggle_main"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/right_guideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:si_no_dash="true"
+            app:srcCompat="@drawable/ic_done"/>
 
-    <com.github.zagum.switchicon.SwitchIconView
-        android:id="@+id/post_saved_state_toggle_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:si_no_dash="true"
-        app:srcCompat="@drawable/ic_done"/>
+    </android.support.constraint.ConstraintLayout>
 
-</LinearLayout>
+</android.support.v7.widget.CardView>

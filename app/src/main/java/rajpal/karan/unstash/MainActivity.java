@@ -64,6 +64,15 @@ public class MainActivity extends AppCompatActivity
      * "pretty" state when the reset menu item is clicked.
      */
     private SavedPostsAdapter mAdapter;
+    private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int resultCode = intent.getIntExtra("ResultCode", RESULT_CANCELED);
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(context, "Fetch completed successfully", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -338,14 +347,4 @@ public class MainActivity extends AppCompatActivity
         i.putExtra("foo", "bar");
         startService(i);
     }
-
-    private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int resultCode = intent.getIntExtra("ResultCode", RESULT_CANCELED);
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(context, "Fetch completed successfully", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 }

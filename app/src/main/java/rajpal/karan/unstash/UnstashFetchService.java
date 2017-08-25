@@ -36,7 +36,7 @@ public class UnstashFetchService extends IntentService {
             case ACTION_START_FETCH_SERVICE:
                 Log.d("TAG", "onHandleIntent: Starting fetch");
                 /*RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-		UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
+        UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
 		saved.setTimePeriod(TimePeriod.WEEK);
 		saved.setLimit(0);
 		saved.setSorting(Sorting.NEW);

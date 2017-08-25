@@ -381,4 +381,72 @@ public class TestSavedPostProvider {
 		contentResolver.unregisterContentObserver(taskObserver);
 	}
 
+    @Test
+    public void testUpdateSingleColumn() {
+
+		/* Get access to a writable database */
+        SavedPostDBHelper dbHelper = new SavedPostDBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        /* Create values to insert */
+        ContentValues testTaskValues = new ContentValues();
+        testTaskValues = putTestContentValues(testTaskValues);
+
+        /* Insert ContentValues into database and get a row ID back */
+        long taskRowId = database.insert(
+                /* Table to insert values into */
+                SavedPostContract.SavedPostEntry.TABLE_NAME,
+                null,
+                /* Values to insert into table */
+                testTaskValues);
+
+        String insertFailed = "Unable to insert directly into the database";
+        assertTrue(insertFailed, taskRowId != -1);
+
+        /* We are done with the database, close it now. */
+        database.close();
+
+        String selection = "post_id=?";
+        String[] selectionArgs = new String[]{postID};
+        String[] projection = new String[]{SavedPostContract.SavedPostEntry.COLUMN_POST_ID, SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED};
+        int initialPosition = 0;
+        int postIDPosition = initialPosition;
+        int isSavedPosition = 1;
+        int defaultIsSavedValue = isSavedPosition;
+
+	    /* Perform the ContentProvider query */
+        Cursor taskCursor = mContext.getContentResolver().query(
+                SavedPostContract.SavedPostEntry.CONTENT_URI,
+                /* Columns; leaving this null returns every column in the table */
+                projection,
+                /* Optional specification for columns in the "where" clause above */
+                selection,
+                /* Values for "where" clause */
+                selectionArgs,
+                /* Sort order to return in Cursor */
+                null);
+
+        taskCursor.moveToPosition(initialPosition);
+        String queryFailed = "Query failed to return a valid Cursor";
+        assertTrue(queryFailed, taskCursor.getString(postIDPosition).equals(postID));
+        int isSaved = taskCursor.getInt(isSavedPosition);
+        assertEquals("Post is not saved", defaultIsSavedValue, isSaved);
+
+        /* We are done with the cursor, close it now. */
+        taskCursor.close();
+
+        // Unsaving post and checking if update works
+        testTaskValues.clear();
+        testTaskValues.put(SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED, "0");
+        int noUpdated = mContext.getContentResolver().update(
+                SavedPostContract.SavedPostEntry.CONTENT_URI,
+                testTaskValues,
+                selection,
+                selectionArgs
+        );
+
+        assertEquals("No rows updated", 1, noUpdated);
+
+    }
+
 }

@@ -218,7 +218,7 @@ public class SavedPostProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase database = postDBHelper.getWritableDatabase();
         final int match = URI_MATCHER.match(uri);
-        int noOfUpdatedRows = 0;
+        int noOfUpdatedRows;
         Timber.d("Updating rows");
 
         switch (match) {
@@ -226,15 +226,15 @@ public class SavedPostProvider extends ContentProvider {
                 noOfUpdatedRows = database.update(SavedPostContract.SavedPostEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             default:
-                throw new UnsupportedOperationException("Cannot perform delete. Unknown Uri:" + uri);
+                throw new UnsupportedOperationException("Cannot perform update. Unknown Uri:" + uri);
         }
 
         if (noOfUpdatedRows != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
-        Timber.d("Updated rows");
-        return 0;
+        Timber.d("No of updated rows = " + noOfUpdatedRows);
+        return noOfUpdatedRows;
     }
 
 }

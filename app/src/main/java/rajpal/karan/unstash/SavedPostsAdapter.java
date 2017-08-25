@@ -4,20 +4,27 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.zagum.switchicon.SwitchIconView;
 
+import net.dean.jraw.ApiException;
+import net.dean.jraw.RedditClient;
+import net.dean.jraw.auth.AuthenticationManager;
+import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.models.Submission;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_AUTHOR;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_CREATED_TIME;
@@ -177,17 +184,15 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.ic_file_download);
             requestOptions.error(R.drawable.ic_cancel);
-            requestOptions.fitCenter();
+            requestOptions.fallback(R.drawable.ic_cancel);
+            requestOptions.centerInside();
+            requestOptions.circleCrop();
 
             Glide.with(context)
                     .setDefaultRequestOptions(requestOptions)
                     .load(thumbnailURL)
-                    .thumbnail(0.8f)
+                    .thumbnail(1.0f)
                     .into(thumbnailImageView);
-
-            if (isSaved > 0) {
-                doneButton.setIconEnabled(true);
-            }
 
             doneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -202,13 +207,65 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             return cursor.getString(INDEX_POST_ID);
         }
 
-        public void toggleSaveStatus(String id, int currentSaveStatus) {
-            if (currentSaveStatus > 0) {
-                doneButton.setIconEnabled(false);
+        public void toggleSaveStatus(final String id, int currentSaveStatus) {
+            if (currentSaveStatus == 1) {
+                doneButton.switchState(true);
                 currentSaveStatus = 0;
-                Toast.makeText(context, id + " " + currentSaveStatus, Toast.LENGTH_SHORT).show();
+                Timber.d(id + " " + currentSaveStatus);
                 ContentValues updateSavedStatusValue = new ContentValues();
-//				String selection =
+                updateSavedStatusValue.put(SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED, currentSaveStatus);
+                String selection = SavedPostProvider.postWithID;
+                String[] selectionArgs = new String[]{id};
+                context.getContentResolver().update(
+                        SavedPostContract.SavedPostEntry.CONTENT_URI,
+                        updateSavedStatusValue,
+                        selection,
+                        selectionArgs
+                );
+                notifyDataSetChanged();
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+                        AccountManager manager = new AccountManager(redditClient);
+                        Submission submission = redditClient.getSubmission(id);
+                        try {
+                            manager.unsave(submission);
+                        } catch (ApiException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute();
+            } else if (currentSaveStatus == 0) {
+                doneButton.switchState(true);
+                currentSaveStatus = 1;
+                Timber.d(id + " " + currentSaveStatus);
+                ContentValues updateSavedStatusValue = new ContentValues();
+                updateSavedStatusValue.put(SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED, currentSaveStatus);
+                String selection = SavedPostProvider.postWithID;
+                String[] selectionArgs = new String[]{id};
+                context.getContentResolver().update(
+                        SavedPostContract.SavedPostEntry.CONTENT_URI,
+                        updateSavedStatusValue,
+                        selection,
+                        selectionArgs
+                );
+                notifyDataSetChanged();
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+                        AccountManager manager = new AccountManager(redditClient);
+                        Submission submission = redditClient.getSubmission(id);
+                        try {
+                            manager.save(submission);
+                        } catch (ApiException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute();
             }
         }
 

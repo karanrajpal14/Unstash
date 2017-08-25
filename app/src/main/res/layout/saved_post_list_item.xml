@@ -75,6 +75,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:si_no_dash="true"
+            app:si_tint_color="@color/colorAccent"
+            app:si_disabled_color="@color/grey_200"
+            app:si_disabled_alpha=".3"
             app:srcCompat="@drawable/ic_done"/>
 
     </android.support.constraint.ConstraintLayout>

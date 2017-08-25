@@ -65,7 +65,7 @@ public class NotificationUtils {
                 ignoreReminderIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action ignoreReminderAction = new NotificationCompat.Action(
-                R.drawable.ic_cancel, "Dismiss", ignorePendingIntent
+                R.drawable.ic_error, "Dismiss", ignorePendingIntent
         );
         return ignoreReminderAction;
     }
@@ -78,7 +78,7 @@ public class NotificationUtils {
                 markAsDoneIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action doneAction = new NotificationCompat.Action(
-                R.drawable.ic_file_download, "Done", donePendingIntent
+                R.drawable.ic_done, "Done", donePendingIntent
         );
         return doneAction;
     }
@@ -96,7 +96,7 @@ public class NotificationUtils {
     private static Bitmap getLargeIcon(Context context) {
         Resources resources = context.getResources();
         // TODO: 22/8/17 Image size should be 24 px
-        return BitmapFactory.decodeResource(resources, R.drawable.ic_done);
+        return BitmapFactory.decodeResource(resources, R.drawable.ic_markunread_mailbox);
     }
 
     private static void clearAllCreatedNotifications(Context context) {
@@ -107,7 +107,7 @@ public class NotificationUtils {
     public static void remindUserToReadSavedPost(Context context) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_cancel)
+                .setSmallIcon(R.drawable.ic_stat_markunread_mailbox)
                 .setLargeIcon(getLargeIcon(context))
                 .setContentTitle("Post Title")
                 .setContentText("Author . Date Saved . Subreddit Name")

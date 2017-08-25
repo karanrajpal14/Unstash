@@ -182,9 +182,9 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             );
 
             RequestOptions requestOptions = new RequestOptions();
-            requestOptions.placeholder(R.drawable.ic_file_download);
-            requestOptions.error(R.drawable.ic_cancel);
-            requestOptions.fallback(R.drawable.ic_cancel);
+            requestOptions.placeholder(R.drawable.ic_action_cloud_download);
+            requestOptions.error(R.drawable.ic_error);
+            requestOptions.fallback(R.drawable.ic_error);
             requestOptions.centerInside();
             requestOptions.circleCrop();
 

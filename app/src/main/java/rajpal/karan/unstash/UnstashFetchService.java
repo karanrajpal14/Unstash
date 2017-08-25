@@ -7,6 +7,8 @@ import android.util.Log;
 
 import timber.log.Timber;
 
+import static android.content.ContentValues.TAG;
+
 public class UnstashFetchService extends IntentService {
 
     public static final String ACTION_START_FETCH_SERVICE = "start-fetch";
@@ -88,13 +90,18 @@ public class UnstashFetchService extends IntentService {
 			saved.next(true);
 		}*/
                 break;
+            case ACTION_MARK_POST_AS_DONE:
+                Timber.d(TAG, "onHandleIntent: Mark as done case");
+                break;
+            case ACTION_READ_POST_REMINDER:
+                Timber.d("Read post reminder case");
             default:
                 NotificationUtils.executeTask(getApplicationContext(), action);
                 break;
         }
 
 		/*assert intent != null;
-		String val = intent.getStringExtra("foo");
+        String val = intent.getStringExtra("foo");
 		Timber.d(val + ACTION_START_FETCH_SERVICE);
 		Intent in = new Intent(ACTION_START_FETCH_SERVICE);
 		in.putExtra("ResultCode", Activity.RESULT_OK);

@@ -20,6 +20,7 @@ public class SavedPostProvider extends ContentProvider {
     // Mapping uris to functions
     static final int POSTS = 100;
     static final int POST_WITH_ID = 101;
+    static final int RANDOM = 200;
     // Adding a uri matcher to map the uri calls to respective queries
     private static final UriMatcher URI_MATCHER = buildUriMatcher();
     private SavedPostDBHelper postDBHelper;
@@ -32,10 +33,12 @@ public class SavedPostProvider extends ContentProvider {
 
         // Building different types of uris for the matcher to match
 
-        // /POSTS directory of posts
+        // /posts directory of posts
         builtUriMatcher.addURI(SavedPostContract.CONTENT_AUTHORITY, SavedPostContract.PATH_POST, POSTS);
-        // /POSTS/id individual post with id = 'id'
+        // /posts/id individual post with id = 'id'
         builtUriMatcher.addURI(SavedPostContract.CONTENT_AUTHORITY, SavedPostContract.PATH_POST + "/*", POST_WITH_ID);
+        // /random individual random post
+        builtUriMatcher.addURI(SavedPostContract.CONTENT_AUTHORITY, SavedPostContract.PATH_RANDOM, RANDOM);
 
         Timber.d("Built Uri Matcher");
         return builtUriMatcher;
@@ -100,6 +103,13 @@ public class SavedPostProvider extends ContentProvider {
                         null,
                         null,
                         "created_time DESC"
+                );
+                break;
+            case RANDOM:
+                Timber.d("Fetching random post");
+                resultCursor = database.rawQuery(
+                        "SELECT * FROM " + SavedPostContract.SavedPostEntry.TABLE_NAME + " ORDER BY RANDOM() LIMIT 1",
+                        null
                 );
                 break;
             default:

@@ -8,6 +8,7 @@ public class SavedPostContract {
 
     static final String CONTENT_AUTHORITY = SavedPostContract.class.getPackage().getName();
     static final String PATH_POST = "posts";
+    static final String PATH_RANDOM = "random";
 
     /* Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
      the content provider.*/
@@ -18,6 +19,9 @@ public class SavedPostContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_POST).build();
+
+        public static final Uri CONTENT_URI_RANDOM =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_RANDOM).build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +

@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity
                         this,
                         SavedPostContract.SavedPostEntry.CONTENT_URI,
                         null,
-                        null,
+                        SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED + " = 1 ",
                         null,
                         null
                 );

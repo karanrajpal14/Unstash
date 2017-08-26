@@ -76,6 +76,7 @@ dependencies {
     compile "com.github.zagum:Android-SwitchIcon:$rootProject.switchIconVersion"
     compile "com.github.santalu:emptyview:$rootProject.emptyViewVersion"
     compile "com.firebase:firebase-jobdispatcher:$rootProject.firebaseJobDispatcherVersion"
+    compile "com.github.bachors:Android-WordToSpan:$rootProject.wordToSpanVersion"
 
     testCompile 'junit:junit:4.12'
 }

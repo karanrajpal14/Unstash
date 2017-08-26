@@ -5,11 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:theme="@style/AppTheme.NoActionBar"
     tools:context="rajpal.karan.unstash.PostDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -31,14 +32,12 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_vertical_margin"
         android:layout_marginStart="@dimen/activity_vertical_margin"
-        android:layout_marginTop="?actionBarSize"
-        android:orientation="vertical"
         android:paddingTop="@dimen/activity_horizontal_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,54 +45,94 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_layout">
 
+        <android.support.constraint.Guideline
+            android:id="@+id/right_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.70"
+            tools:layout_editor_absoluteX="299dp"
+            tools:layout_editor_absoluteY="25dp"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/top_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.30"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="25dp"/>
+
         <TextView
             android:id="@+id/title_post_detail_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/author_post_detail_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/created_time_post_detail_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/sub_name_post_detail_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+            android:textColor="@color/colorPrimaryText"
+            app:layout_constraintBottom_toTopOf="@+id/post_details_tv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="25dp"
+            tools:text="An unnecessarily long post title that I will be using just for testing"/>
 
         <TextView
-            android:id="@+id/domain_post_detail_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/post_hint_post_detail_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/permalink_post_detail_tv"
-            android:layout_width="wrap_content"
+            android:id="@+id/post_details_tv"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/colorSecondaryText"
+            app:layout_constraintBottom_toTopOf="@+id/url_post_detail_tv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_post_detail_tv"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="25dp"
+            tools:text="An unnecessarily long author name that I will be using just for testing"/>
 
         <TextView
             android:id="@+id/url_post_detail_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintBottom_toTopOf="@+id/score_post_detail_tv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/domain_post_detail_tv"
+            app:layout_constraintTop_toBottomOf="@+id/post_details_tv"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="25dp"
+            tools:text="http://www.someurl.com"/>
+
+        <TextView
+            android:id="@+id/domain_post_detail_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            app:layout_constraintLeft_toRightOf="@+id/url_post_detail_tv"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/url_post_detail_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/url_post_detail_tv"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="25dp"
+            tools:text="(somedomain)"/>
 
         <TextView
             android:id="@+id/score_post_detail_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
-    </LinearLayout>
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/url_post_detail_tv"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="25dp"
+            tools:text="2591"/>
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

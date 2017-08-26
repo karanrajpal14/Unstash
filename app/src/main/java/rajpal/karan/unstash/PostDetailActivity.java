@@ -2,10 +2,13 @@ package rajpal.karan.unstash;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
+
+import com.bachors.wordtospan.WordToSpan;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,18 +28,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.title_post_detail_tv)
     TextView titleDetailTv;
-    @BindView(R.id.author_post_detail_tv)
-    TextView authorDetailTv;
-    @BindView(R.id.created_time_post_detail_tv)
-    TextView createdTimeDetailTv;
-    @BindView(R.id.sub_name_post_detail_tv)
-    TextView subNameDetailTv;
+    @BindView(R.id.post_details_tv)
+    TextView postDetailsTv;
     @BindView(R.id.domain_post_detail_tv)
     TextView domainDetailTv;
-    @BindView(R.id.post_hint_post_detail_tv)
-    TextView postHintDetailTv;
-    @BindView(R.id.permalink_post_detail_tv)
-    TextView permalinkDetailTv;
     @BindView(R.id.url_post_detail_tv)
     TextView urlDetailTv;
     @BindView(R.id.score_post_detail_tv)
@@ -67,26 +62,41 @@ public class PostDetailActivity extends AppCompatActivity {
         assert clickedPostCursor != null;
         clickedPostCursor.moveToNext();
 
+        WordToSpan wordToSpan = new WordToSpan();
+        wordToSpan.setColorURL(getResources().getColor(R.color.colorAccent));
+        wordToSpan.setUnderlineURL(true);
+
         String title = clickedPostCursor.getString(INDEX_TITLE);
         String author = clickedPostCursor.getString(INDEX_AUTHOR);
-        String thumbnailURL = clickedPostCursor.getString(INDEX_THUMBNAIL);
         String createdTime = Utils.getRelativeTime(clickedPostCursor.getLong(INDEX_CREATED_TIME));
         String subName = clickedPostCursor.getString(INDEX_SUBREDDIT_NAME);
+        String thumbnailURL = clickedPostCursor.getString(INDEX_THUMBNAIL);
         String domain = clickedPostCursor.getString(INDEX_DOMAIN);
         String postHint = clickedPostCursor.getString(INDEX_POST_HINT);
         String permalink = clickedPostCursor.getString(INDEX_PERMALINK);
         String url = clickedPostCursor.getString(INDEX_URL);
-        int score = clickedPostCursor.getInt(INDEX_SCORE);
+        String score = String.valueOf(clickedPostCursor.getInt(INDEX_SCORE));
 
         titleDetailTv.setText(title);
-        authorDetailTv.setText(author);
-        createdTimeDetailTv.setText(String.valueOf(createdTime));
-        subNameDetailTv.setText(subName);
-        domainDetailTv.setText(domain);
-        postHintDetailTv.setText(postHint);
-        permalinkDetailTv.setText(permalink);
-        urlDetailTv.setText(url);
-        scoreDetailTv.setText(String.valueOf(score));
+        postDetailsTv.setText(
+                getResources().getString(R.string.post_details_textview,
+                        author,
+                        createdTime,
+                        subName
+                )
+        );
+        domainDetailTv.setText(getResources().getString(R.string.domain_detail_textview,domain));
+        wordToSpan.setLink(url, urlDetailTv);
+        scoreDetailTv.setText(getResources().getString(R.string.score_detail_textview,score));
+
+        wordToSpan.setClickListener(new WordToSpan.ClickListener() {
+            @Override
+            public void onClick(String type, String text) {
+                if (type.equals("url")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(text)));
+                }
+            }
+        });
 
         clickedPostCursor.close();
     }

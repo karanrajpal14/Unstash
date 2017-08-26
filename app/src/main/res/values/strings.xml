@@ -3,4 +3,6 @@
     <string name="toolbar_not_logged_in">Not logged in</string>
     <string name="details_toolbar_title">Details</string>
     <string name="post_details_textview">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
+    <string name="score_detail_textview">\u25B2 %1$s</string>
+    <string name="domain_detail_textview">(%1$s)</string>
 </resources>

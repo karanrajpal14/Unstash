@@ -115,6 +115,7 @@ public class NotificationUtils {
 
     public static void remindUserToReadSavedPost(Context context) {
         Timber.d("Reminder to read set");
+
         Cursor randomPostCursor = context.getContentResolver().query(
                 SavedPostContract.SavedPostEntry.CONTENT_URI_RANDOM,
                 null,
@@ -123,37 +124,39 @@ public class NotificationUtils {
                 null
         );
 
-        randomPostCursor.moveToFirst();
-        String postID = randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_POST_ID);
-        Timber.d(postID);
-        String postTitle = randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_TITLE);
-        String postDetails = context.getResources().getString(
-                R.string.post_details_textview,
-                randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_AUTHOR),
-                Utils.getRelativeTime(randomPostCursor.getInt(SavedPostContract.SavedPostEntry.INDEX_CREATED_TIME)),
-                randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_SUBREDDIT_NAME)
-        );
+        if (randomPostCursor != null && randomPostCursor.getCount() == 1) {
+            randomPostCursor.moveToFirst();
+            String postID = randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_POST_ID);
+            Timber.d(postID);
+            String postTitle = randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_TITLE);
+            String postDetails = context.getResources().getString(
+                    R.string.post_details_textview,
+                    randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_AUTHOR),
+                    Utils.getRelativeTime(randomPostCursor.getInt(SavedPostContract.SavedPostEntry.INDEX_CREATED_TIME)),
+                    randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_SUBREDDIT_NAME)
+            );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_stat_markunread_mailbox)
-                .setLargeIcon(getLargeIcon(context))
-                .setContentTitle("Let's read something new. Shall we?")
-                .setContentText(postTitle)
-                .setStyle(
-                        new NotificationCompat.BigTextStyle().bigText(
-                                postTitle + "\r\n" + postDetails
-                        )
-                )
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(getContentIntent(context))
-                .setAutoCancel(true)
-                .addAction(markAsDoneAction(context))
-                .addAction(ignoreReminderAction(context));
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                    .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_stat_markunread_mailbox)
+                    .setLargeIcon(getLargeIcon(context))
+                    .setContentTitle("Let's read something new. Shall we?")
+                    .setContentText(postTitle)
+                    .setStyle(
+                            new NotificationCompat.BigTextStyle().bigText(
+                                    postTitle + "\r\n" + postDetails
+                            )
+                    )
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setContentIntent(getContentIntent(context))
+                    .setAutoCancel(true)
+                    .addAction(markAsDoneAction(context))
+                    .addAction(ignoreReminderAction(context));
 
-        builder.setPriority(Notification.PRIORITY_HIGH);
+            builder.setPriority(Notification.PRIORITY_HIGH);
 
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(POST_REMINDER_NOTIFICATION_ID, builder.build());
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(POST_REMINDER_NOTIFICATION_ID, builder.build());
+        }
     }
 }

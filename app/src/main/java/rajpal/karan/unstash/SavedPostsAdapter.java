@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.zagum.switchicon.SwitchIconView;
-
-import net.dean.jraw.ApiException;
-import net.dean.jraw.RedditClient;
-import net.dean.jraw.auth.AuthenticationManager;
-import net.dean.jraw.managers.AccountManager;
-import net.dean.jraw.models.Submission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -169,7 +162,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             thumbnailURL = cursor.getString(INDEX_THUMBNAIL);
             createdTime = cursor.getLong(INDEX_CREATED_TIME);
             subName = cursor.getString(INDEX_SUBREDDIT_NAME);
-            final int isSaved = cursor.getInt(INDEX_IS_SAVED);
 
             titleTV.setText(title);
             postDetailsTV.setText(
@@ -197,7 +189,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             doneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    toggleSaveStatus(getPostID(getAdapterPosition()), isSaved);
+                    toggleSaveStatus(getPostID(getAdapterPosition()), cursor.getInt(INDEX_IS_SAVED));
                 }
             });
         }
@@ -209,7 +201,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
         public void toggleSaveStatus(final String id, int currentSaveStatus) {
             if (currentSaveStatus == 1) {
-                doneButton.switchState(true);
                 currentSaveStatus = 0;
                 Timber.d(id + " " + currentSaveStatus);
                 ContentValues updateSavedStatusValue = new ContentValues();
@@ -223,7 +214,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
                         selectionArgs
                 );
                 notifyDataSetChanged();
-                new AsyncTask<Void, Void, Void>() {
+                doneButton.setIconEnabled(true, true);
+                /*new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         RedditClient redditClient = AuthenticationManager.get().getRedditClient();
@@ -236,9 +228,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
                         }
                         return null;
                     }
-                }.execute();
+                }.execute();*/
             } else if (currentSaveStatus == 0) {
-                doneButton.switchState(true);
                 currentSaveStatus = 1;
                 Timber.d(id + " " + currentSaveStatus);
                 ContentValues updateSavedStatusValue = new ContentValues();
@@ -252,7 +243,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
                         selectionArgs
                 );
                 notifyDataSetChanged();
-                new AsyncTask<Void, Void, Void>() {
+                doneButton.setIconEnabled(false, true);
+                /*new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         RedditClient redditClient = AuthenticationManager.get().getRedditClient();
@@ -265,7 +257,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
                         }
                         return null;
                     }
-                }.execute();
+                }.execute();*/
             }
         }
 

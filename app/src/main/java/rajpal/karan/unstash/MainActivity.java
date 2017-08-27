@@ -29,6 +29,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.santalu.emptyview.EmptyView;
 
 import net.dean.jraw.RedditClient;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.adView)
     AdView adView;
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -84,6 +87,12 @@ public class MainActivity extends AppCompatActivity
 //        checkConnection();
         Utils.scheduleReadPostReminder(this);
 
+        // Obtain the FirebaseAnalytics instance.
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        firebaseAnalytics.setMinimumSessionDuration(5000);
+        firebaseAnalytics.setSessionTimeoutDuration(1000000);
+
         redditClient = AuthenticationManager.get().getRedditClient();
 
         MobileAds.initialize(this, ADMOB_APP_ID);
@@ -99,6 +108,11 @@ public class MainActivity extends AppCompatActivity
             public void onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
                 Timber.d("Ads", "onAdLoaded");
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "AD_SHOWN");
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "AD_SHOWN");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Ad");
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
             }
 
             @Override
@@ -112,6 +126,11 @@ public class MainActivity extends AppCompatActivity
                 // Code to be executed when an ad opens an overlay that
                 // covers the screen.
                 Timber.d("Ads", "onAdOpened");
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "AD_CLICKED");
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "AD_CLICKED");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Ad");
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                 adView.pause();
             }
 
@@ -169,6 +188,7 @@ public class MainActivity extends AppCompatActivity
         AuthenticationState state = AuthenticationManager.get().checkAuthState();
         Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
+
         IntentFilter filter = new IntentFilter(UnstashFetchService.ACTION_START_FETCH_SERVICE);
         LocalBroadcastManager.getInstance(this).registerReceiver(UnstashFetchReceiver, filter);
 
@@ -186,7 +206,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (state) {
             case READY:
-				launchFetchService();
+                launchFetchService();
                 break;
             case NONE:
                 showEmpty();
@@ -220,13 +240,18 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Void v) {
-				launchFetchService();
+                launchFetchService();
             }
         }.execute();
     }
 
     @Override
     public void onListItemClick(Intent intent) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "POST_CLICKED");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "POST_CLICKED");
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Button");
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         startActivity(intent);
     }
 

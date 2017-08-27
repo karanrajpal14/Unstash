@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.bachors.wordtospan.WordToSpan;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +39,7 @@ public class PostDetailActivity extends AppCompatActivity {
     TextView scoreDetailTv;
     @BindView(R.id.toolbar2)
     Toolbar toolbar;
+    FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class PostDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.details_toolbar_title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Intent receivedPostIntent = getIntent();
         String postID = receivedPostIntent.getStringExtra("intentClickedPostID");
@@ -85,14 +88,19 @@ public class PostDetailActivity extends AppCompatActivity {
                         subName
                 )
         );
-        domainDetailTv.setText(getResources().getString(R.string.domain_detail_textview,domain));
+        domainDetailTv.setText(getResources().getString(R.string.domain_detail_textview, domain));
         wordToSpan.setLink(url, urlDetailTv);
-        scoreDetailTv.setText(getResources().getString(R.string.score_detail_textview,score));
+        scoreDetailTv.setText(getResources().getString(R.string.score_detail_textview, score));
 
         wordToSpan.setClickListener(new WordToSpan.ClickListener() {
             @Override
             public void onClick(String type, String text) {
                 if (type.equals("url")) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "LINK_CLICKED");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "LINK_CLICKED");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Link");
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(text)));
                 }
             }

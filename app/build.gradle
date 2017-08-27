@@ -78,6 +78,9 @@ dependencies {
     compile "com.firebase:firebase-jobdispatcher:$rootProject.firebaseJobDispatcherVersion"
     compile "com.github.bachors:Android-WordToSpan:$rootProject.wordToSpanVersion"
     compile "com.google.firebase:firebase-ads:$rootProject.googlePlayServicesVersion"
+    compile "com.google.firebase:firebase-core:$rootProject.googlePlayServicesVersion"
 
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'

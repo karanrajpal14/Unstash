@@ -77,6 +77,7 @@ dependencies {
     compile "com.github.santalu:emptyview:$rootProject.emptyViewVersion"
     compile "com.firebase:firebase-jobdispatcher:$rootProject.firebaseJobDispatcherVersion"
     compile "com.github.bachors:Android-WordToSpan:$rootProject.wordToSpanVersion"
+    compile "com.google.firebase:firebase-ads:$rootProject.googlePlayServicesVersion"
 
     testCompile 'junit:junit:4.12'
 }

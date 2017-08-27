@@ -25,6 +25,10 @@ import android.webkit.CookieManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.santalu.emptyview.EmptyView;
 
 import net.dean.jraw.RedditClient;
@@ -56,6 +60,10 @@ public class MainActivity extends AppCompatActivity
      * "pretty" state when the reset menu item is clicked.
      */
     private SavedPostsAdapter mAdapter;
+    private final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
+    @BindView(R.id.adView)
+    AdView adView;
+
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -77,6 +85,51 @@ public class MainActivity extends AppCompatActivity
         Utils.scheduleReadPostReminder(this);
 
         redditClient = AuthenticationManager.get().getRedditClient();
+
+        MobileAds.initialize(this, ADMOB_APP_ID);
+        // Create an ad request. Check your logcat output for the hashed device ID to
+        // get test ads on a physical device. e.g.
+        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("ABCDEF012345")
+                .build();
+        adView.loadAd(adRequest);
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Timber.d("Ads", "onAdLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                Timber.d("Ads", "onAdFailedToLoad error no = " + errorCode);
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+                Timber.d("Ads", "onAdOpened");
+                adView.pause();
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+                Timber.d("Ads", "onAdLeftApplication");
+                adView.destroy();
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when when the user is about to return
+                // to the app after tapping on an ad.
+                Timber.d("Ads", "onAdClosed");
+                adView.resume();
+            }
+        });
 
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a

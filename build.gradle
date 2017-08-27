@@ -43,5 +43,6 @@ ext {
     emptyViewVersion = '1.0.2'
     firebaseJobDispatcherVersion = '0.8.0'
     wordToSpanVersion = '2.0'
+    googlePlayServicesVersion = '11.2.0'
 
 }

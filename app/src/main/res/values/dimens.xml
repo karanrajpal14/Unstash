@@ -5,4 +5,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
+
+    <!-- Number of columns for main activity grid -->
+    <integer name="grid_columns">1</integer>
 </resources>

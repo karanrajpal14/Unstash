@@ -9,7 +9,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <android.support.constraint.Guideline
             android:id="@+id/left_guideline"
@@ -58,10 +58,10 @@
             android:id="@+id/author_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
@@ -72,14 +72,14 @@
         <com.github.zagum.switchicon.SwitchIconView
             android:id="@+id/post_saved_state_toggle_main"
             android:layout_width="0dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="16dp"
             android:layout_height="wrap_content"
+            android:paddingEnd="16dp"
+            android:paddingStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/right_guideline"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:si_disabled_alpha=".3"
+            app:si_disabled_alpha=".5"
             app:si_disabled_color="@color/grey_200"
             app:si_no_dash="true"
             app:si_tint_color="@color/colorAccent"

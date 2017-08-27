@@ -14,7 +14,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -142,8 +142,10 @@ public class MainActivity extends AppCompatActivity
          * There are other LayoutManagers available to display your data in uniform grids,
          * staggered grids, and more! See the developer documentation for more details.
          */
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        postsListRecyclerView.setLayoutManager(layoutManager);
+
+        final int columns = getResources().getInteger(R.integer.grid_columns);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columns);
+        postsListRecyclerView.setLayoutManager(gridLayoutManager);
 
         /*
          * Use this setting to improve performance if you know that changes in content do not

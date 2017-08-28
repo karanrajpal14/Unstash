@@ -108,7 +108,10 @@ public class SavedPostProvider extends ContentProvider {
             case RANDOM:
                 Timber.d("Fetching random post");
                 resultCursor = database.rawQuery(
-                        "SELECT * FROM " + SavedPostContract.SavedPostEntry.TABLE_NAME + " ORDER BY RANDOM() LIMIT 1",
+                        "SELECT * FROM " +
+                                SavedPostContract.SavedPostEntry.TABLE_NAME +
+                                " WHERE "+ SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED +
+                                " = 1 ORDER BY RANDOM() LIMIT 1",
                         null
                 );
                 break;

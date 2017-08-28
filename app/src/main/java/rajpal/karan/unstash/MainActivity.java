@@ -7,6 +7,9 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -19,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +51,8 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG = MainActivity.class.getSimpleName();
     static final int MAIN_LOADER_ID = 0;
     int position = RecyclerView.NO_POSITION;
+    @BindView(R.id.coordinator_layout_main)
+    CoordinatorLayout mainCoordinatorLayout;
     @BindView(R.id.posts_list_rv)
     RecyclerView postsListRecyclerView;
     @BindView(R.id.empty_view)
@@ -204,11 +210,22 @@ public class MainActivity extends AppCompatActivity
         switch (state) {
             case READY:
                 launchFetchService();
+                adView.setVisibility(View.VISIBLE);
                 break;
             case NONE:
                 showEmpty();
-                Toast.makeText(MainActivity.this, "Log in first", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                adView.setVisibility(View.GONE);
+                Snackbar.make(
+                        mainCoordinatorLayout,
+                        "Please login to continue",
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Login", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                            }
+                        })
+                        .show();
                 break;
             case NEED_REFRESH:
                 refreshAccessTokenAsync();

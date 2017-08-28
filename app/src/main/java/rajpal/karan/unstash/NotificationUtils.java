@@ -78,10 +78,11 @@ public class NotificationUtils {
         return ignoreReminderAction;
     }
 
-    private static NotificationCompat.Action markAsDoneAction(Context context) {
+    private static NotificationCompat.Action markAsDoneAction(Context context, String id) {
         Timber.d("Mark as done action created");
         Intent markAsDoneIntent = new Intent(context, UnstashFetchService.class);
         markAsDoneIntent.setAction(ACTION_MARK_POST_AS_DONE);
+        markAsDoneIntent.putExtra(SavedPostContract.SavedPostEntry.COLUMN_POST_ID, id);
         PendingIntent donePendingIntent = PendingIntent.getService(context,
                 ACTION_MARK_POST_AS_DONE_PENDING_INTENT_ID,
                 markAsDoneIntent,
@@ -150,7 +151,7 @@ public class NotificationUtils {
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(getContentIntent(context))
                     .setAutoCancel(true)
-                    .addAction(markAsDoneAction(context))
+                    .addAction(markAsDoneAction(context, postID))
                     .addAction(ignoreReminderAction(context));
 
             builder.setPriority(Notification.PRIORITY_HIGH);

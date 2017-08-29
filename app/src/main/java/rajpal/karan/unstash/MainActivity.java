@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = MainActivity.class.getSimpleName();
     static final int MAIN_LOADER_ID = 0;
+    private final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
     int position = RecyclerView.NO_POSITION;
     @BindView(R.id.coordinator_layout_main)
     CoordinatorLayout mainCoordinatorLayout;
@@ -60,15 +61,13 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.toolbar)
     Toolbar myToolbar;
     RedditClient redditClient;
+    @BindView(R.id.adView)
+    AdView adView;
     /*
      * References to RecyclerView and Adapter to reset the list to its
      * "pretty" state when the reset menu item is clicked.
      */
     private SavedPostsAdapter mAdapter;
-    private final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
-    @BindView(R.id.adView)
-    AdView adView;
-
     private FirebaseAnalytics firebaseAnalytics;
 
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {

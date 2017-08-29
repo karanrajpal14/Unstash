@@ -67,3 +67,7 @@ gen-external-apklibs
 \.idea/misc\.xml
 
 \.idea/codeStyleSettings\.xml
+
+\.idea/inspectionProfiles/Project_Default\.xml
+
+\.idea/inspectionProfiles/profiles_settings\.xml

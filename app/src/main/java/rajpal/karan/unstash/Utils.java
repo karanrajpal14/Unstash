@@ -22,9 +22,9 @@ import timber.log.Timber;
 
 public class Utils {
 
-    private static int REMINDER_INTERVAL_SECONDS;
     private static final int SYNC_FLEXTIME_SECONDS = 60;
     private static final String REMINDER_JOB_TAG = "read_post_reminder_tag";
+    private static int REMINDER_INTERVAL_SECONDS;
     private static boolean initialized;
 
     public static String getRelativeTime(long createdTime) {
@@ -53,9 +53,13 @@ public class Utils {
 
         if (initialized) return;
 
+        getTime();
+        if (REMINDER_INTERVAL_SECONDS < 0) {
+            REMINDER_INTERVAL_SECONDS = (int) TimeUnit.MINUTES.toSeconds(60);
+        }
+
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
-        getTime();
         Job constrainedReminderJob = dispatcher.newJobBuilder()
                 .setService(TestJobService.class)
                 .setTag(REMINDER_JOB_TAG)

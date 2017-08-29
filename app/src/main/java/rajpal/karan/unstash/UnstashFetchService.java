@@ -52,72 +52,7 @@ public class UnstashFetchService extends IntentService {
         switch (action) {
             case ACTION_START_FETCH_SERVICE:
                 Log.d("TAG", "onHandleIntent: Starting fetch");
-                RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-                UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
-                saved.setTimePeriod(TimePeriod.DAY);
-                saved.setSorting(Sorting.NEW);
-                ContentValues savedPostValues;
-                for (Listing<Contribution> items : saved) {
-                    for (Contribution item : items) {
-                        JsonNode dataNode = item.getDataNode();
-                        String id = dataNode.get("id").asText();
-                        Cursor checkIfPostPresentCursor = getContentResolver().query(
-                                SavedPostContract.SavedPostEntry.CONTENT_URI,
-                                null,
-                                SavedPostProvider.postWithID,
-                                new String[]{id},
-                                null
-                        );
-
-                        if (checkIfPostPresentCursor != null && checkIfPostPresentCursor.getCount() == 0) {
-                            Timber.d("Post not present. Inserting.");
-                            try {
-                                Submission submission = redditClient.getSubmission(id);
-
-                                if (submission != null) {
-
-                                    savedPostValues = new ContentValues();
-
-                                    // Fetching saved post data
-                                    String author = submission.getAuthor();
-                                    long created_time = submission.getCreated().getTime();
-                                    String domain = submission.getDomain();
-                                    String permalink = submission.getPermalink();
-                                    String postHint = submission.getPostHint().toString();
-                                    int score = submission.getScore();
-                                    String subredditName = submission.getSubredditName();
-                                    String title = submission.getTitle();
-                                    String url = submission.getShortURL();
-                                    int isNSFW = (submission.isNsfw()) ? 1 : 0;
-                                    int isSaved = (submission.isSaved()) ? 1 : 0;
-                                    String thumbnailURL = submission.getThumbnail();
-
-                                    savedPostValues.put("post_id", id);
-                                    savedPostValues.put("title", title);
-                                    savedPostValues.put("author", author);
-                                    savedPostValues.put("thumbnail_url", thumbnailURL);
-                                    savedPostValues.put("created_time", created_time);
-                                    savedPostValues.put("subreddit_name", subredditName);
-                                    savedPostValues.put("domain", domain);
-                                    savedPostValues.put("post_hint", postHint);
-                                    savedPostValues.put("permalink", permalink);
-                                    savedPostValues.put("url", url);
-                                    savedPostValues.put("score", score);
-                                    savedPostValues.put("is_nsfw", isNSFW);
-                                    savedPostValues.put("is_saved", isSaved);
-
-                                    getContentResolver().insert(SavedPostContract.SavedPostEntry.CONTENT_URI, savedPostValues);
-                                }
-                            } catch (Exception e) {
-                                Timber.d(e.getMessage());
-                            }
-                        } else {
-                            Timber.d("Post already present. Skipping post " + id);
-                        }
-
-                    }
-                    saved.next(true);
-                }
+                syncImmediately();
                 break;
             case ACTION_MARK_POST_AS_DONE:
                 String id = intent.getStringExtra(SavedPostContract.SavedPostEntry.COLUMN_POST_ID);
@@ -161,4 +96,72 @@ public class UnstashFetchService extends IntentService {
         }
     }
 
+    public void syncImmediately() {
+        try {
+            RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+            UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
+            saved.setTimePeriod(TimePeriod.DAY);
+            saved.setSorting(Sorting.NEW);
+            ContentValues savedPostValues;
+            for (Listing<Contribution> items : saved) {
+                for (Contribution item : items) {
+                    JsonNode dataNode = item.getDataNode();
+                    String id = dataNode.get("id").asText();
+                    Cursor checkIfPostPresentCursor = getContentResolver().query(
+                            SavedPostContract.SavedPostEntry.CONTENT_URI,
+                            null,
+                            SavedPostProvider.postWithID,
+                            new String[]{id},
+                            null
+                    );
+
+                    if (checkIfPostPresentCursor != null && checkIfPostPresentCursor.getCount() == 0) {
+                        Timber.d("Post not present. Inserting.");
+                        Submission submission = redditClient.getSubmission(id);
+
+                        if (submission != null) {
+
+                            savedPostValues = new ContentValues();
+
+                            // Fetching saved post data
+                            String author = submission.getAuthor();
+                            long created_time = submission.getCreated().getTime();
+                            String domain = submission.getDomain();
+                            String permalink = submission.getPermalink();
+                            String postHint = submission.getPostHint().toString();
+                            int score = submission.getScore();
+                            String subredditName = submission.getSubredditName();
+                            String title = submission.getTitle();
+                            String url = submission.getShortURL();
+                            int isNSFW = (submission.isNsfw()) ? 1 : 0;
+                            int isSaved = (submission.isSaved()) ? 1 : 0;
+                            String thumbnailURL = submission.getThumbnail();
+
+                            savedPostValues.put("post_id", id);
+                            savedPostValues.put("title", title);
+                            savedPostValues.put("author", author);
+                            savedPostValues.put("thumbnail_url", thumbnailURL);
+                            savedPostValues.put("created_time", created_time);
+                            savedPostValues.put("subreddit_name", subredditName);
+                            savedPostValues.put("domain", domain);
+                            savedPostValues.put("post_hint", postHint);
+                            savedPostValues.put("permalink", permalink);
+                            savedPostValues.put("url", url);
+                            savedPostValues.put("score", score);
+                            savedPostValues.put("is_nsfw", isNSFW);
+                            savedPostValues.put("is_saved", isSaved);
+
+                            getContentResolver().insert(SavedPostContract.SavedPostEntry.CONTENT_URI, savedPostValues);
+                        }
+                    } else {
+                        Timber.d("Post already present. Skipping post " + id);
+                    }
+                }
+
+            }
+            saved.next(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

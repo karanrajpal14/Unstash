@@ -110,7 +110,7 @@ public class SavedPostProvider extends ContentProvider {
                 resultCursor = database.rawQuery(
                         "SELECT * FROM " +
                                 SavedPostContract.SavedPostEntry.TABLE_NAME +
-                                " WHERE "+ SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED +
+                                " WHERE " + SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED +
                                 " = 1 ORDER BY RANDOM() LIMIT 1",
                         null
                 );

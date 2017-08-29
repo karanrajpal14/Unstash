@@ -32,6 +32,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.santalu.emptyview.EmptyView;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
@@ -55,8 +56,8 @@ public class MainActivity extends AppCompatActivity
     CoordinatorLayout mainCoordinatorLayout;
     @BindView(R.id.posts_list_rv)
     RecyclerView postsListRecyclerView;
-    /*@BindView(R.id.empty_view)
-    EmptyView emptyView;*/
+    @BindView(R.id.empty_view)
+    EmptyView emptyView;
     @BindView(R.id.toolbar)
     Toolbar myToolbar;
     RedditClient redditClient;
@@ -213,7 +214,7 @@ public class MainActivity extends AppCompatActivity
         appTitle.setText(R.string.app_name);
         TextView username = findViewById(R.id.username_main_tv);
 
-//        showEmpty();
+        showEmpty();
 
         if (redditClient.isAuthenticated()) {
             username.setText(redditClient.getAuthenticatedUser());
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                 adView.setVisibility(View.VISIBLE);
                 break;
             case NONE:
-//                showEmpty();
+                showEmpty();
                 adView.setVisibility(View.GONE);
                 Snackbar.make(
                         mainCoordinatorLayout,
@@ -304,7 +305,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
-        /*emptyView.showContent();*/
+        emptyView.showContent();
         if (position == RecyclerView.NO_POSITION) position = 0;
     }
 
@@ -353,11 +354,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*public void showEmpty() {
+    public void showEmpty() {
         if (mAdapter.getItemCount() == 0) {
             emptyView.showEmpty();
         }
-    }*/
+    }
 
     public void launchFetchService() {
         Intent i = new Intent(this, UnstashFetchService.class);

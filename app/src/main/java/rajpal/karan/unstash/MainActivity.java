@@ -74,9 +74,20 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int resultCode = intent.getIntExtra("ResultCode", RESULT_CANCELED);
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(context, "Fetch completed successfully", Toast.LENGTH_SHORT).show();
+
+            int resultCode = intent.getIntExtra(UnstashFetchService.INTENT_KEY_RESULT_CODE, RESULT_CANCELED);
+            String action = intent.getAction();
+            Timber.d(action + ' ' + resultCode);
+            switch (action) {
+                case UnstashFetchService.ACTION_MARK_POST_AS_DONE:
+                    if (resultCode == UnstashFetchService.INTENT_EXTRA_NO_NETWORK) {
+                        Toast.makeText(context, "Unstash: Please connect to the internet to mark this post as \"done\"", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case UnstashFetchService.ACTION_START_FETCH_SERVICE:
+                    if (resultCode == RESULT_OK) {
+                        Snackbar.make(mainCoordinatorLayout, "Fetch completed successfully", BaseTransientBottomBar.LENGTH_LONG).show();
+                    }
             }
         }
     };
@@ -192,7 +203,9 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "AuthenticationState for onResume(): " + state);
 
 
-        IntentFilter filter = new IntentFilter(UnstashFetchService.ACTION_START_FETCH_SERVICE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UnstashFetchService.ACTION_START_FETCH_SERVICE);
+        filter.addAction(UnstashFetchService.ACTION_MARK_POST_AS_DONE);
         LocalBroadcastManager.getInstance(this).registerReceiver(UnstashFetchReceiver, filter);
 
         TextView appTitle = findViewById(R.id.app_title_main_tv);

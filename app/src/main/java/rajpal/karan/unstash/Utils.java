@@ -1,6 +1,8 @@
 package rajpal.karan.unstash;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 
@@ -69,5 +71,11 @@ public class Utils {
 
         dispatcher.schedule(constrainedReminderJob);
         initialized = true;
+    }
+
+    public static boolean isConnected(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null && info.isConnected();
     }
 }

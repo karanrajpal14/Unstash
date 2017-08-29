@@ -29,7 +29,8 @@ public class UnstashFetchService extends IntentService {
     public static final String ACTION_DISMISS_NOTIFICATION = "dismiss-notification";
     public static final String ACTION_READ_POST_REMINDER = "read-post-reminder";
     public static final String INTENT_KEY_RESULT_CODE = "result-code";
-    public static final int INTENT_EXTRA_NO_NETWORK = -1;
+    public static final int INTENT_EXTRA_RESULT_NO_NETWORK = -1;
+    public static final int INTENT_EXTRA_RESULT_OK = 1;
 
     public UnstashFetchService() {
         super(UnstashFetchService.class.getSimpleName());
@@ -57,11 +58,12 @@ public class UnstashFetchService extends IntentService {
             case ACTION_MARK_POST_AS_DONE:
                 String id = intent.getStringExtra(SavedPostContract.SavedPostEntry.COLUMN_POST_ID);
                 if (unSavePost(id)) {
-                    Timber.d("OK");
-                    intent.putExtra(INTENT_KEY_RESULT_CODE, Activity.RESULT_OK);
+                    Timber.d("OK" + Activity.RESULT_OK);
+
+                    intent.putExtra(INTENT_KEY_RESULT_CODE, INTENT_EXTRA_RESULT_OK);
                 } else {
                     Timber.d("Not OK");
-                    intent.putExtra(INTENT_KEY_RESULT_CODE, INTENT_EXTRA_NO_NETWORK);
+                    intent.putExtra(INTENT_KEY_RESULT_CODE, INTENT_EXTRA_RESULT_NO_NETWORK);
                 }
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 break;

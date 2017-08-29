@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
      * References to RecyclerView and Adapter to reset the list to its
      * "pretty" state when the reset menu item is clicked.
      */
-    private SavedPostsAdapter mAdapter;
+    SavedPostsAdapter mAdapter;
     private FirebaseAnalytics firebaseAnalytics;
 
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
@@ -79,12 +79,15 @@ public class MainActivity extends AppCompatActivity
             Timber.d(action + ' ' + resultCode);
             switch (action) {
                 case UnstashFetchService.ACTION_MARK_POST_AS_DONE:
-                    if (resultCode == UnstashFetchService.INTENT_EXTRA_NO_NETWORK) {
+                    if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_OK) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    else if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_NO_NETWORK) {
                         Toast.makeText(context, "Unstash: Please connect to the internet to mark this post as \"done\"", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case UnstashFetchService.ACTION_START_FETCH_SERVICE:
-                    if (resultCode == RESULT_OK) {
+                    if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_OK) {
                         Snackbar.make(mainCoordinatorLayout, "Fetch completed successfully", BaseTransientBottomBar.LENGTH_LONG).show();
                     }
             }

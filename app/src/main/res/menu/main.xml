@@ -15,4 +15,8 @@
         android:id="@+id/test_notification"
         android:title="Test Notification"/>
 
+    <item
+        android:id="@+id/show_done"
+        android:title="Show completed items"/>
+
 </menu>

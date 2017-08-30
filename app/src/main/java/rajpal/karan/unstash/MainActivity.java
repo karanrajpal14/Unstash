@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,6 +70,10 @@ public class MainActivity extends AppCompatActivity
      */
     SavedPostsAdapter mAdapter;
     private FirebaseAnalytics firebaseAnalytics;
+    SharedPreferences prefs;
+    final static String sharedPrefsKey = "mainPrefs";
+    final static String showDoneKey = "showDoneKey";
+    final static String isSavedKey = "isSavedKey";
 
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
@@ -100,6 +105,12 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(myToolbar);
+        prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(showDoneKey, false);
+        prefsEditor.putInt(isSavedKey, 1);
+        prefsEditor.apply();
+//        prefsEditor.commit();
 
         Utils.scheduleReadPostReminder(this);
 
@@ -335,6 +346,31 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.test_notification:
                 NotificationUtils.remindUserToReadSavedPost(this);
+                return true;
+            case R.id.show_done:
+                prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                boolean status = prefs.getBoolean(showDoneKey, false);
+                int isSaved = prefs.getInt(isSavedKey, 1);
+                if (status == true && isSaved == 0) {
+                    // is saved is 0 here
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    Timber.d(String.valueOf(prefs.getInt(isSavedKey, 1)));
+                    editor.putBoolean(showDoneKey, false);
+                    editor.putInt(isSavedKey, 0);
+                    editor.commit();
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    Timber.d(String.valueOf(prefs.getInt(isSavedKey, 1)));
+                } else if (status == false && isSaved == 1){
+                    // is saved is 1 here
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    Timber.d(String.valueOf(prefs.getInt(isSavedKey, 1)));
+                    editor.putBoolean(showDoneKey, true);
+                    editor.putInt(isSavedKey, 1);
+                    editor.commit();
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    Timber.d(String.valueOf(prefs.getInt(isSavedKey, 1)));
+                }
         }
         return super.onOptionsItemSelected(item);
     }

@@ -45,6 +45,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
     long createdTime;
     String subName;
     String thumbnailURL;
+    int isSaved;
     private Context context;
     private Cursor cursor;
 
@@ -162,6 +163,9 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             thumbnailURL = cursor.getString(INDEX_THUMBNAIL);
             createdTime = cursor.getLong(INDEX_CREATED_TIME);
             subName = cursor.getString(INDEX_SUBREDDIT_NAME);
+            isSaved = cursor.getInt(INDEX_IS_SAVED);
+
+            doneButton.setIconEnabled(isSaved!=0, true);
 
             titleTV.setText(title);
             postDetailsTV.setText(

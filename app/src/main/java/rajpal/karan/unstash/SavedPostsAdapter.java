@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.zagum.switchicon.SwitchIconView;
-import com.santalu.emptyview.EmptyView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,8 +31,9 @@ import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_TITLE;
  * {@link SavedPostsAdapter} exposes a list of the user's saved posts on reddit
  * from a {@link android.database.Cursor} to a {@link android.support.v7.widget.RecyclerView}.
  */
-public class SavedPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.SavedPostsViewHolder> {
 
+    private static final String TAG = SavedPostsAdapter.class.getSimpleName();
     /*
      * An on-click handler that we've defined to make it easy for an Activity to interface with
      * our RecyclerView
@@ -47,10 +47,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     String thumbnailURL;
     private Context context;
     private Cursor cursor;
-
-    private static final int VIEW_TYPE_EMPTY = 0;
-    private static final int VIEW_TYPE_NO_NETWORK = 1;
-    private static final int VIEW_TYPE_CONTENT = 2;
 
     /**
      * Constructor for SavedPostsAdapter that accepts a context and the specification
@@ -73,29 +69,14 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * @return A new SavedPostsViewHolder that holds the View for each list item
      */
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public SavedPostsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         context = viewGroup.getContext();
-        View view;
-        RecyclerView.ViewHolder viewHolder;
-        if (viewType == VIEW_TYPE_EMPTY) {
-            view = LayoutInflater
-                    .from(context)
-                    .inflate(R.layout.activity_main, viewGroup, false);
-            viewHolder = new EmptyViewHolder(view);
-        } else if (viewType == VIEW_TYPE_NO_NETWORK) {
-            view = LayoutInflater
-                    .from(context)
-                    .inflate(R.layout.activity_main, viewGroup, false);
-            viewHolder = new ErrorViewHolder(view);
-        } else {
-            view = LayoutInflater
-                    .from(context)
-                    .inflate(R.layout.saved_post_list_item, viewGroup, false);
-            viewHolder = new SavedPostsViewHolder(view);
-            view.setFocusable(true);
-        }
-        return viewHolder;
+        int layoutIdForListItem = R.layout.saved_post_list_item;
+        View view = LayoutInflater.from(context).inflate(layoutIdForListItem, viewGroup, false);
+        view.setFocusable(true);
+
+        return new SavedPostsViewHolder(view);
     }
 
     /**
@@ -109,23 +90,9 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        int viewType = getItemViewType(position);
-        switch (viewType) {
-            case VIEW_TYPE_EMPTY:
-                Timber.d("Showing empty");
-                holder.emptyView.showEmpty();
-                break;
-            case VIEW_TYPE_NO_NETWORK:
-                Timber.d("Showing Error");
-                holder.emptyView.showError();
-                break;
-            case VIEW_TYPE_CONTENT:
-                Timber.d("Showing content");
-                holder.emptyView.showContent();
-                holder.bind(position);
-                break;
-        }
+    public void onBindViewHolder(SavedPostsViewHolder holder, int position) {
+        holder.bind(position);
+
     }
 
     void swapCursor(Cursor newCursor) {
@@ -143,15 +110,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemCount() {
         if (cursor == null) return 0;
         return cursor.getCount();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (Utils.isConnected(context) && getItemCount() == 0) {
-            return VIEW_TYPE_EMPTY;
-        } else if (!Utils.isConnected(context) && getItemCount() == 0) {
-            return VIEW_TYPE_NO_NETWORK;
-        } else return VIEW_TYPE_CONTENT;
     }
 
     /**
@@ -315,43 +273,4 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mOnClickListener.onListItemClick(postIDIntent);
         }
     }
-
-    class EmptyViewHolder extends SavedPostsViewHolder {
-
-        @BindView(R.id.empty_view)
-        EmptyView emptyView;
-
-        /**
-         * Constructor for our ViewHolder. Within this constructor, we get a reference to our
-         * TextViews and set an onClickListener to listen for clicks. Those will be handled in the
-         * onClick method below.
-         *
-         * @param itemView The View that you inflated in
-         *                 {@link SavedPostsAdapter#onCreateViewHolder(ViewGroup, int)}
-         */
-        public EmptyViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-
-    class ErrorViewHolder extends SavedPostsViewHolder {
-
-        @BindView(R.id.empty_view)
-        EmptyView emptyView;
-
-        /**
-         * Constructor for our ViewHolder. Within this constructor, we get a reference to our
-         * TextViews and set an onClickListener to listen for clicks. Those will be handled in the
-         * onClick method below.
-         *
-         * @param itemView The View that you inflated in
-         *                 {@link SavedPostsAdapter#onCreateViewHolder(ViewGroup, int)}
-         */
-        public ErrorViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-
 }

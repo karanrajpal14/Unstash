@@ -79,8 +79,8 @@
             app:layout_constraintLeft_toLeftOf="@+id/right_guideline"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:si_disabled_alpha=".5"
-            app:si_disabled_color="@color/grey_200"
+            app:si_disabled_alpha=".6"
+            app:si_disabled_color="@color/colorSecondaryText"
             app:si_no_dash="true"
             app:si_tint_color="@color/colorAccent"
             app:srcCompat="@drawable/ic_done"/>

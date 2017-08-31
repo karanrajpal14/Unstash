@@ -3,8 +3,8 @@
           package="rajpal.karan.unstash">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
@@ -19,18 +19,19 @@
             android:name="net.dean.jraw.REDDIT_USERNAME"
             android:value="artemis73"/>
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity android:name=".LoginActivity"/>
-
-        <activity android:name=".PostDetailActivity"
-                  android:parentActivityName=".MainActivity">
+        <activity
+            android:name=".PostDetailActivity"
+            android:parentActivityName=".MainActivity">
         </activity>
 
         <provider
@@ -40,21 +41,21 @@
             android:exported="true"
             android:grantUriPermissions="true"/>
 
-        <service android:name=".UnstashFetchService"
-                 android:exported="false"/>
-
+        <service
+            android:name=".UnstashFetchService"
+            android:exported="false"/>
         <service
             android:name=".TestJobService"
-            android:label="UnstashFetchServiceJobScheduler"
-            android:exported="false">
+            android:exported="false"
+            android:label="UnstashFetchServiceJobScheduler">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>
         </service>
 
-        <receiver android:name="MyStartServiceReceiver" >
+        <receiver android:name=".MyStartServiceReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 

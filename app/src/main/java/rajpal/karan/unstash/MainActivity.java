@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.santalu.emptyview.EmptyView;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
@@ -55,8 +57,8 @@ public class MainActivity extends AppCompatActivity
     CoordinatorLayout mainCoordinatorLayout;
     @BindView(R.id.posts_list_rv)
     RecyclerView postsListRecyclerView;
-    /*@BindView(R.id.empty_view)
-    EmptyView emptyView;*/
+    @BindView(R.id.empty_view)
+    EmptyView emptyView;
     @BindView(R.id.toolbar)
     Toolbar myToolbar;
     RedditClient redditClient;
@@ -68,6 +70,10 @@ public class MainActivity extends AppCompatActivity
      */
     SavedPostsAdapter mAdapter;
     private FirebaseAnalytics firebaseAnalytics;
+    SharedPreferences prefs;
+    final static String sharedPrefsKey = "mainPrefs";
+    final static String showDoneKey = "showDoneKey";
+    final static String isSavedKey = "isSavedKey";
 
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
@@ -99,6 +105,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(myToolbar);
+
+        prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(showDoneKey, true);
+        prefsEditor.apply();
 
         Utils.scheduleReadPostReminder(this);
 
@@ -193,7 +204,9 @@ public class MainActivity extends AppCompatActivity
         mAdapter = new SavedPostsAdapter(this, this);
         postsListRecyclerView.setAdapter(mAdapter);
 
-        getSupportLoaderManager().initLoader(MAIN_LOADER_ID, null, this);
+        Bundle bundle = new Bundle();
+        bundle.putInt(isSavedKey, 1);
+        getSupportLoaderManager().initLoader(MAIN_LOADER_ID, bundle, this);
 
     }
 
@@ -213,7 +226,7 @@ public class MainActivity extends AppCompatActivity
         appTitle.setText(R.string.app_name);
         TextView username = findViewById(R.id.username_main_tv);
 
-//        showEmpty();
+        showEmpty();
 
         if (redditClient.isAuthenticated()) {
             username.setText(redditClient.getAuthenticatedUser());
@@ -227,7 +240,7 @@ public class MainActivity extends AppCompatActivity
                 adView.setVisibility(View.VISIBLE);
                 break;
             case NONE:
-//                showEmpty();
+                showEmpty();
                 adView.setVisibility(View.GONE);
                 Snackbar.make(
                         mainCoordinatorLayout,
@@ -285,6 +298,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String savedArg = "0";
+        if (args != null) {
+            savedArg = String.valueOf(args.getInt(isSavedKey));
+            Timber.d("Loader Saved Arg" + savedArg);
+        }
         switch (id) {
             case MAIN_LOADER_ID:
 
@@ -292,7 +310,7 @@ public class MainActivity extends AppCompatActivity
                         this,
                         SavedPostContract.SavedPostEntry.CONTENT_URI,
                         null,
-                        SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED + " = 1 ",
+                        SavedPostContract.SavedPostEntry.COLUMN_IS_SAVED + " = " + savedArg,
                         null,
                         null
                 );
@@ -304,13 +322,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
-        /*emptyView.showContent();*/
+        emptyView.showContent();
         if (position == RecyclerView.NO_POSITION) position = 0;
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.swapCursor(null);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
+        boolean status = prefs.getBoolean(showDoneKey, true);
+        if (status) {
+            menu.findItem(R.id.show_done).setTitle("Show Done");
+        } else {
+            menu.findItem(R.id.show_done).setTitle("Show Todo");
+        }
+        return true;
     }
 
     @Override
@@ -334,6 +365,34 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.test_notification:
                 NotificationUtils.remindUserToReadSavedPost(this);
+                return true;
+            case R.id.show_done:
+                prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                boolean status = prefs.getBoolean(showDoneKey, false);
+                if (status) {
+                    // is saved is 0 here
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    editor.clear();
+                    Bundle notSavedBundle = new Bundle();
+                    notSavedBundle.putInt(isSavedKey, 0);
+                    getSupportLoaderManager().restartLoader(MAIN_LOADER_ID, notSavedBundle, this);
+                    editor.putBoolean(showDoneKey, false);
+                    editor.apply();
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    invalidateOptionsMenu();
+                } else {
+                    // is saved is 1 here
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    editor.clear();
+                    Bundle savedBundle = new Bundle();
+                    savedBundle.putInt(isSavedKey, 1);
+                    getSupportLoaderManager().restartLoader(MAIN_LOADER_ID, savedBundle, this);
+                    editor.putBoolean(showDoneKey, true);
+                    editor.apply();
+                    Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
+                    invalidateOptionsMenu();
+                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -353,11 +412,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*public void showEmpty() {
+    public void showEmpty() {
         if (mAdapter.getItemCount() == 0) {
             emptyView.showEmpty();
         }
-    }*/
+    }
 
     public void launchFetchService() {
         Intent i = new Intent(this, UnstashFetchService.class);

@@ -51,6 +51,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = MainActivity.class.getSimpleName();
     static final int MAIN_LOADER_ID = 0;
+    final static String sharedPrefsKey = "mainPrefs";
+    final static String showDoneKey = "showDoneKey";
+    final static String isSavedKey = "isSavedKey";
     private final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
     int position = RecyclerView.NO_POSITION;
     @BindView(R.id.coordinator_layout_main)
@@ -69,12 +72,8 @@ public class MainActivity extends AppCompatActivity
      * "pretty" state when the reset menu item is clicked.
      */
     SavedPostsAdapter mAdapter;
-    private FirebaseAnalytics firebaseAnalytics;
     SharedPreferences prefs;
-    final static String sharedPrefsKey = "mainPrefs";
-    final static String showDoneKey = "showDoneKey";
-    final static String isSavedKey = "isSavedKey";
-
+    private FirebaseAnalytics firebaseAnalytics;
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -86,8 +85,7 @@ public class MainActivity extends AppCompatActivity
                 case UnstashFetchService.ACTION_MARK_POST_AS_DONE:
                     if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_OK) {
                         mAdapter.notifyDataSetChanged();
-                    }
-                    else if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_NO_NETWORK) {
+                    } else if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_NO_NETWORK) {
                         Toast.makeText(context, "Unstash: Please connect to the internet to mark this post as \"done\"", Toast.LENGTH_SHORT).show();
                     }
                     break;

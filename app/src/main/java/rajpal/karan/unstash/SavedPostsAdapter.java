@@ -165,7 +165,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             subName = cursor.getString(INDEX_SUBREDDIT_NAME);
             isSaved = cursor.getInt(INDEX_IS_SAVED);
 
-            doneButton.setIconEnabled(isSaved!=0, true);
+            doneButton.setIconEnabled(isSaved != 0, true);
 
             titleTV.setText(title);
             postDetailsTV.setText(

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1076612465154",
+    "firebase_url": "https://unstash-7459c.firebaseio.com",
+    "project_id": "unstash-7459c",
+    "storage_bucket": "unstash-7459c.appspot.comasdada"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076612465154:android:8aeab265114b4093",
+        "android_client_info": {
+          "package_name": "rajpal.karan.unstash.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076612465154-4v9020jj1m6ilko1opkh64871n5jlo0b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rajpal.karan.unstash.debug",
+            "certificate_hash": "7dcc2a8d0a5aaad73861617eacb3a7a637104fdc"
+          }
+        },
+        {
+          "client_id": "1076612465154-qm111395cdd4iqtv0svfl94e7gavjafl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClVQCO2A1oTUx6y2KPMMWZ3YpcawHpFAQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076612465154-qm111395cdd4iqtv0svfl94e7gavjafl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

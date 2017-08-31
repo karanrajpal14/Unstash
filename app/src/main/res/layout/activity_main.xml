@@ -47,35 +47,33 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <com.santalu.emptyview.EmptyView
-        android:id="@+id/empty_view"
+    <rajpal.karan.unstash.StateAwareRecyclerView
+        android:id="@+id/posts_list_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:emptyDrawable="@drawable/ic_action_inbox"
-        app:emptyDrawableTint="@color/colorPrimary"
-        app:emptyGravity="center"
-        app:emptyText="Empty"
-        app:errorBackgroundColor="@color/colorAccent"
-        app:errorButtonBackgroundColor="@color/colorAccent"
-        app:errorButtonText="Try Again"
-        app:errorButtonTextColor="@color/colorPrimaryText"
-        app:errorDrawable="@drawable/ic_error"
-        app:errorDrawableTint="@color/colorAccent"
-        app:errorText="Unknown"
-        app:errorTextColor="@color/colorAccent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:loadingDrawable="@drawable/ic_action_cloud_download"
-        app:loadingStyle="circular"
-        app:loadingText="Loading"
-        app:loadingTint="@color/colorPrimary">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/posts_list_rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    <LinearLayout
+        android:id="@+id/posts_list_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize"
+        android:orientation="vertical"
+        android:textAlignment="center">
 
-    </com.santalu.emptyview.EmptyView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="No data fetched. Press refresh to fetch data"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Refresh"/>
+
+    </LinearLayout>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

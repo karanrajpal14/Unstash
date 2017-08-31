@@ -33,7 +33,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.santalu.emptyview.EmptyView;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
@@ -60,8 +59,6 @@ public class MainActivity extends AppCompatActivity
     CoordinatorLayout mainCoordinatorLayout;
     @BindView(R.id.posts_list_rv)
     RecyclerView postsListRecyclerView;
-    @BindView(R.id.empty_view)
-    EmptyView emptyView;
     @BindView(R.id.toolbar)
     Toolbar myToolbar;
     RedditClient redditClient;
@@ -174,33 +171,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        /*
-         * A LinearLayoutManager is responsible for measuring and positioning item views within a
-         * RecyclerView into a linear list. This means that it can produce either a horizontal or
-         * vertical list depending on which parameter you pass in to the LinearLayoutManager
-         * constructor. By default, if you don't specify an orientation, you get a vertical list.
-         * In our case, we want a vertical list, so we don't need to pass in an orientation flag to
-         * the LinearLayoutManager constructor.
-         *
-         * There are other LayoutManagers available to display your data in uniform grids,
-         * staggered grids, and more! See the developer documentation for more details.
-         */
-
+        StateAwareRecyclerView recyclerView = findViewById(R.id.posts_list_rv);
         final int columns = getResources().getInteger(R.integer.grid_columns);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columns);
-        postsListRecyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setLayoutManager(gridLayoutManager);
 
-        /*
-         * Use this setting to improve performance if you know that changes in content do not
-         * change the child layout size in the RecyclerView
-         */
-        postsListRecyclerView.setHasFixedSize(true);
-
-        /*
-         * The SavedPostsAdapter is responsible for displaying each item in the list.
-         */
+        View emptyView = findViewById(R.id.posts_list_empty_view);
+        recyclerView.setEmptyView(emptyView);
         mAdapter = new SavedPostsAdapter(this, this);
-        postsListRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
         Bundle bundle = new Bundle();
         bundle.putInt(isSavedKey, 1);
@@ -224,7 +203,6 @@ public class MainActivity extends AppCompatActivity
         appTitle.setText(R.string.app_name);
         TextView username = findViewById(R.id.username_main_tv);
 
-        showEmpty();
 
         if (redditClient.isAuthenticated()) {
             username.setText(redditClient.getAuthenticatedUser());
@@ -238,7 +216,6 @@ public class MainActivity extends AppCompatActivity
                 adView.setVisibility(View.VISIBLE);
                 break;
             case NONE:
-                showEmpty();
                 adView.setVisibility(View.GONE);
                 Snackbar.make(
                         mainCoordinatorLayout,
@@ -320,7 +297,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
-        emptyView.showContent();
         if (position == RecyclerView.NO_POSITION) position = 0;
     }
 
@@ -408,12 +384,6 @@ public class MainActivity extends AppCompatActivity
 
         }.execute();
 
-    }
-
-    public void showEmpty() {
-        if (mAdapter.getItemCount() == 0) {
-            emptyView.showEmpty();
-        }
     }
 
     public void launchFetchService() {

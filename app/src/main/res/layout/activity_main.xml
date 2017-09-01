@@ -59,15 +59,17 @@
         android:layout_height="match_parent"
         android:paddingTop="?attr/actionBarSize"
         android:orientation="vertical"
+        android:gravity="center"
         android:textAlignment="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="No data fetched. Press refresh to fetch data"/>
+            android:text="No posts loaded."/>
 
         <Button
+            android:id="@+id/empty_view_refresh_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"

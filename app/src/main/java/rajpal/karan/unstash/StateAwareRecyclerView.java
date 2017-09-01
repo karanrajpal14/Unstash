@@ -19,16 +19,6 @@ public class StateAwareRecyclerView extends RecyclerView {
         }
 
         @Override
-        public void onItemRangeChanged(int positionStart, int itemCount) {
-            super.onItemRangeChanged(positionStart, itemCount);
-        }
-
-        @Override
-        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            super.onItemRangeChanged(positionStart, itemCount, payload);
-        }
-
-        @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
             Timber.d("onIRI called");
             checkIfEmpty();
@@ -40,10 +30,6 @@ public class StateAwareRecyclerView extends RecyclerView {
             checkIfEmpty();
         }
 
-        @Override
-        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-            super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-        }
     };
 
     public StateAwareRecyclerView(Context context) {
@@ -59,12 +45,6 @@ public class StateAwareRecyclerView extends RecyclerView {
     }
 
     void checkIfEmpty() {
-        if (emptyView == null) {
-            Timber.d("EmptyView null");
-        }
-        if (getAdapter() == null) {
-            Timber.d("adapter null");
-        }
         if (emptyView != null && getAdapter() != null) {
             final boolean emptyViewVisible = getAdapter().getItemCount() == 0;
             Timber.d("EmptyViewVisibility " + emptyViewVisible);
@@ -84,12 +64,12 @@ public class StateAwareRecyclerView extends RecyclerView {
         Timber.d("old adapter " + oldAdapter);
         if (oldAdapter != null) {
             oldAdapter.unregisterAdapterDataObserver(observer);
-            super.setAdapter(adapter);
-            if (adapter != null) {
-                adapter.registerAdapterDataObserver(observer);
-            }
-            checkIfEmpty();
         }
+        super.setAdapter(adapter);
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(observer);
+        }
+        checkIfEmpty();
     }
 
     public void setEmptyView(View emptyView) {

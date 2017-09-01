@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,8 +58,12 @@ public class MainActivity extends AppCompatActivity
     int position = RecyclerView.NO_POSITION;
     @BindView(R.id.coordinator_layout_main)
     CoordinatorLayout mainCoordinatorLayout;
+    @BindView(R.id.posts_list_empty_view)
+    View emptyView;
+    @BindView(R.id.empty_view_refresh_button)
+    Button refreshButton;
     @BindView(R.id.posts_list_rv)
-    RecyclerView postsListRecyclerView;
+    StateAwareRecyclerView postsListRecyclerView;
     @BindView(R.id.toolbar)
     Toolbar myToolbar;
     RedditClient redditClient;
@@ -171,15 +176,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        StateAwareRecyclerView recyclerView = findViewById(R.id.posts_list_rv);
         final int columns = getResources().getInteger(R.integer.grid_columns);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columns);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        postsListRecyclerView.setLayoutManager(gridLayoutManager);
 
-        View emptyView = findViewById(R.id.posts_list_empty_view);
-        recyclerView.setEmptyView(emptyView);
+        postsListRecyclerView.setEmptyView(emptyView);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchFetchService();
+            }
+        });
         mAdapter = new SavedPostsAdapter(this, this);
-        recyclerView.setAdapter(mAdapter);
+        postsListRecyclerView.setAdapter(mAdapter);
 
         Bundle bundle = new Bundle();
         bundle.putInt(isSavedKey, 1);

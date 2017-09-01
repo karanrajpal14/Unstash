@@ -1,6 +1,7 @@
 package rajpal.karan.unstash;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -136,8 +137,30 @@ public class NotificationUtils {
                     Utils.getRelativeTime(randomPostCursor.getInt(SavedPostContract.SavedPostEntry.INDEX_CREATED_TIME)),
                     randomPostCursor.getString(SavedPostContract.SavedPostEntry.INDEX_SUBREDDIT_NAME)
             );
+            randomPostCursor.close();
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            final String NOTIFICATION_CHANNEL_ID = "UnstashPostReminderChannel";
+            final CharSequence NOTIFICATION_CHANNEL_NAME = context.getString(R.string.notification_channel_name);
+            final String NOTIFICATION_CHANNEL_DESCRIPTION = context.getString(R.string.notification_channel_desciption);
+
+            int NOTIFICATION_CHANNEL_IMPORTANCE = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                NOTIFICATION_CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_HIGH;
+            }
+
+            NotificationChannel channel;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NOTIFICATION_CHANNEL_IMPORTANCE);
+                channel.setDescription(NOTIFICATION_CHANNEL_DESCRIPTION);
+                channel.enableLights(true);
+                channel.setLightColor(context.getColor(R.color.colorPrimary));
+                channel.enableVibration(true);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_stat_markunread_mailbox)
                     .setLargeIcon(getLargeIcon(context))
@@ -152,11 +175,9 @@ public class NotificationUtils {
                     .setContentIntent(getContentIntent(context))
                     .setAutoCancel(true)
                     .addAction(markAsDoneAction(context, postID))
-                    .addAction(ignoreReminderAction(context));
+                    .addAction(ignoreReminderAction(context))
+                    .setPriority(NOTIFICATION_CHANNEL_IMPORTANCE);
 
-            builder.setPriority(Notification.PRIORITY_HIGH);
-
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(POST_REMINDER_NOTIFICATION_ID, builder.build());
         }
     }

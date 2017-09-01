@@ -158,6 +158,8 @@ public class UnstashFetchService extends IntentService {
                     } else {
                         Timber.d("Post already present. Skipping post " + id);
                     }
+                    assert checkIfPostPresentCursor != null;
+                    checkIfPostPresentCursor.close();
                 }
 
             }

@@ -305,6 +305,7 @@ public class TestSavedPostProvider {
 
 
         String queryFailed = "Query failed to return a valid Cursor";
+        assert taskCursor != null;
         taskCursor.moveToPosition(initialPosition);
         assertTrue(queryFailed, taskCursor.getString(initialPosition).equals(postID));
 
@@ -426,6 +427,7 @@ public class TestSavedPostProvider {
                 /* Sort order to return in Cursor */
                 null);
 
+        assert taskCursor != null;
         taskCursor.moveToPosition(initialPosition);
         String queryFailed = "Query failed to return a valid Cursor";
         assertTrue(queryFailed, taskCursor.getString(postIDPosition).equals(postID));

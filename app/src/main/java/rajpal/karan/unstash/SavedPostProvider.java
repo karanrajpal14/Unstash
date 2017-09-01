@@ -186,7 +186,7 @@ public class SavedPostProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase database = postDBHelper.getWritableDatabase();
         final int match = URI_MATCHER.match(uri);
-        int numberOfDeletedRows = 0;
+        int numberOfDeletedRows;
         Timber.d("Deleting rows");
         String id = null;
 

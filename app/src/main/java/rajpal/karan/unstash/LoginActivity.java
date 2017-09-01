@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         String[] scopes = {"identity", "read", "edit", "flair", "history", "save", "vote"};
 
         final URL authorizationUrl = helper.getAuthorizationUrl(CREDENTIALS, true, true, scopes);
-        final WebView webView = ((WebView) findViewById(R.id.webview));
+        final WebView webView = findViewById(R.id.webview);
         // Load the authorization URL into the browser
         webView.loadUrl(authorizationUrl.toExternalForm());
         webView.setWebViewClient(new WebViewClient() {
@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 if (url.contains("code=")) {
                     // We've detected the redirect URL
-                    onUserChallenge(url, CREDENTIALS);
+                    onUserChallenge(url);
                 } else if (url.contains("error=")) {
                     Toast.makeText(LoginActivity.this, "You must press 'allow' to log in with this account", Toast.LENGTH_SHORT).show();
                     webView.loadUrl(authorizationUrl.toExternalForm());
@@ -54,12 +54,12 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void onUserChallenge(final String url, final Credentials creds) {
+    private void onUserChallenge(final String url) {
         new AsyncTask<String, Void, String>() {
             @Override
             protected String doInBackground(String... params) {
                 try {
-                    OAuthData data = AuthenticationManager.get().getRedditClient().getOAuthHelper().onUserChallenge(params[0], creds);
+                    OAuthData data = AuthenticationManager.get().getRedditClient().getOAuthHelper().onUserChallenge(params[0], LoginActivity.CREDENTIALS);
                     AuthenticationManager.get().getRedditClient().authenticate(data);
                     return AuthenticationManager.get().getRedditClient().getAuthenticatedUser();
                 } catch (NetworkException | OAuthException e) {

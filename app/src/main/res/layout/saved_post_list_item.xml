@@ -34,10 +34,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:paddingStart="16dp"
+            android:paddingEnd="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/left_guideline"
             app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/main_list_item_thumbnail_content_description"
             />
 
         <TextView

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
@@ -17,11 +18,8 @@ import butterknife.ButterKnife;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_AUTHOR;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_CREATED_TIME;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_DOMAIN;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_PERMALINK;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_POST_HINT;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_SCORE;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_SUBREDDIT_NAME;
-import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_THUMBNAIL;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_TITLE;
 import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_URL;
 
@@ -48,7 +46,7 @@ public class PostDetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.details_toolbar_title);
+        getSupportActionBar().setTitle(R.string.post_details_toolbar_title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
@@ -66,17 +64,14 @@ public class PostDetailActivity extends AppCompatActivity {
         clickedPostCursor.moveToNext();
 
         WordToSpan wordToSpan = new WordToSpan();
-        wordToSpan.setColorURL(getResources().getColor(R.color.colorAccent));
+        wordToSpan.setColorURL(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
         wordToSpan.setUnderlineURL(true);
 
         String title = clickedPostCursor.getString(INDEX_TITLE);
         String author = clickedPostCursor.getString(INDEX_AUTHOR);
         String createdTime = Utils.getRelativeTime(clickedPostCursor.getLong(INDEX_CREATED_TIME));
         String subName = clickedPostCursor.getString(INDEX_SUBREDDIT_NAME);
-        String thumbnailURL = clickedPostCursor.getString(INDEX_THUMBNAIL);
         String domain = clickedPostCursor.getString(INDEX_DOMAIN);
-        String postHint = clickedPostCursor.getString(INDEX_POST_HINT);
-        String permalink = clickedPostCursor.getString(INDEX_PERMALINK);
         String url = clickedPostCursor.getString(INDEX_URL);
         String score = String.valueOf(clickedPostCursor.getInt(INDEX_SCORE));
 
@@ -88,9 +83,9 @@ public class PostDetailActivity extends AppCompatActivity {
                         subName
                 )
         );
-        domainDetailTv.setText(getResources().getString(R.string.domain_detail_textview, domain));
+        domainDetailTv.setText(getResources().getString(R.string.post_details_domain_detail_textview, domain));
         wordToSpan.setLink(url, urlDetailTv);
-        scoreDetailTv.setText(getResources().getString(R.string.score_detail_textview, score));
+        scoreDetailTv.setText(getResources().getString(R.string.post_details_score_detail_textview, score));
 
         wordToSpan.setClickListener(new WordToSpan.ClickListener() {
             @Override

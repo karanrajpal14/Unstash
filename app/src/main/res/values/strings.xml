@@ -1,8 +1,26 @@
 <resources>
     <string name="app_name">Unstash</string>
-    <string name="toolbar_not_logged_in">Not logged in</string>
-    <string name="details_toolbar_title">Details</string>
+
+    <!-- Main Activity Strings -->
+    <string name="main_empty_view_no_posts_loaded_text">No posts loaded. Please refresh to fetch new posts.</string>
+    <string name="main_empty_view_refresh_button_text">Refresh</string>
+    <string name="main_list_item_thumbnail_content_description">Thumbnail</string>
+    <string name="main_toolbar_not_logged_in">Not logged in</string>
+    <string name="main_post_details_textview">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
+    <string name="main_score_detail_textview">\u25B2 %1$s</string>
+
+    <!-- Post Detail Activity Strings -->
+    <string name="post_details_toolbar_title">Details</string>
     <string name="post_details_textview">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
-    <string name="score_detail_textview">\u25B2 %1$s</string>
-    <string name="domain_detail_textview">(%1$s)</string>
+    <string name="post_details_score_detail_textview">\u25B2 %1$s</string>
+    <string name="post_details_domain_detail_textview">(%1$s)</string>
+
+    <!-- Overflow Menu Items Strings -->
+    <string name="menu_refresh_posts_string">Fetch Posts</string>
+    <string name="menu_show_done_string">Show Done</string>
+    <string name="menu_show_todo_string">Show Todo</string>
+
+    <!-- Notification Channel Strings-->
+    <string name="notification_channel_name">Post Reminder Channel</string>
+    <string name="notification_channel_desciption">Unstash\'s daily Post Reminder Channel</string>
 </resources>

@@ -14,7 +14,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="true">
         <meta-data
             android:name="net.dean.jraw.REDDIT_USERNAME"
             android:value="artemis73"/>
@@ -24,11 +25,12 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity android:name=".LoginActivity"/>
+
         <activity
             android:name=".PostDetailActivity"
             android:parentActivityName=".MainActivity">
@@ -38,12 +40,13 @@
             android:name=".SavedPostProvider"
             android:authorities="rajpal.karan.unstash"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:grantUriPermissions="true"/>
 
         <service
             android:name=".UnstashFetchService"
             android:exported="false"/>
+
         <service
             android:name=".TestJobService"
             android:exported="false"

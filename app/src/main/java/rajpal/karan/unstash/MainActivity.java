@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -200,8 +199,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         AuthenticationState state = AuthenticationManager.get().checkAuthState();
-        Log.d(TAG, "AuthenticationState for onResume(): " + state);
-
+        Timber.d("AuthenticationState for onResume(): " + state);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(UnstashFetchService.ACTION_START_FETCH_SERVICE);
@@ -212,11 +210,10 @@ public class MainActivity extends AppCompatActivity
         appTitle.setText(R.string.app_name);
         TextView username = findViewById(R.id.username_main_tv);
 
-
         if (redditClient.isAuthenticated()) {
             username.setText(redditClient.getAuthenticatedUser());
         } else {
-            username.setText(R.string.toolbar_not_logged_in);
+            username.setText(R.string.main_toolbar_not_logged_in);
         }
 
         switch (state) {
@@ -251,14 +248,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void refreshAccessTokenAsync() {
-        Log.d(TAG, "refreshAccessTokenAsync: Refreshing");
+        Timber.d("refreshAccessTokenAsync: Refreshing");
         new AsyncTask<Credentials, Void, Void>() {
             @Override
             protected Void doInBackground(Credentials... params) {
                 try {
                     AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
                 } catch (NoSuchTokenException | OAuthException | RuntimeException e) {
-                    Log.e(TAG, "Could not refresh access token", e);
+                    Timber.e("Could not refresh access token", e);
                 }
                 return null;
             }
@@ -320,9 +317,9 @@ public class MainActivity extends AppCompatActivity
         prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
         boolean status = prefs.getBoolean(showDoneKey, true);
         if (status) {
-            menu.findItem(R.id.show_done).setTitle("Show Done");
+            menu.findItem(R.id.show_done).setTitle(getString(R.string.menu_show_done_string));
         } else {
-            menu.findItem(R.id.show_done).setTitle("Show Todo");
+            menu.findItem(R.id.show_done).setTitle(getString(R.string.menu_show_todo_string));
         }
         return true;
     }
@@ -339,7 +336,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_fetch:
+            case R.id.action_refresh:
                 launchFetchService();
                 return true;
             case R.id.action_logout:

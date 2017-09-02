@@ -3,11 +3,36 @@ package rajpal.karan.unstash;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+import timber.log.Timber;
+
 public class TodoCountWidgetProvider extends AppWidgetProvider {
+
+    private static final String REFRESH_ACTION = AppWidgetManager.ACTION_APPWIDGET_UPDATE;
+
+    public static void refreshWidgetBroadcast(Context context) {
+        Timber.d("Received refresh broadcast from CP");
+        Intent intent = new Intent(REFRESH_ACTION);
+        intent.setComponent(new ComponentName(context, TodoCountWidgetProvider.class));
+        context.sendBroadcast(intent);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        final String action = intent.getAction();
+
+        if (action.equals(REFRESH_ACTION)) {
+            Timber.d("Refreshing widget on CP change");
+            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+            ComponentName name = new ComponentName(context, SavedPostProvider.class);
+            manager.notifyAppWidgetViewDataChanged(manager.getAppWidgetIds(name), R.id.todo_widget_textview);
+            manager.notifyAppWidgetViewDataChanged(manager.getAppWidgetIds(name), R.id.done_widget_textview);
+        }
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

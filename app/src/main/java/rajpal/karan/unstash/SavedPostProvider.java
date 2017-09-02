@@ -147,6 +147,7 @@ public class SavedPostProvider extends ContentProvider {
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
+        TodoCountWidgetProvider.refreshWidgetBroadcast(getContext());
         Timber.d("Completed insertion");
         return returnUri;
     }
@@ -221,6 +222,7 @@ public class SavedPostProvider extends ContentProvider {
 
         if (numberOfDeletedRows != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
+            TodoCountWidgetProvider.refreshWidgetBroadcast(getContext());
         }
 
         Timber.d("Completed deletion");
@@ -244,6 +246,7 @@ public class SavedPostProvider extends ContentProvider {
 
         if (noOfUpdatedRows != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
+            TodoCountWidgetProvider.refreshWidgetBroadcast(getContext());
         }
 
         Timber.d("No of updated rows = " + noOfUpdatedRows);

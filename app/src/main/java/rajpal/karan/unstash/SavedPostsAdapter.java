@@ -4,16 +4,24 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.zagum.switchicon.SwitchIconView;
+
+import net.dean.jraw.ApiException;
+import net.dean.jraw.RedditClient;
+import net.dean.jraw.auth.AuthenticationManager;
+import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.models.Submission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +41,6 @@ import static rajpal.karan.unstash.SavedPostContract.SavedPostEntry.INDEX_TITLE;
  */
 public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.SavedPostsViewHolder> {
 
-    private static final String TAG = SavedPostsAdapter.class.getSimpleName();
     /*
      * An on-click handler that we've defined to make it easy for an Activity to interface with
      * our RecyclerView
@@ -219,20 +226,25 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
                 );
                 notifyDataSetChanged();
                 doneButton.setIconEnabled(true, true);
-                /*new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-                        AccountManager manager = new AccountManager(redditClient);
-                        Submission submission = redditClient.getSubmission(id);
-                        try {
-                            manager.unsave(submission);
-                        } catch (ApiException e) {
-                            e.printStackTrace();
+                if (Utils.isConnected(context)) {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+                            AccountManager manager = new AccountManager(redditClient);
+                            Submission submission = redditClient.getSubmission(id);
+                            try {
+                                manager.unsave(submission);
+                            } catch (ApiException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                }.execute();*/
+                    }.execute();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.disconnected_message), Toast.LENGTH_SHORT).show();
+                }
+
             } else if (currentSaveStatus == 0) {
                 currentSaveStatus = 1;
                 Timber.d(id + " " + currentSaveStatus);
@@ -248,20 +260,24 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
                 );
                 notifyDataSetChanged();
                 doneButton.setIconEnabled(false, true);
-                /*new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        RedditClient redditClient = AuthenticationManager.get().getRedditClient();
-                        AccountManager manager = new AccountManager(redditClient);
-                        Submission submission = redditClient.getSubmission(id);
-                        try {
-                            manager.save(submission);
-                        } catch (ApiException e) {
-                            e.printStackTrace();
+                if (Utils.isConnected(context)) {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            RedditClient redditClient = AuthenticationManager.get().getRedditClient();
+                            AccountManager manager = new AccountManager(redditClient);
+                            Submission submission = redditClient.getSubmission(id);
+                            try {
+                                manager.save(submission);
+                            } catch (ApiException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                }.execute();*/
+                    }.execute();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.disconnected_message), Toast.LENGTH_SHORT).show();
+                }
             }
         }
 

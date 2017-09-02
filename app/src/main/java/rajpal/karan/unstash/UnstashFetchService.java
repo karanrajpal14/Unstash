@@ -7,12 +7,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
+import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
@@ -48,18 +49,17 @@ public class UnstashFetchService extends IntentService {
         Timber.d("Received intent");
         assert intent != null;
         String action = intent.getAction() != null ? intent.getAction() : "default";
-        Log.d("onHandleIntent", "onHandleIntent: Action " + action);
+        Timber.d("onHandleIntent: Action " + action);
 
         switch (action) {
             case ACTION_START_FETCH_SERVICE:
-                Log.d("TAG", "onHandleIntent: Starting fetch");
+                Timber.d("onHandleIntent: Starting fetch");
                 syncImmediately();
                 break;
             case ACTION_MARK_POST_AS_DONE:
                 String id = intent.getStringExtra(SavedPostContract.SavedPostEntry.COLUMN_POST_ID);
                 if (unSavePost(id)) {
                     Timber.d("OK" + Activity.RESULT_OK);
-
                     intent.putExtra(INTENT_KEY_RESULT_CODE, INTENT_EXTRA_RESULT_OK);
                 } else {
                     Timber.d("Not OK");
@@ -73,25 +73,18 @@ public class UnstashFetchService extends IntentService {
                 NotificationUtils.executeTask(getApplicationContext(), action);
                 break;
         }
-
-		/*assert intent != null;
-        String val = intent.getStringExtra("foo");
-		Timber.d(val + ACTION_START_FETCH_SERVICE);
-		Intent in = new Intent(ACTION_START_FETCH_SERVICE);
-		in.putExtra("ResultCode", Activity.RESULT_OK);
-		LocalBroadcastManager.getInstance(this).sendBroadcast(in);*/
     }
 
     public boolean unSavePost(String id) {
         if (Utils.isConnected(this)) {
-            /*RedditClient reddit = AuthenticationManager.get().getRedditClient();
+            RedditClient reddit = AuthenticationManager.get().getRedditClient();
             AccountManager accountManager = new AccountManager(reddit);
             Submission submission = reddit.getSubmission(id);
             try {
                 accountManager.unsave(submission);
             } catch (ApiException e) {
                 e.printStackTrace();
-            }*/
+            }
             return true;
         } else {
             return false;

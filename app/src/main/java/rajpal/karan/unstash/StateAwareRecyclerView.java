@@ -14,19 +14,16 @@ public class StateAwareRecyclerView extends RecyclerView {
     final private AdapterDataObserver observer = new AdapterDataObserver() {
         @Override
         public void onChanged() {
-            Timber.d("onChanged called");
             checkIfEmpty();
         }
 
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
-            Timber.d("onIRI called");
             checkIfEmpty();
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-            Timber.d("onIRR called");
             checkIfEmpty();
         }
 
@@ -47,21 +44,16 @@ public class StateAwareRecyclerView extends RecyclerView {
     void checkIfEmpty() {
         if (emptyView != null && getAdapter() != null) {
             final boolean emptyViewVisible = getAdapter().getItemCount() == 0;
-            Timber.d("EmptyViewVisibility " + emptyViewVisible);
             int vis1 = emptyViewVisible ? VISIBLE : GONE;
-            Timber.d("vis1 " + vis1);
             emptyView.setVisibility(vis1);
             int vis2 = emptyViewVisible ? GONE : VISIBLE;
-            Timber.d("vis2 " + vis2);
             setVisibility(vis2);
         }
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
-        Timber.d("Setting new adapter " + adapter);
         final Adapter oldAdapter = getAdapter();
-        Timber.d("old adapter " + oldAdapter);
         if (oldAdapter != null) {
             oldAdapter.unregisterAdapterDataObserver(observer);
         }

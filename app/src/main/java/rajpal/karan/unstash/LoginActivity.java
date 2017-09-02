@@ -21,7 +21,7 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     public static final Credentials CREDENTIALS = Credentials.installedApp(
-            "NaP7nvfW4D721A", "http://www.google.com"
+            BuildConfig.REDDIT_CLIENT_ID, BuildConfig.REDDIT_REDIRECT_URL
     );
 
     @Override

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:theme="@style/AppTheme.NoActionBar"
-    tools:context="rajpal.karan.unstash.PostDetailActivity">
+    tools:context=".PostDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -26,8 +26,7 @@
             android:minHeight="?attr/actionBarSize"
             android:title="@string/post_details_toolbar_title"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:theme="@style/AppTheme.AppBarOverlay"
-            >
+            app:theme="@style/AppTheme.AppBarOverlay">
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

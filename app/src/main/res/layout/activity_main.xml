@@ -6,7 +6,7 @@
     android:id="@+id/coordinator_layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="rajpal.karan.unstash.MainActivity">
+    tools:context=".MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -65,14 +65,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="@dimen/default_padding"
             android:text="@string/main_empty_view_no_posts_loaded_text"/>
 
         <Button
             android:id="@+id/empty_view_refresh_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="@dimen/default_padding"
             android:text="@string/main_empty_view_refresh_button_text"/>
 
     </LinearLayout>

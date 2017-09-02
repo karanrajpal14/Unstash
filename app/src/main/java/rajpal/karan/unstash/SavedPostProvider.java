@@ -17,6 +17,7 @@ public class SavedPostProvider extends ContentProvider {
 
     // post_id = ?
     public static final String postWithID = SavedPostContract.SavedPostEntry.COLUMN_POST_ID + " = ? ";
+    public static final String defaultOrder = "created_time DESC";
     // Mapping uris to functions
     static final int POSTS = 100;
     static final int POST_WITH_ID = 101;
@@ -86,7 +87,7 @@ public class SavedPostProvider extends ContentProvider {
                         selectionArgs,
                         null,
                         null,
-                        "created_time DESC"
+                        defaultOrder
                 );
                 break;
             case POST_WITH_ID:
@@ -102,7 +103,7 @@ public class SavedPostProvider extends ContentProvider {
                         selectionArgsTemp,
                         null,
                         null,
-                        "created_time DESC"
+                        defaultOrder
                 );
                 break;
             case RANDOM:
@@ -150,37 +151,6 @@ public class SavedPostProvider extends ContentProvider {
         TodoCountWidgetProvider.refreshWidgetBroadcast(getContext());
         Timber.d("Completed insertion");
         return returnUri;
-    }
-
-    @Override
-    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        Timber.d("Bulk Inserting values");
-
-        final SQLiteDatabase database = postDBHelper.getWritableDatabase();
-        final int match = URI_MATCHER.match(uri);
-        int noOfInsertedRows = 0;
-
-        switch (match) {
-            case POSTS:
-                database.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = database.insert(SavedPostContract.SavedPostEntry.TABLE_NAME, null, value);
-                        if (_id != -1)
-                            noOfInsertedRows++;
-                    }
-                    database.setTransactionSuccessful();
-                } finally {
-                    database.endTransaction();
-                }
-                break;
-            default:
-                throw new UnsupportedOperationException("Could not bull insert. Invalid uri" + uri);
-        }
-
-        getContext().getContentResolver().notifyChange(uri, null);
-        Timber.d("Completed bulk insertion");
-        return noOfInsertedRows;
     }
 
     @Override

@@ -1,19 +1,23 @@
 <resources>
-    <string name="app_name">Unstash</string>
+    <string name="app_name" translatable="false">Unstash</string>
+
+    <string name="disconnected_message">Please connect to the internet</string>
 
     <!-- Main Activity Strings -->
     <string name="main_empty_view_no_posts_loaded_text">No posts loaded. Please refresh to fetch new posts.</string>
     <string name="main_empty_view_refresh_button_text">Refresh</string>
     <string name="main_list_item_thumbnail_content_description">Thumbnail</string>
     <string name="main_toolbar_not_logged_in">Not logged in</string>
-    <string name="main_post_details_textview">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
-    <string name="main_score_detail_textview">\u25B2 %1$s</string>
+    <string name="main_post_details_textview" translatable="false">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
+    <string name="main_score_detail_textview" translatable="false">\u25B2 %1$s</string>
+    <string name="main_disconnected_toast_string">Unstash: Please connect to the internet to mark this post as \"done\"</string>
+    <string name="main_fetch_completed_snack_string">Fetch completed successfully</string>
 
     <!-- Post Detail Activity Strings -->
     <string name="post_details_toolbar_title">Details</string>
-    <string name="post_details_textview">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
-    <string name="post_details_score_detail_textview">\u25B2 %1$s</string>
-    <string name="post_details_domain_detail_textview">(%1$s)</string>
+    <string name="post_details_textview" translatable="false">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
+    <string name="post_details_score_detail_textview" translatable="false">\u25B2 %1$s</string>
+    <string name="post_details_domain_detail_textview" translatable="false">(%1$s)</string>
 
     <!-- Overflow Menu Items Strings -->
     <string name="menu_refresh_posts_string">Fetch Posts</string>

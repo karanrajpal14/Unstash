@@ -15,8 +15,8 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "REDDIT_CLIENT_ID", REDDIT_CLIENT_ID)
-        buildConfigField("String", "REDDIT_REDIRECT_URL", REDDIT_REDIRECT_URL)
+        buildConfigField("String", "REDDIT_CLIENT_ID", '\"NaP7nvfW4D721A\"')
+        buildConfigField("String", "REDDIT_REDIRECT_URL", '\"http://www.reddit.com\"')
     }
     signingConfigs {
         config {

@@ -10,11 +10,8 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
 
 import timber.log.Timber;
 
@@ -41,13 +38,6 @@ public class NotificationUtils {
         switch (action) {
             case ACTION_MARK_POST_AS_DONE:
                 Timber.d("Marked as done action");
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, "To be implemented", Toast.LENGTH_SHORT).show();
-                    }
-                });
                 clearAllCreatedNotifications(context);
                 break;
             case ACTION_DISMISS_NOTIFICATION:

@@ -31,7 +31,6 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import net.dean.jraw.RedditClient;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     final static String showDoneKey = "showDoneKey";
     final static String isSavedKey = "isSavedKey";
     final static String usernameKey = "usernameKey";
-    private final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
+
     int position = RecyclerView.NO_POSITION;
     @BindView(R.id.coordinator_layout_main)
     CoordinatorLayout mainCoordinatorLayout;
@@ -69,10 +68,6 @@ public class MainActivity extends AppCompatActivity
     RedditClient redditClient;
     @BindView(R.id.adView)
     AdView adView;
-    /*
-     * References to RecyclerView and Adapter to reset the list to its
-     * "pretty" state when the reset menu item is clicked.
-     */
     SavedPostsAdapter mAdapter;
     SharedPreferences prefs;
     private FirebaseAnalytics firebaseAnalytics;
@@ -88,12 +83,20 @@ public class MainActivity extends AppCompatActivity
                     if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_OK) {
                         mAdapter.notifyDataSetChanged();
                     } else if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_NO_NETWORK) {
-                        Toast.makeText(context, "Unstash: Please connect to the internet to mark this post as \"done\"", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                context,
+                                getString(R.string.main_disconnected_toast_string),
+                                Toast.LENGTH_SHORT
+                        ).show();
                     }
                     break;
                 case UnstashFetchService.ACTION_START_FETCH_SERVICE:
                     if (resultCode == UnstashFetchService.INTENT_EXTRA_RESULT_OK) {
-                        Snackbar.make(mainCoordinatorLayout, "Fetch completed successfully", BaseTransientBottomBar.LENGTH_LONG).show();
+                        Snackbar.make(
+                                mainCoordinatorLayout,
+                                getString(R.string.main_fetch_completed_snack_string),
+                                BaseTransientBottomBar.LENGTH_LONG
+                        ).show();
                     }
             }
         }
@@ -106,10 +109,6 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(myToolbar);
 
-        if (savedInstanceState != null) {
-            Timber.d("LEL " + savedInstanceState.getString("something"));
-        }
-
         prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putBoolean(showDoneKey, true);
@@ -119,13 +118,9 @@ public class MainActivity extends AppCompatActivity
 
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
-        firebaseAnalytics.setMinimumSessionDuration(5000);
-        firebaseAnalytics.setSessionTimeoutDuration(1000000);
 
         redditClient = AuthenticationManager.get().getRedditClient();
 
-        MobileAds.initialize(this, ADMOB_APP_ID);
         // Create an ad request. Check your logcat output for the hashed device ID to
         // get test ads on a physical device. e.g.
         // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
@@ -180,8 +175,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        final int columns = getResources().getInteger(R.integer.grid_columns);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columns);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(
+                this,
+                getResources().getInteger(R.integer.grid_columns)
+        );
         postsListRecyclerView.setLayoutManager(gridLayoutManager);
 
         postsListRecyclerView.setEmptyView(emptyView);
@@ -191,6 +188,7 @@ public class MainActivity extends AppCompatActivity
                 launchFetchService();
             }
         });
+
         mAdapter = new SavedPostsAdapter(this, this);
         postsListRecyclerView.setAdapter(mAdapter);
 
@@ -257,22 +255,30 @@ public class MainActivity extends AppCompatActivity
 
     private void refreshAccessTokenAsync() {
         Timber.d("refreshAccessTokenAsync: Refreshing");
-        new AsyncTask<Credentials, Void, Void>() {
-            @Override
-            protected Void doInBackground(Credentials... params) {
-                try {
-                    AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
-                } catch (NoSuchTokenException | OAuthException | RuntimeException e) {
-                    Timber.e("Could not refresh access token", e);
+        if (Utils.isConnected(getApplicationContext())) {
+            new AsyncTask<Credentials, Void, Void>() {
+                @Override
+                protected Void doInBackground(Credentials... params) {
+                    try {
+                        AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
+                    } catch (NoSuchTokenException | OAuthException | RuntimeException e) {
+                        Timber.e("Could not refresh access token", e);
+                    }
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void v) {
-                launchFetchService();
-            }
-        }.execute();
+                @Override
+                protected void onPostExecute(Void v) {
+                    launchFetchService();
+                }
+            }.execute();
+        } else {
+            Snackbar.make(
+                    mainCoordinatorLayout,
+                    getString(R.string.disconnected_message),
+                    BaseTransientBottomBar.LENGTH_LONG
+            ).show();
+        }
     }
 
     @Override
@@ -344,11 +350,27 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.action_refresh:
-                launchFetchService();
+                if (Utils.isConnected(getApplicationContext())) {
+                    launchFetchService();
+                } else {
+                    Snackbar.make(
+                            mainCoordinatorLayout,
+                            getString(R.string.disconnected_message),
+                            BaseTransientBottomBar.LENGTH_LONG
+                    ).show();
+                }
                 return true;
             case R.id.action_logout:
                 Timber.d("Action logout");
-                logout();
+                if (Utils.isConnected(getApplicationContext())) {
+                    logout();
+                } else {
+                    Snackbar.make(
+                            mainCoordinatorLayout,
+                            getString(R.string.disconnected_message),
+                            BaseTransientBottomBar.LENGTH_LONG
+                    ).show();
+                }
                 return true;
             case R.id.test_notification:
                 NotificationUtils.remindUserToReadSavedPost(this);

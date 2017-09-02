@@ -4,6 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
+import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.android.AndroidRedditClient;
@@ -16,9 +18,18 @@ import timber.log.Timber;
 
 public class App extends Application {
 
+    private static final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
+    private FirebaseAnalytics firebaseAnalytics;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        MobileAds.initialize(this, ADMOB_APP_ID);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        firebaseAnalytics.setMinimumSessionDuration(5000);
+        firebaseAnalytics.setSessionTimeoutDuration(1000000);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

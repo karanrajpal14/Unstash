@@ -14,10 +14,11 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@color/colorPrimaryDark"
-        android:padding="16dp"
+        android:padding="@dimen/widget_padding"
         android:textAlignment="center"
         android:textColor="@color/white"
-        tools:text="Todo: 112143"/>
+        android:textSize="@dimen/widget_text_size"
+        tools:text="Todo: 10"/>
 
     <TextView
         android:id="@+id/done_widget_textview"
@@ -25,9 +26,10 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@color/colorPrimary"
-        android:padding="16dp"
+        android:padding="@dimen/widget_padding"
         android:textAlignment="center"
         android:textColor="@color/white"
-        tools:text="Done: 112143"/>
+        android:textSize="@dimen/widget_text_size"
+        tools:text="Done: 15"/>
 
 </LinearLayout>

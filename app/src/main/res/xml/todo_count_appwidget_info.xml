@@ -2,10 +2,9 @@
 <appwidget-provider
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/widget_todo_count"
-    android:minHeight="72dp"
-    android:minWidth="146dp"
-    android:previewImage="@mipmap/ic_launcher"
-    android:resizeMode="horizontal|vertical"
+    android:minHeight="40dp"
+    android:minWidth="250dp"
+    android:previewImage="@drawable/unstash_todo_widget_preview"
+    android:resizeMode="horizontal"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen"
-    />
+    android:widgetCategory="home_screen"/>

@@ -8,4 +8,7 @@
 
     <!-- Number of columns for main activity grid -->
     <integer name="grid_columns">1</integer>
+
+    <!-- Widget Margins-->
+    <dimen name="widget_margin">0dp</dimen>
 </resources>

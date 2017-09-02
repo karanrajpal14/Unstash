@@ -62,6 +62,19 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".TodoCountWidgetProvider"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.ACTION_WIDGET_RECEIVER"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/todo_count_appwidget_info"/>
+        </receiver>
+
     </application>
 
 </manifest>

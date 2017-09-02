@@ -23,4 +23,8 @@
     <!-- Notification Channel Strings-->
     <string name="notification_channel_name">Post Reminder Channel</string>
     <string name="notification_channel_desciption">Unstash\'s daily Post Reminder Channel</string>
+
+    <!-- Widget Strings -->
+    <string name="widget_todo_string">ToDo: %1$d</string>
+    <string name="widget_done_string">Done: %1$d</string>
 </resources>

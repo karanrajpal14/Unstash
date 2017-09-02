@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     final static String sharedPrefsKey = "mainPrefs";
     final static String showDoneKey = "showDoneKey";
     final static String isSavedKey = "isSavedKey";
+    final static String usernameKey = "usernameKey";
     private final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
     int position = RecyclerView.NO_POSITION;
     @BindView(R.id.coordinator_layout_main)
@@ -104,6 +105,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(myToolbar);
+
+        if (savedInstanceState != null) {
+            Timber.d("LEL " + savedInstanceState.getString("something"));
+        }
 
         prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = prefs.edit();
@@ -210,11 +215,14 @@ public class MainActivity extends AppCompatActivity
         appTitle.setText(R.string.app_name);
         TextView username = findViewById(R.id.username_main_tv);
 
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+
         if (redditClient.isAuthenticated()) {
-            username.setText(redditClient.getAuthenticatedUser());
-        } else {
-            username.setText(R.string.main_toolbar_not_logged_in);
+            prefsEditor.putString(usernameKey, redditClient.getAuthenticatedUser());
+            prefsEditor.apply();
         }
+
+        username.setText(prefs.getString(usernameKey, getString(R.string.main_toolbar_not_logged_in)));
 
         switch (state) {
             case READY:
@@ -314,7 +322,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
         boolean status = prefs.getBoolean(showDoneKey, true);
         if (status) {
             menu.findItem(R.id.show_done).setTitle(getString(R.string.menu_show_done_string));
@@ -347,7 +354,6 @@ public class MainActivity extends AppCompatActivity
                 NotificationUtils.remindUserToReadSavedPost(this);
                 return true;
             case R.id.show_done:
-                prefs = getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 boolean status = prefs.getBoolean(showDoneKey, false);
                 if (status) {

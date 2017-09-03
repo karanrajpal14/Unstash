@@ -57,23 +57,29 @@
         android:id="@+id/posts_list_empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="?attr/actionBarSize"
         android:textAlignment="center">
 
         <TextView
-
+            android:id="@+id/empty_view_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+            android:nextFocusDown="@+id/empty_view_refresh_button"
+            android:nextFocusForward="@+id/empty_view_refresh_button"
             android:padding="@dimen/default_padding"
-            android:text="@string/main_empty_view_no_posts_loaded_text"/>
+            android:text="@string/main_empty_view_no_posts_loaded_text"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"/>
 
         <Button
             android:id="@+id/empty_view_refresh_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:nextFocusDown="@+id/adView"
+            android:nextFocusForward="@+id/adView"
+            android:nextFocusUp="@+id/empty_view_textview"
             android:padding="@dimen/default_padding"
             android:text="@string/main_empty_view_refresh_button_text"/>
 
@@ -87,6 +93,9 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="bottom"
+        android:nextFocusDown="@+id/empty_view_textview"
+        android:nextFocusForward="@id/empty_view_textview"
+        android:nextFocusUp="@+id/empty_view_refresh_button"
         ads:adSize="SMART_BANNER"
         ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
     </com.google.android.gms.ads.AdView>

@@ -134,7 +134,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
         @BindView(R.id.post_title_text_view)
         TextView titleTV;
-        @BindView(R.id.author_text_view)
+        @BindView(R.id.post_details_text_view)
         TextView postDetailsTV;
         @BindView(R.id.thumbnail_main_image_view)
         ImageView thumbnailImageView;

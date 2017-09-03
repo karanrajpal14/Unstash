@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name" translatable="false">Unstash</string>
 
+    <!-- General "disconnected from internet" message -->
     <string name="disconnected_message">Please connect to the internet</string>
+
+    <!-- Login Activity Strings -->
+    <string name="login_webview_content_description">login screen</string>
 
     <!-- Main Activity Strings -->
     <string name="main_empty_view_no_posts_loaded_text">No posts loaded. Please refresh to fetch new posts.</string>
@@ -12,6 +16,9 @@
     <string name="main_score_detail_textview" translatable="false">\u25B2 %1$s</string>
     <string name="main_disconnected_toast_string">Unstash: Please connect to the internet to mark this post as \"done\"</string>
     <string name="main_fetch_completed_snack_string">Fetch completed successfully</string>
+    <string name="main_ad_content_description">Ad</string>
+    <string name="main_done_button_content_description">Mark as done</string>
+    <string name="main_undone_button_content_description">Mark as undone</string>
 
     <!-- Post Detail Activity Strings -->
     <string name="post_details_toolbar_title">Details</string>
@@ -26,9 +33,10 @@
 
     <!-- Notification Channel Strings-->
     <string name="notification_channel_name">Post Reminder Channel</string>
-    <string name="notification_channel_desciption">Unstash\'s daily Post Reminder Channel</string>
+    <string name="notification_channel_description">Unstash\'s daily Post Reminder Channel</string>
 
     <!-- Widget Strings -->
     <string name="widget_todo_string">Todo: %1$d</string>
     <string name="widget_done_string">Done: %1$d</string>
+
 </resources>

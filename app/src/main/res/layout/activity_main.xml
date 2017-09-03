@@ -63,8 +63,10 @@
         android:textAlignment="center">
 
         <TextView
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
             android:padding="@dimen/default_padding"
             android:text="@string/main_empty_view_no_posts_loaded_text"/>
 

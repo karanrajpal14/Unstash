@@ -74,18 +74,34 @@ public class TodoCountWidgetProvider extends AppWidgetProvider {
             Timber.d("Refreshing widget on CP change");
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_todo_count);
             views = setIntents(views, context);
-            int[] counts = getCounts(context);
-            views.setTextViewText(
-                    todoWidgetTVID,
-                    context.getResources().getString(R.string.widget_todo_string, counts[0])
-            );
-            views.setTextViewText(
-                    doneWidgetTVID,
-                    context.getResources().getString(R.string.widget_done_string, counts[1])
-            );
+            views = setRemoteViews(views, context);
+
             ComponentName name = new ComponentName(context, TodoCountWidgetProvider.class);
             AppWidgetManager.getInstance(context).updateAppWidget(name, views);
         }
+    }
+
+    public RemoteViews setRemoteViews(RemoteViews views, Context context) {
+        int[] counts = getCounts(context);
+
+        views.setTextViewText(
+                todoWidgetTVID,
+                context.getResources().getString(R.string.widget_todo_string, counts[0])
+        );
+        views.setContentDescription(
+                todoWidgetTVID,
+                context.getResources().getString(R.string.widget_todo_string, counts[0])
+        );
+        views.setTextViewText(
+                doneWidgetTVID,
+                context.getResources().getString(R.string.widget_done_string, counts[1])
+        );
+        views.setContentDescription(
+                doneWidgetTVID,
+                context.getResources().getString(R.string.widget_done_string, counts[1])
+        );
+
+        return views;
     }
 
     @Override
@@ -93,17 +109,7 @@ public class TodoCountWidgetProvider extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_todo_count);
             views = setIntents(views, context);
-
-            int[] counts = getCounts(context);
-
-            views.setTextViewText(
-                    todoWidgetTVID,
-                    context.getResources().getString(R.string.widget_todo_string, counts[0])
-            );
-            views.setTextViewText(
-                    doneWidgetTVID,
-                    context.getResources().getString(R.string.widget_done_string, counts[1])
-            );
+            views = setRemoteViews(views, context);
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }

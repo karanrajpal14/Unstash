@@ -174,15 +174,23 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
 
             doneButton.setIconEnabled(isSaved != 0, true);
 
+            if (doneButton.isIconEnabled()) {
+                doneButton.setContentDescription(context.getString(R.string.main_done_button_content_description));
+            } else {
+                doneButton.setContentDescription(context.getString(R.string.main_undone_button_content_description));
+            }
+
             titleTV.setText(title);
-            postDetailsTV.setText(
-                    context.getResources().getString(
-                            R.string.post_details_textview,
-                            author,
-                            Utils.getRelativeTime(createdTime),
-                            subName
-                    )
+            titleTV.setContentDescription(title);
+
+            String postDetailsText = context.getResources().getString(
+                    R.string.post_details_textview,
+                    author,
+                    Utils.getRelativeTime(createdTime),
+                    subName
             );
+            postDetailsTV.setText(postDetailsText);
+            postDetailsTV.setContentDescription(postDetailsText);
 
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.ic_action_cloud_download);

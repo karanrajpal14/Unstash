@@ -75,17 +75,26 @@ public class PostDetailActivity extends AppCompatActivity {
         String url = clickedPostCursor.getString(INDEX_URL);
         String score = String.valueOf(clickedPostCursor.getInt(INDEX_SCORE));
 
-        titleDetailTv.setText(title);
-        postDetailsTv.setText(
-                getResources().getString(R.string.post_details_textview,
-                        author,
-                        createdTime,
-                        subName
-                )
+        String postDetailsText = getResources().getString(
+                R.string.post_details_textview,
+                author,
+                createdTime,
+                subName
         );
-        domainDetailTv.setText(getResources().getString(R.string.post_details_domain_detail_textview, domain));
+
+        String domainText = getResources().getString(R.string.post_details_domain_detail_textview, domain);
+        String scoreDetailText = getResources().getString(R.string.post_details_score_detail_textview, score);
+
+        titleDetailTv.setText(title);
+        titleDetailTv.setContentDescription(title);
+        postDetailsTv.setText(postDetailsText);
+        postDetailsTv.setContentDescription(postDetailsText);
+        domainDetailTv.setText(domainText);
+        domainDetailTv.setContentDescription(domainText);
         wordToSpan.setLink(url, urlDetailTv);
-        scoreDetailTv.setText(getResources().getString(R.string.post_details_score_detail_textview, score));
+        urlDetailTv.setContentDescription(url);
+        scoreDetailTv.setText(scoreDetailText);
+        scoreDetailTv.setContentDescription(scoreDetailText);
 
         wordToSpan.setClickListener(new WordToSpan.ClickListener() {
             @Override

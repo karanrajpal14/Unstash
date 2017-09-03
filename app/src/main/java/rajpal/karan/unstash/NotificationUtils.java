@@ -133,7 +133,7 @@ public class NotificationUtils {
 
             final String NOTIFICATION_CHANNEL_ID = "UnstashPostReminderChannel";
             final CharSequence NOTIFICATION_CHANNEL_NAME = context.getString(R.string.notification_channel_name);
-            final String NOTIFICATION_CHANNEL_DESCRIPTION = context.getString(R.string.notification_channel_desciption);
+            final String NOTIFICATION_CHANNEL_DESCRIPTION = context.getString(R.string.notification_channel_description);
 
             int NOTIFICATION_CHANNEL_IMPORTANCE = 0;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {

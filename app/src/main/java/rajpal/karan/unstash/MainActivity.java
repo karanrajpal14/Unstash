@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("ABCDEF012345")
                 .build();
+        adView.setContentDescription(getString(R.string.main_ad_content_description));
         adView.loadAd(adRequest);
         adView.setAdListener(new AdListener() {
             @Override
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity
                 launchFetchService();
             }
         });
+        refreshButton.setContentDescription(getString(R.string.main_empty_view_refresh_button_text));
 
         mAdapter = new SavedPostsAdapter(this, this);
         postsListRecyclerView.setAdapter(mAdapter);
@@ -211,6 +213,7 @@ public class MainActivity extends AppCompatActivity
 
         TextView appTitle = findViewById(R.id.app_title_main_tv);
         appTitle.setText(R.string.app_name);
+        appTitle.setContentDescription(getString(R.string.app_name));
         TextView username = findViewById(R.id.username_main_tv);
 
         SharedPreferences.Editor prefsEditor = prefs.edit();
@@ -220,7 +223,9 @@ public class MainActivity extends AppCompatActivity
             prefsEditor.apply();
         }
 
-        username.setText(prefs.getString(usernameKey, getString(R.string.main_toolbar_not_logged_in)));
+        String usernameText = prefs.getString(usernameKey, getString(R.string.main_toolbar_not_logged_in));
+        username.setText(usernameText);
+        username.setContentDescription(usernameText);
 
         switch (state) {
             case READY:
@@ -300,7 +305,6 @@ public class MainActivity extends AppCompatActivity
         }
         switch (id) {
             case MAIN_LOADER_ID:
-
                 return new CursorLoader(
                         this,
                         SavedPostContract.SavedPostEntry.CONTENT_URI,

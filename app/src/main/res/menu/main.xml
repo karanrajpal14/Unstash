@@ -19,4 +19,7 @@
         android:id="@+id/show_done"
         android:title="@string/menu_show_done_string"/>
 
+    <item
+        android:id="@+id/action_settings"
+        android:title="Settings"/>
 </menu>

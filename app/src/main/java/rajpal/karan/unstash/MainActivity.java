@@ -405,6 +405,9 @@ public class MainActivity extends AppCompatActivity
                     Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
                     invalidateOptionsMenu();
                 }
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

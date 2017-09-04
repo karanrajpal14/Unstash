@@ -69,6 +69,9 @@
                 android:resource="@xml/todo_count_appwidget_info"/>
         </receiver>
 
+        <activity android:name=".SettingsActivity"
+                  android:parentActivityName=".MainActivity"/>
+
     </application>
 
 </manifest>

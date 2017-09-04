@@ -32,7 +32,7 @@ ext {
     minSdkVersion = 21
     targetSdkVersion = 26
 
-    supportLibraryVersion = '26.0.0'
+    supportLibraryVersion = '26.0.2'
     constraintLayoutVersion = '1.0.2'
     JRAWVersion = '0.9.0'
     butterKnifeVersion = '8.8.1'

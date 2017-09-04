@@ -1,9 +1,11 @@
 package rajpal.karan.unstash;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.v7.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
 import com.firebase.jobdispatcher.Constraint;
@@ -36,9 +38,14 @@ public class Utils {
         );
     }
 
-    private static void getTime() {
+    private static void getTime(Context context) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        String notifPrefKey = context.getString(R.string.pref_notification_frequency_key);
+        String notifPrefDefaultValue = context.getString(R.string.pref_notification_frequency_default_value);
+        int noOfDays = Integer.valueOf(settings.getString(notifPrefKey, notifPrefDefaultValue));
+        Timber.d("getTime: 46 - " + noOfDays);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.DAY_OF_MONTH, noOfDays);
         calendar.set(Calendar.HOUR_OF_DAY, 9);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -51,9 +58,11 @@ public class Utils {
 
     synchronized public static void scheduleReadPostReminder(@NonNull final Context context) {
 
-        if (initialized) return;
+        Timber.d("scheduleReadPostReminder: 54 - Scheduled");
 
-        getTime();
+//        if (initialized) return;
+
+        getTime(context);
         if (REMINDER_INTERVAL_SECONDS < 0) {
             REMINDER_INTERVAL_SECONDS = (int) TimeUnit.MINUTES.toSeconds(60);
         }

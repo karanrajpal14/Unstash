@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_notification_title_category">
+        <ListPreference
+            android:defaultValue="@string/pref_notification_frequency_default_value"
+            android:dialogTitle="@string/pref_notification_frequency_title_list"
+            android:enabled="true"
+            android:entries="@array/frequency_names_array"
+            android:entryValues="@array/frequency_values_array"
+            android:key="@string/pref_notification_frequency_key"
+            android:summary="@string/pref_notification_summary_list"
+            android:title="@string/pref_notification_frequency_title_list"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="frequency_names_array">
+        <item>Every Day</item>
+        <item>Every Two Days</item>
+        <item>Every Week</item>
+    </string-array>
+
+    <string-array name="frequency_values_array">
+        <item>1</item>
+        <item>2</item>
+        <item>7</item>
+    </string-array>
+</resources>

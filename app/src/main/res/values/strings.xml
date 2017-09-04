@@ -39,4 +39,11 @@
     <string name="widget_todo_string">Todo: %1$d</string>
     <string name="widget_done_string">Done: %1$d</string>
 
+    <!-- Preferences Strings -->
+    <string name="pref_notification_title_category">Notifications</string>
+    <string name="pref_notification_frequency_title_list">Frequency</string>
+    <string name="pref_notification_frequency_key">pref_notificationFrequency</string>
+    <string name="pref_notification_frequency_default_value">1</string>
+    <string name="pref_notification_summary_list">Select the frequency of reminder notifications</string>
+
 </resources>

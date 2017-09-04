@@ -78,6 +78,7 @@ dependencies {
     compile "com.github.bachors:Android-WordToSpan:$rootProject.wordToSpanVersion"
     compile "com.google.firebase:firebase-ads:$rootProject.googlePlayServicesVersion"
     compile "com.google.firebase:firebase-core:$rootProject.googlePlayServicesVersion"
+    compile "com.android.support:preference-v14:$rootProject.supportLibraryVersion"
 
     testCompile 'junit:junit:4.12'
 }

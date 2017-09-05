@@ -1,6 +1,5 @@
 package rajpal.karan.unstash;
 
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +45,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
-                Utils.scheduleReadPostReminder(preference.getContext());
+                Utils.scheduleReadPostReminder(preference.getContext(), stringValue);
 
                 // Set the summary to reflect the new value.
                 preference.setSummary(

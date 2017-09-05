@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
@@ -27,7 +28,7 @@ public class Utils {
     private static final int SYNC_FLEXTIME_SECONDS = 60;
     private static final String REMINDER_JOB_TAG = "read_post_reminder_tag";
     private static int REMINDER_INTERVAL_SECONDS;
-    private static boolean initialized;
+    private static String value;
 
     public static String getRelativeTime(long createdTime) {
         return (String) DateUtils.getRelativeTimeSpanString(
@@ -38,11 +39,8 @@ public class Utils {
         );
     }
 
-    private static void getTime(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        String notifPrefKey = context.getString(R.string.pref_notification_frequency_key);
-        String notifPrefDefaultValue = context.getString(R.string.pref_notification_frequency_default_value);
-        int noOfDays = Integer.valueOf(settings.getString(notifPrefKey, notifPrefDefaultValue));
+    private static void getTime(String value) {
+        int noOfDays = Integer.valueOf(value);
         Timber.d("getTime: 46 - " + noOfDays);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, noOfDays);
@@ -52,17 +50,28 @@ public class Utils {
         calendar.set(Calendar.MILLISECOND, 0);
         long tomorrowEpoch = calendar.getTimeInMillis();
         long secondsLeft = (tomorrowEpoch - System.currentTimeMillis());
-        Timber.d("Job scheduled for " + getRelativeTime(tomorrowEpoch));
+        Timber.d("Job scheduled " + getRelativeTime(tomorrowEpoch));
         REMINDER_INTERVAL_SECONDS = (int) TimeUnit.MILLISECONDS.toSeconds(secondsLeft);
     }
 
-    synchronized public static void scheduleReadPostReminder(@NonNull final Context context) {
+    synchronized public static void scheduleReadPostReminder(@NonNull final Context context, @Nullable String value) {
 
-        Timber.d("scheduleReadPostReminder: 54 - Scheduled");
+        Timber.d("scheduleReadPostReminder: 54 - Scheduling");
 
-//        if (initialized) return;
+        if (value == null) {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+            value = settings.getString(context.getString(R.string.pref_notification_frequency_key), "1");
+            Timber.d("scheduleReadPostReminder: 71 - Null, fetched value from sharedprefs " + value);
+        }
 
-        getTime(context);
+        if (value.equals(Utils.value)) {
+            Timber.d("scheduleReadPostReminder: 63 - Already initialized");
+            return;
+        }
+
+        Timber.d("scheduleReadPostReminder: 69 - Value is: " + value);
+        getTime(value);
+
         if (REMINDER_INTERVAL_SECONDS < 0) {
             REMINDER_INTERVAL_SECONDS = (int) TimeUnit.MINUTES.toSeconds(60);
         }
@@ -83,7 +92,8 @@ public class Utils {
                 .build();
 
         dispatcher.schedule(constrainedReminderJob);
-        initialized = true;
+
+        Utils.value = value;
     }
 
     public static boolean isConnected(Context context) {

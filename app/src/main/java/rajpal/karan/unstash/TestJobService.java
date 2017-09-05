@@ -16,7 +16,7 @@ public class TestJobService extends JobService {
         Timber.d("Starting JobService");
         Intent service = new Intent(getApplicationContext(), UnstashFetchService.class);
         getApplicationContext().startService(service);
-        Utils.scheduleReadPostReminder(getApplicationContext()); // reschedule the job
+        Utils.scheduleReadPostReminder(getApplicationContext(), null); // reschedule the job
         NotificationUtils.executeTask(this, UnstashFetchService.ACTION_READ_POST_REMINDER);
         jobFinished(jobParameters, false);
         return true;

@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         prefsEditor.putBoolean(showDoneKey, true);
         prefsEditor.apply();
 
-        Utils.scheduleReadPostReminder(this);
+        Utils.scheduleReadPostReminder(this, null);
 
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);

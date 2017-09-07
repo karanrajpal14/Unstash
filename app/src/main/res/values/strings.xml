@@ -46,4 +46,10 @@
     <string name="pref_notification_frequency_default_value">1</string>
     <string name="pref_notification_summary_list">Select the frequency of reminder notifications</string>
 
+    <string name="pref_notification_time_key">pref_notificationTime</string>
+    <string name="pref_notification_time_hour_of_day_key">pref_notificationTimeHoD</string>
+    <string name="pref_notification_time_minute_key">pref_notificationTimeM</string>
+    <string name="pref_notification_time_title">Time</string>
+    <string name="pref_notification_time_summary">What time would you like to receiver the reminder notification?</string>
+
 </resources>

@@ -33,9 +33,11 @@ android {
             signingConfig signingConfigs.config
             zipAlignEnabled true
             debuggable false
+            multiDexEnabled true
         }
         debug {
             applicationIdSuffix ".debug"
+            multiDexEnabled true
         }
     }
 
@@ -79,6 +81,7 @@ dependencies {
     compile "com.google.firebase:firebase-ads:$rootProject.googlePlayServicesVersion"
     compile "com.google.firebase:firebase-core:$rootProject.googlePlayServicesVersion"
     compile "com.android.support:preference-v14:$rootProject.supportLibraryVersion"
+    compile "com.wdullaer:materialdatetimepicker:$rootProject.materialDatePickerVersion"
 
     testCompile 'junit:junit:4.12'
 }

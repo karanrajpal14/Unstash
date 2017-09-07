@@ -114,7 +114,11 @@ public class MainActivity extends AppCompatActivity
         prefsEditor.putBoolean(showDoneKey, true);
         prefsEditor.apply();
 
-        Utils.scheduleReadPostReminder(this, null);
+        Timber.d("onCreate: 117 - " + prefs.contains(getString(R.string.pref_notification_time_key)));
+        Timber.d("onCreate: 117 - " + prefs.contains(getString(R.string.pref_notification_time_hour_of_day_key)));
+        Timber.d("onCreate: 117 - " + prefs.contains(getString(R.string.pref_notification_time_minute_key)));
+
+        Utils.scheduleReadPostReminder(this, null, -1, -1);
 
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -405,6 +409,7 @@ public class MainActivity extends AppCompatActivity
                     Timber.d(String.valueOf(prefs.getBoolean(showDoneKey, false)));
                     invalidateOptionsMenu();
                 }
+                return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;

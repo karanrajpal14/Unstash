@@ -3,6 +3,7 @@ package rajpal.karan.unstash;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,9 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
+import java.util.Calendar;
 import java.util.List;
 
 import timber.log.Timber;
@@ -45,7 +49,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
-                Utils.scheduleReadPostReminder(preference.getContext(), stringValue);
+                Utils.scheduleReadPostReminder(preference.getContext(), stringValue, -1, -1);
 
                 // Set the summary to reflect the new value.
                 preference.setSummary(
@@ -140,13 +144,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class NotificationPreferenceFragment extends PreferenceFragment {
+    public static class NotificationPreferenceFragment extends PreferenceFragment implements TimePickerDialog.OnTimeSetListener {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
 
+            Preference timePicker = findPreference(getString(R.string.pref_notification_time_key));
+            timePicker.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    showTimePickerDialog();
+                    return true;
+                }
+            });
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
@@ -163,6 +175,29 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
             return super.onOptionsItemSelected(item);
+        }
+
+        public void showTimePickerDialog() {
+            Calendar now = Calendar.getInstance();
+            TimePickerDialog timePickerDialog =
+                    TimePickerDialog.newInstance(
+                            NotificationPreferenceFragment.this,
+                            now.get(Calendar.HOUR_OF_DAY),
+                            now.get(Calendar.MINUTE),
+                            false
+                    );
+            timePickerDialog.dismissOnPause(true);
+            timePickerDialog.show(getFragmentManager(), "TimePickerDialog");
+        }
+
+        @Override
+        public void onTimeSet(TimePickerDialog timePickerDialog, int hourOfDay, int minute, int second) {
+            Timber.d( hourOfDay + " " + minute + " " + second);
+            SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
+            editor.putString(getString(R.string.pref_notification_time_hour_of_day_key), String.valueOf(hourOfDay));
+            editor.putString(getString(R.string.pref_notification_time_minute_key), String.valueOf(minute));
+            editor.apply();
+            Utils.scheduleReadPostReminder(getActivity(), null, hourOfDay, second);
         }
     }
 }

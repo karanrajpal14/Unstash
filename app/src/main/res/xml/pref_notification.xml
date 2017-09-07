@@ -11,6 +11,11 @@
             android:key="@string/pref_notification_frequency_key"
             android:summary="@string/pref_notification_summary_list"
             android:title="@string/pref_notification_frequency_title_list"/>
+
+        <Preference
+            android:key="@string/pref_notification_time_key"
+            android:summary="@string/pref_notification_time_summary"
+            android:title="@string/pref_notification_time_title"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

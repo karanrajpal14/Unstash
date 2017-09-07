@@ -32,7 +32,7 @@ ext {
     minSdkVersion = 21
     targetSdkVersion = 26
 
-    supportLibraryVersion = '26.0.2'
+    supportLibraryVersion = '26.0.1'
     constraintLayoutVersion = '1.0.2'
     JRAWVersion = '0.9.0'
     butterKnifeVersion = '8.8.1'
@@ -44,5 +44,6 @@ ext {
     firebaseJobDispatcherVersion = '0.8.0'
     wordToSpanVersion = '2.0'
     googlePlayServicesVersion = '11.2.0'
+    materialDatePickerVersion = '3.3.0'
 
 }

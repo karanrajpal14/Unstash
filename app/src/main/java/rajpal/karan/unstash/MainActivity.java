@@ -1,5 +1,6 @@
 package rajpal.karan.unstash;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
@@ -23,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -370,15 +371,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.action_logout:
                 Timber.d("Action logout");
-                if (Utils.isConnected(getApplicationContext())) {
-                    logout();
-                } else {
-                    Snackbar.make(
-                            mainCoordinatorLayout,
-                            getString(R.string.disconnected_message),
-                            BaseTransientBottomBar.LENGTH_LONG
-                    ).show();
-                }
+                logout();
                 return true;
             case R.id.test_notification:
                 NotificationUtils.remindUserToReadSavedPost(this);
@@ -418,18 +411,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logout() {
-        new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                Timber.d("logging out");
-                redditClient.getOAuthHelper().revokeAccessToken(LoginActivity.CREDENTIALS);
-                redditClient.deauthenticate();
-                CookieManager.getInstance().removeAllCookies(null);
-                return redditClient.isAuthenticated();
-            }
-
-        }.execute();
-
+        if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+            ((ActivityManager) getApplicationContext().getSystemService(ACTIVITY_SERVICE))
+                    .clearApplicationUserData();
+        }
     }
 
     public void launchFetchService() {

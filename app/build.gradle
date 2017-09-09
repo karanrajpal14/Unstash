@@ -82,6 +82,8 @@ dependencies {
     compile "com.google.firebase:firebase-core:$rootProject.googlePlayServicesVersion"
     compile "com.android.support:preference-v14:$rootProject.supportLibraryVersion"
     compile "com.wdullaer:materialdatetimepicker:$rootProject.materialDatePickerVersion"
+    compile 'io.reactivex.rxjava2:rxjava:2.0.3'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     testCompile 'junit:junit:4.12'
 }

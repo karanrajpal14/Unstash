@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -37,24 +37,28 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.auth.AuthenticationState;
-import net.dean.jraw.auth.NoSuchTokenException;
+import net.dean.jraw.auth.RefreshTokenHandler;
+import net.dean.jraw.auth.TokenStore;
+import net.dean.jraw.http.UserAgent;
 import net.dean.jraw.http.oauth.Credentials;
-import net.dean.jraw.http.oauth.OAuthException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
         implements SavedPostsAdapter.ListItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final int REQUEST_CODE = 1;
     static final int MAIN_LOADER_ID = 0;
     final static String sharedPrefsKey = "mainPrefs";
     final static String showDoneKey = "showDoneKey";
     final static String isSavedKey = "isSavedKey";
     final static String usernameKey = "usernameKey";
-
     int position = RecyclerView.NO_POSITION;
     @BindView(R.id.coordinator_layout_main)
     CoordinatorLayout mainCoordinatorLayout;
@@ -72,6 +76,12 @@ public class MainActivity extends AppCompatActivity
     SavedPostsAdapter mAdapter;
     SharedPreferences prefs;
     private FirebaseAnalytics firebaseAnalytics;
+    private String platform = "android";
+    private String packageName = MainActivity.class.getPackage().getName();
+    private String version = BuildConfig.VERSION_NAME;
+    private String redditAppDevUsername = "artemis73";
+    private CompositeDisposable disposables = new CompositeDisposable();
+
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,16 +125,19 @@ public class MainActivity extends AppCompatActivity
         prefsEditor.putBoolean(showDoneKey, true);
         prefsEditor.apply();
 
-        Timber.d("onCreate: 117 - " + prefs.contains(getString(R.string.pref_notification_time_key)));
-        Timber.d("onCreate: 117 - " + prefs.contains(getString(R.string.pref_notification_time_hour_of_day_key)));
-        Timber.d("onCreate: 117 - " + prefs.contains(getString(R.string.pref_notification_time_minute_key)));
-
         Utils.scheduleReadPostReminder(this, null, -1, -1);
 
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        redditClient = AuthenticationManager.get().getRedditClient();
+        redditClient = new RedditClient(UserAgent.of(platform,
+                packageName, version, redditAppDevUsername));
+        TokenStore store = new AndroidTokenStore(
+                PreferenceManager.getDefaultSharedPreferences(this));
+        RefreshTokenHandler refreshTokenHandler = new RefreshTokenHandler(store, redditClient);
+
+        AuthenticationManager manager = AuthenticationManager.get();
+        manager.init(redditClient, refreshTokenHandler);
 
         // Create an ad request. Check your logcat output for the hashed device ID to
         // get test ads on a physical device. e.g.
@@ -205,21 +218,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AuthenticationState state = AuthenticationManager.get().checkAuthState();
-        Timber.d("AuthenticationState for onResume(): " + state);
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UnstashFetchService.ACTION_START_FETCH_SERVICE);
-        filter.addAction(UnstashFetchService.ACTION_MARK_POST_AS_DONE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(UnstashFetchReceiver, filter);
-
+    private void updateUsername() {
         TextView appTitle = findViewById(R.id.app_title_main_tv);
         appTitle.setText(R.string.app_name);
         appTitle.setContentDescription(getString(R.string.app_name));
-        TextView username = findViewById(R.id.username_main_tv);
+        TextView usernameTV = findViewById(R.id.username_main_tv);
 
         SharedPreferences.Editor prefsEditor = prefs.edit();
 
@@ -229,8 +232,78 @@ public class MainActivity extends AppCompatActivity
         }
 
         String usernameText = prefs.getString(usernameKey, getString(R.string.main_toolbar_not_logged_in));
-        username.setText(usernameText);
-        username.setContentDescription(usernameText);
+        usernameTV.setText(usernameText);
+        usernameTV.setContentDescription(usernameText);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            Credentials credentials = ((App) getApplication())
+                    .getInstalledAppCredentials();
+
+            disposables.add(RedditService.userAuthentication(
+                    AuthenticationManager.get().getRedditClient(),
+                    credentials,
+                    data.getStringExtra("RESULT_URL"))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableCompletableObserver() {
+                        @Override
+                        public void onComplete() {
+                            String username = AuthenticationManager.get().getRedditClient()
+                                    .getAuthenticatedUser();
+                            Toast.makeText(MainActivity.this, "Logged in as " + username,
+                                    Toast.LENGTH_SHORT).show();
+                            updateUsername();
+                            launchFetchService();
+                            adView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(MainActivity.this, "Something went wrong",
+                                    Toast.LENGTH_SHORT).show();
+                            adView.setVisibility(View.GONE);
+                            Snackbar.make(
+                                    mainCoordinatorLayout,
+                                    "Please login to continue",
+                                    Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Login", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                            startActivityForResult(intent, REQUEST_CODE);
+                                        }
+                                    })
+                                    .show();
+                        }
+                    })
+            );
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AuthenticationState state = AuthenticationManager.get().checkAuthState();
+        Timber.d("AuthenticationState for onResume(): " + state);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UnstashFetchService.ACTION_START_FETCH_SERVICE);
+        filter.addAction(UnstashFetchService.ACTION_MARK_POST_AS_DONE);
+
+        Toast.makeText(this, "Auth state " + state, Toast.LENGTH_SHORT).show();
+
+        updateUsername();
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(UnstashFetchReceiver, filter);
 
         switch (state) {
             case READY:
@@ -246,13 +319,14 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Login", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                startActivityForResult(intent, REQUEST_CODE);
                             }
                         })
                         .show();
                 break;
             case NEED_REFRESH:
-                refreshAccessTokenAsync();
+                refreshToken();
                 break;
         }
     }
@@ -263,31 +337,30 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).unregisterReceiver(UnstashFetchReceiver);
     }
 
-    private void refreshAccessTokenAsync() {
-        Timber.d("refreshAccessTokenAsync: Refreshing");
-        if (Utils.isConnected(getApplicationContext())) {
-            new AsyncTask<Credentials, Void, Void>() {
-                @Override
-                protected Void doInBackground(Credentials... params) {
-                    try {
-                        AuthenticationManager.get().refreshAccessToken(LoginActivity.CREDENTIALS);
-                    } catch (NoSuchTokenException | OAuthException | RuntimeException e) {
-                        Timber.e("Could not refresh access token", e);
-                    }
-                    return null;
-                }
+    private void refreshToken() {
+        if (!AuthenticationManager.get().getRedditClient().hasActiveUserContext()) {
+            Toast.makeText(MainActivity.this, "No need to refresh userless auth tokens",
+                    Toast.LENGTH_SHORT).show();
+        } else if (!AuthenticationManager.get().getRedditClient().isAuthenticated()) {
+            Credentials credentials = ((App) getApplicationContext())
+                    .getInstalledAppCredentials();
+            disposables.add(RedditService.refreshToken(credentials)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableCompletableObserver() {
+                        @Override
+                        public void onComplete() {
+                            Toast.makeText(MainActivity.this, "Token refreshed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
 
-                @Override
-                protected void onPostExecute(Void v) {
-                    launchFetchService();
-                }
-            }.execute();
-        } else {
-            Snackbar.make(
-                    mainCoordinatorLayout,
-                    getString(R.string.disconnected_message),
-                    BaseTransientBottomBar.LENGTH_LONG
-            ).show();
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(MainActivity.this, "Something went wrong",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    })
+            );
         }
     }
 

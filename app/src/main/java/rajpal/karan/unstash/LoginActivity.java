@@ -1,79 +1,87 @@
 package rajpal.karan.unstash;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import net.dean.jraw.auth.AuthenticationManager;
-import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.http.oauth.Credentials;
-import net.dean.jraw.http.oauth.OAuthData;
-import net.dean.jraw.http.oauth.OAuthException;
 import net.dean.jraw.http.oauth.OAuthHelper;
 
 import java.net.URL;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class LoginActivity extends AppCompatActivity {
 
-    public static final Credentials CREDENTIALS = Credentials.installedApp(
-            BuildConfig.REDDIT_CLIENT_ID, BuildConfig.REDDIT_REDIRECT_URL
-    );
+    @BindView(R.id.webview)
+    WebView webView;
+    @BindView(R.id.login_toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
 
-        // Create our RedditClient
-        final OAuthHelper helper = AuthenticationManager.get().getRedditClient().getOAuthHelper();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setTitle("Log in to Reddit");
+        }
 
-        // OAuth2 scopes to request. See https://www.reddit.com/dev/api/oauth for a full list
-        String[] scopes = {"identity", "read", "edit", "flair", "history", "save", "vote"};
-
-        final URL authorizationUrl = helper.getAuthorizationUrl(CREDENTIALS, true, true, scopes);
-        final WebView webView = findViewById(R.id.webview);
-        // Load the authorization URL into the browser
-        webView.loadUrl(authorizationUrl.toExternalForm());
         webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 if (url.contains("code=")) {
-                    // We've detected the redirect URL
-                    onUserChallenge(url);
+                    webView.stopLoading();
+                    setResult(RESULT_OK, new Intent().putExtra("RESULT_URL", url));
+                    finish();
                 } else if (url.contains("error=")) {
-                    Toast.makeText(LoginActivity.this, "You must press 'allow' to log in with this account", Toast.LENGTH_SHORT).show();
-                    webView.loadUrl(authorizationUrl.toExternalForm());
+                    Toast.makeText(LoginActivity.this, "You must click on allow to complete the sign-in process", Toast.LENGTH_SHORT).show();
+                    webView.loadUrl(getAuthorizationUrl().toExternalForm());
                 }
             }
         });
-
+        webView.loadUrl(getAuthorizationUrl().toExternalForm());
     }
 
-    private void onUserChallenge(final String url) {
-        new AsyncTask<String, Void, String>() {
-            @Override
-            protected String doInBackground(String... params) {
-                try {
-                    OAuthData data = AuthenticationManager.get().getRedditClient().getOAuthHelper().onUserChallenge(params[0], LoginActivity.CREDENTIALS);
-                    AuthenticationManager.get().getRedditClient().authenticate(data);
-                    return AuthenticationManager.get().getRedditClient().getAuthenticatedUser();
-                } catch (NetworkException | OAuthException e) {
-                    Log.e(MainActivity.TAG, "Could not log in", e);
-                    return null;
-                }
-            }
+    private URL getAuthorizationUrl() {
+        OAuthHelper oAuthHelper = AuthenticationManager.get().getRedditClient().getOAuthHelper();
+        Credentials credentials = ((App) getApplication()).getInstalledAppCredentials();
+        // OAuth2 scopes to request. See https://www.reddit.com/dev/api/oauth for a full list
+        String[] scopes = {"identity", "edit", "flair", "read", "vote",
+                "submit", "history", "save"};
+        return oAuthHelper.getAuthorizationUrl(credentials, true, true, scopes);
+    }
 
-            @Override
-            protected void onPostExecute(String s) {
-                Log.i(MainActivity.TAG, s);
-                LoginActivity.this.finish();
-            }
-        }.execute(url);
+    @Override
+    protected void onDestroy() {
+        webView.destroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

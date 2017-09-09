@@ -71,7 +71,7 @@
             android:nextFocusForward="@+id/empty_view_refresh_button"
             android:padding="@dimen/default_padding"
             android:text="@string/main_empty_view_no_posts_loaded_text"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"/>
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
 
         <Button
             android:id="@+id/empty_view_refresh_button"

@@ -185,19 +185,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int itemId = item.getItemId();
             switch (itemId) {
                 case android.R.id.home:
-                    Timber.d("onOptionsItemSelected: 216 - Fragment");
-                    moveToSettingsActivity();
+                    Intent i = new Intent(getActivity(), SettingsActivity.class);
+                    startActivity(i);
+                    getActivity().overridePendingTransition(0, 0);
                     return true;
             }
             return false;
-        }
-
-        private void moveToSettingsActivity() {
-            Timber.d("moveToNewActivity: 158 - move inside activity");
-            Intent i = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(i);
-            getActivity().overridePendingTransition(0, 0);
-
         }
 
         public void showTimePickerDialog() {

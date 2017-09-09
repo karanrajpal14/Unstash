@@ -57,7 +57,7 @@ public class Utils {
         REMINDER_INTERVAL_SECONDS = (int) TimeUnit.MILLISECONDS.toSeconds(secondsLeft);
     }
 
-    synchronized public static void scheduleReadPostReminder(@NonNull final Context context, @Nullable String value, int hourOfDay, int  minute) {
+    synchronized public static void scheduleReadPostReminder(@NonNull final Context context, @Nullable String value, int hourOfDay, int minute) {
 
         Timber.d("scheduleReadPostReminder: 54 - Scheduling");
 

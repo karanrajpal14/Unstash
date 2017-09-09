@@ -34,6 +34,7 @@ import timber.log.Timber;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -140,6 +141,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case android.R.id.home:
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
+                return false;
+        }
+        return false;
+    }
+
     /**
      * This fragment shows notification preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -169,13 +182,22 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            Timber.d("onOptionsItemSelected: 157 - " + id);
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), MainActivity.class));
-                return true;
+            int itemId = item.getItemId();
+            switch (itemId) {
+                case android.R.id.home:
+                    Timber.d("onOptionsItemSelected: 216 - Fragment");
+                    moveToSettingsActivity();
+                    return true;
             }
-            return super.onOptionsItemSelected(item);
+            return false;
+        }
+
+        private void moveToSettingsActivity() {
+            Timber.d("moveToNewActivity: 158 - move inside activity");
+            Intent i = new Intent(getActivity(), SettingsActivity.class);
+            startActivity(i);
+            getActivity().overridePendingTransition(0, 0);
+
         }
 
         public void showTimePickerDialog() {
@@ -193,7 +215,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public void onTimeSet(TimePickerDialog timePickerDialog, int hourOfDay, int minute, int second) {
-            Timber.d( hourOfDay + " " + minute + " " + second);
+            Timber.d(hourOfDay + " " + minute + " " + second);
             SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
             editor.putString(getString(R.string.pref_notification_time_hour_of_day_key), String.valueOf(hourOfDay));
             editor.putString(getString(R.string.pref_notification_time_minute_key), String.valueOf(minute));

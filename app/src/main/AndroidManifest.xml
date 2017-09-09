@@ -10,12 +10,12 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="true">
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="net.dean.jraw.REDDIT_USERNAME"
             android:value="artemis73"/>
@@ -69,10 +69,9 @@
                 android:resource="@xml/todo_count_appwidget_info"/>
         </receiver>
 
-        <activity android:name=".SettingsActivity"
-                  android:theme="@style/SettingsTheme">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                       android:value=".MainActivity"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/SettingsTheme">
         </activity>
 
     </application>

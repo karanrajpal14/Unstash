@@ -5,21 +5,32 @@
     <string name="disconnected_message">Please connect to the internet</string>
 
     <!-- Login Activity Strings -->
-    <string name="login_webview_content_description">login screen</string>
+    <string name="signin_webview_content_description">reddit sign in screen</string>
+    <string name="signin_toolbar_title">Sign-in to Reddit</string>
+    <string name="signin_click_allow_error_toast">You must click on allow to complete the sign-in process</string>
 
     <!-- Main Activity Strings -->
     <string name="main_empty_view_box_content_description">No posts loaded. Please refresh to fetch new posts.</string>
     <string name="main_empty_view_no_posts_loaded_text">No posts loaded. Please refresh to fetch new posts.</string>
     <string name="main_empty_view_refresh_button_text">Refresh</string>
     <string name="main_list_item_thumbnail_content_description">Thumbnail</string>
-    <string name="main_toolbar_not_logged_in">Not logged in</string>
+    <string name="main_toolbar_not_logged_in">Not signed in</string>
     <string name="main_post_details_textview" translatable="false">/u/%1$s \u25CF %2$s \u25CF /r/%3$s</string>
-    <string name="main_score_detail_textview" translatable="false">\u25B2 %1$s</string>
     <string name="main_disconnected_toast_string">Unstash: Please connect to the internet to mark this post as \"done\"</string>
-    <string name="main_fetch_completed_snack_string">Fetch completed successfully</string>
+    <string name="main_fetch_completed_snack_string">All posts fetched successfully</string>
     <string name="main_ad_content_description">Ad</string>
     <string name="main_done_button_content_description">Mark as done</string>
     <string name="main_undone_button_content_description">Mark as undone</string>
+    <string name="main_signed_in_as_user_placeholder_snack">Signed in as %1$s</string>
+    <string name="main_sign_in_to_continue_snack">Please sign-in to continue</string>
+    <string name="main_sign_in_snack_action">Sign-in</string>
+    <string name="main_sign_in_something_wrong_toast">Something went wrong, please try again</string>
+    <string name="main_loader_not_implemented_exception">Loader with id = %1$d not implemented</string>
+
+    <!-- Notification Utils Strings -->
+    <string name="notification_done_action">Done</string>
+    <string name="notification_dismiss_action">Dismiss</string>
+    <string name="notification_content_title">Let\'s read something new. Shall we?</string>
 
     <!-- Post Detail Activity Strings -->
     <string name="post_details_toolbar_title">Details</string>
@@ -29,8 +40,10 @@
 
     <!-- Overflow Menu Items Strings -->
     <string name="menu_refresh_posts_string">Fetch Posts</string>
-    <string name="menu_show_done_string">Show Done</string>
+    <string name="menu_show_done_action_title">Show Done</string>
     <string name="menu_show_todo_string">Show Todo</string>
+    <string name="menu_logout_action_title">Logout</string>
+    <string name="menu_settings_action_title">Settings</string>
 
     <!-- Notification Channel Strings-->
     <string name="notification_channel_name">Post Reminder Channel</string>
@@ -43,13 +56,13 @@
     <!-- Preferences Strings -->
     <string name="pref_notification_title_category">Notifications</string>
     <string name="pref_notification_frequency_title_list">Frequency</string>
-    <string name="pref_notification_frequency_key">pref_notificationFrequency</string>
-    <string name="pref_notification_frequency_default_value">1</string>
+    <string name="pref_notification_frequency_key" translatable="false">pref_notificationFrequency</string>
+    <string name="pref_notification_frequency_default_value" translatable="false">1</string>
     <string name="pref_notification_summary_list">Select the frequency of reminder notifications</string>
 
-    <string name="pref_notification_time_key">pref_notificationTime</string>
-    <string name="pref_notification_time_hour_of_day_key">pref_notificationTimeHoD</string>
-    <string name="pref_notification_time_minute_key">pref_notificationTimeM</string>
+    <string name="pref_notification_time_key" translatable="false">pref_notificationTime</string>
+    <string name="pref_notification_time_hour_of_day_key" translatable="false">pref_notificationTimeHoD</string>
+    <string name="pref_notification_time_minute_key" translatable="false">pref_notificationTimeM</string>
     <string name="pref_notification_time_title">Time</string>
     <string name="pref_notification_time_summary">What time would you like to receiver the reminder notification?</string>
 

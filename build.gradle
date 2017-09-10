@@ -32,18 +32,21 @@ ext {
     minSdkVersion = 21
     targetSdkVersion = 26
 
+    jUnitVersion = '4.12'
+
     supportLibraryVersion = '26.0.1'
     constraintLayoutVersion = '1.0.2'
     JRAWVersion = '0.9.0'
     butterKnifeVersion = '8.8.1'
     timberVersion = '4.5.1'
     sl4jVersion = '1.7.25'
-    stethoVersion = '1.5.0'
-    glideVersion = '4.0.0'
+    glideVersion = '4.1.1'
     switchIconVersion = '1.3.5'
     firebaseJobDispatcherVersion = '0.8.0'
     wordToSpanVersion = '2.0'
     googlePlayServicesVersion = '11.2.0'
     materialDatePickerVersion = '3.3.0'
+    rxJavaVersion = '2.1.3'
+    rxJavaAndroidVersion = '2.0.1'
 
 }

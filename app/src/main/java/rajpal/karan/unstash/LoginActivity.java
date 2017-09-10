@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.setTitle("Log in to Reddit");
+            toolbar.setTitle(getString(R.string.signin_toolbar_title));
         }
 
         webView.setWebViewClient(new WebViewClient() {
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                     setResult(RESULT_OK, new Intent().putExtra("RESULT_URL", url));
                     finish();
                 } else if (url.contains("error=")) {
-                    Toast.makeText(LoginActivity.this, "You must click on allow to complete the sign-in process", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.signin_click_allow_error_toast), Toast.LENGTH_SHORT).show();
                     webView.loadUrl(getAuthorizationUrl().toExternalForm());
                 }
             }

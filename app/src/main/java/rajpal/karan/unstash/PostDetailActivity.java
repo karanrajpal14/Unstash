@@ -46,8 +46,11 @@ public class PostDetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.post_details_toolbar_title);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.post_details_toolbar_title);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Intent receivedPostIntent = getIntent();

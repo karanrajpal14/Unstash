@@ -46,13 +46,14 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
      * our RecyclerView
      */
     final private ListItemClickListener mOnClickListener;
-    String postID;
+
     String title;
     String author;
     long createdTime;
     String subName;
     String thumbnailURL;
     int isSaved;
+
     private Context context;
     private Cursor cursor;
 
@@ -164,7 +165,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
         void bind(int position) {
             cursor.moveToPosition(position);
 
-            postID = cursor.getString(INDEX_POST_ID);
             title = cursor.getString(INDEX_TITLE);
             author = cursor.getString(INDEX_AUTHOR);
             thumbnailURL = cursor.getString(INDEX_THUMBNAIL);
@@ -184,7 +184,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Sa
             titleTV.setContentDescription(title);
 
             String postDetailsText = context.getResources().getString(
-                    R.string.post_details_textview,
+                    R.string.main_post_details_textview,
                     author,
                     Utils.getRelativeTime(createdTime),
                     subName

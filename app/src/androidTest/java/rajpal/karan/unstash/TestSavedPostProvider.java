@@ -34,7 +34,7 @@ public class TestSavedPostProvider {
     //================================================================================
     // Test UriMatcher
     //================================================================================
-    public String postID = "Test ID";
+    public final String postID = "Test ID";
 
     /**
      * Because we annotate this method with the @Before annotation, this method will be called

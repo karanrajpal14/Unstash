@@ -55,11 +55,16 @@ public class MainActivity extends AppCompatActivity
 
     public static final int REQUEST_CODE = 1;
     static final int MAIN_LOADER_ID = 0;
-    final static String sharedPrefsKey = "mainPrefs";
-    final static String showDoneKey = "showDoneKey";
-    final static String isSavedKey = "isSavedKey";
-    final static String usernameKey = "usernameKey";
+    static final String sharedPrefsKey = "mainPrefs";
+    static final String showDoneKey = "showDoneKey";
+    static final String isSavedKey = "isSavedKey";
+    static final String usernameKey = "usernameKey";
+    static final String platform = "android";
+    static final String packageName = MainActivity.class.getPackage().getName();
+    static final String version = BuildConfig.VERSION_NAME;
+    static final String redditAppDevUsername = "artemis73";
     int position = RecyclerView.NO_POSITION;
+
     @BindView(R.id.coordinator_layout_main)
     CoordinatorLayout mainCoordinatorLayout;
     @BindView(R.id.posts_list_empty_view)
@@ -70,16 +75,13 @@ public class MainActivity extends AppCompatActivity
     StateAwareRecyclerView postsListRecyclerView;
     @BindView(R.id.toolbar)
     Toolbar myToolbar;
-    RedditClient redditClient;
     @BindView(R.id.adView)
     AdView adView;
+    RedditClient redditClient;
+
     SavedPostsAdapter mAdapter;
     SharedPreferences prefs;
     private FirebaseAnalytics firebaseAnalytics;
-    private String platform = "android";
-    private String packageName = MainActivity.class.getPackage().getName();
-    private String version = BuildConfig.VERSION_NAME;
-    private String redditAppDevUsername = "artemis73";
     private CompositeDisposable disposables = new CompositeDisposable();
 
     private BroadcastReceiver UnstashFetchReceiver = new BroadcastReceiver() {
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
-                Timber.d("Ads", "onAdLoaded");
+                Timber.d("onAdLoaded");
                 Bundle bundle = new Bundle();
                 bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "AD_SHOWN");
                 bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "AD_SHOWN");
@@ -162,14 +164,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // Code to be executed when an ad request fails.
-                Timber.d("Ads", "onAdFailedToLoad error no = " + errorCode);
+                Timber.d("onAdFailedToLoad error number = " + errorCode);
             }
 
             @Override
             public void onAdOpened() {
                 // Code to be executed when an ad opens an overlay that
                 // covers the screen.
-                Timber.d("Ads", "onAdOpened");
+                Timber.d("onAdOpened");
                 Bundle bundle = new Bundle();
                 bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "AD_CLICKED");
                 bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "AD_CLICKED");
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onAdLeftApplication() {
                 // Code to be executed when the user has left the app.
-                Timber.d("Ads", "onAdLeftApplication");
+                Timber.d("onAdLeftApplication");
                 adView.destroy();
             }
 
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity
             public void onAdClosed() {
                 // Code to be executed when when the user is about to return
                 // to the app after tapping on an ad.
-                Timber.d("Ads", "onAdClosed");
+                Timber.d("onAdClosed");
                 adView.resume();
             }
         });
@@ -218,7 +220,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void updateUsername() {
+    void updateUsername() {
         TextView appTitle = findViewById(R.id.app_title_main_tv);
         appTitle.setText(R.string.app_name);
         appTitle.setContentDescription(getString(R.string.app_name));
@@ -253,8 +255,12 @@ public class MainActivity extends AppCompatActivity
                         public void onComplete() {
                             String username = AuthenticationManager.get().getRedditClient()
                                     .getAuthenticatedUser();
-                            Toast.makeText(MainActivity.this, "Logged in as " + username,
-                                    Toast.LENGTH_SHORT).show();
+                            Snackbar.make(mainCoordinatorLayout,
+                                    String.format(
+                                            getString(R.string.main_signed_in_as_user_placeholder_snack),
+                                            username
+                                    ),
+                                    Snackbar.LENGTH_SHORT).show();
                             updateUsername();
                             launchFetchService();
                             adView.setVisibility(View.VISIBLE);
@@ -262,21 +268,11 @@ public class MainActivity extends AppCompatActivity
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(MainActivity.this, "Something went wrong",
+                            Toast.makeText(MainActivity.this,
+                                    getString(R.string.main_sign_in_something_wrong_toast),
                                     Toast.LENGTH_SHORT).show();
                             adView.setVisibility(View.GONE);
-                            Snackbar.make(
-                                    mainCoordinatorLayout,
-                                    "Please login to continue",
-                                    Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Login", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                                            startActivityForResult(intent, REQUEST_CODE);
-                                        }
-                                    })
-                                    .show();
+                            signInToContinueSnack();
                         }
                     })
             );
@@ -299,8 +295,6 @@ public class MainActivity extends AppCompatActivity
         filter.addAction(UnstashFetchService.ACTION_START_FETCH_SERVICE);
         filter.addAction(UnstashFetchService.ACTION_MARK_POST_AS_DONE);
 
-        Toast.makeText(this, "Auth state " + state, Toast.LENGTH_SHORT).show();
-
         updateUsername();
 
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(UnstashFetchReceiver, filter);
@@ -312,18 +306,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case NONE:
                 adView.setVisibility(View.GONE);
-                Snackbar.make(
-                        mainCoordinatorLayout,
-                        "Please login to continue",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Login", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                                startActivityForResult(intent, REQUEST_CODE);
-                            }
-                        })
-                        .show();
+                signInToContinueSnack();
                 break;
             case NEED_REFRESH:
                 refreshToken();
@@ -338,10 +321,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void refreshToken() {
-        if (!AuthenticationManager.get().getRedditClient().hasActiveUserContext()) {
-            Toast.makeText(MainActivity.this, "No need to refresh userless auth tokens",
-                    Toast.LENGTH_SHORT).show();
-        } else if (!AuthenticationManager.get().getRedditClient().isAuthenticated()) {
+        if (!AuthenticationManager.get().getRedditClient().isAuthenticated()) {
             Credentials credentials = ((App) getApplicationContext())
                     .getInstalledAppCredentials();
             disposables.add(RedditService.refreshToken(credentials)
@@ -350,14 +330,14 @@ public class MainActivity extends AppCompatActivity
                     .subscribeWith(new DisposableCompletableObserver() {
                         @Override
                         public void onComplete() {
-                            Toast.makeText(MainActivity.this, "Token refreshed",
-                                    Toast.LENGTH_SHORT).show();
+                            /*Toast.makeText(MainActivity.this, "Token refreshed",
+                                    Toast.LENGTH_SHORT).show();*/
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(MainActivity.this, "Something went wrong",
-                                    Toast.LENGTH_SHORT).show();
+                            /*Toast.makeText(MainActivity.this, "Something went wrong",
+                                    Toast.LENGTH_SHORT).show();*/
                         }
                     })
             );
@@ -392,7 +372,7 @@ public class MainActivity extends AppCompatActivity
                         null
                 );
             default:
-                throw new RuntimeException("Loader not implemented: " + id);
+                throw new RuntimeException(String.format(getString(R.string.main_loader_not_implemented_exception), id));
         }
     }
 
@@ -412,7 +392,7 @@ public class MainActivity extends AppCompatActivity
 
         boolean status = prefs.getBoolean(showDoneKey, true);
         if (status) {
-            menu.findItem(R.id.show_done).setTitle(getString(R.string.menu_show_done_string));
+            menu.findItem(R.id.show_done).setTitle(getString(R.string.menu_show_done_action_title));
         } else {
             menu.findItem(R.id.show_done).setTitle(getString(R.string.menu_show_todo_string));
         }
@@ -431,6 +411,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
+
             case R.id.action_refresh:
                 if (Utils.isConnected(getApplicationContext())) {
                     launchFetchService();
@@ -438,17 +419,15 @@ public class MainActivity extends AppCompatActivity
                     Snackbar.make(
                             mainCoordinatorLayout,
                             getString(R.string.disconnected_message),
-                            BaseTransientBottomBar.LENGTH_LONG
+                            Snackbar.LENGTH_LONG
                     ).show();
                 }
                 return true;
+
             case R.id.action_logout:
-                Timber.d("Action logout");
                 logout();
                 return true;
-            case R.id.test_notification:
-                NotificationUtils.remindUserToReadSavedPost(this);
-                return true;
+
             case R.id.show_done:
                 SharedPreferences.Editor editor = prefs.edit();
                 boolean status = prefs.getBoolean(showDoneKey, false);
@@ -476,6 +455,7 @@ public class MainActivity extends AppCompatActivity
                     invalidateOptionsMenu();
                 }
                 return true;
+
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
@@ -494,5 +474,21 @@ public class MainActivity extends AppCompatActivity
         Intent i = new Intent(this, UnstashFetchService.class);
         i.setAction(UnstashFetchService.ACTION_START_FETCH_SERVICE);
         startService(i);
+    }
+
+
+    public void signInToContinueSnack() {
+        Snackbar.make(
+                mainCoordinatorLayout,
+                getString(R.string.main_sign_in_to_continue_snack),
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.main_sign_in_snack_action), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivityForResult(intent, REQUEST_CODE);
+                    }
+                })
+                .show();
     }
 }

@@ -64,7 +64,7 @@ public class NotificationUtils {
                 ignoreReminderIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action ignoreReminderAction = new NotificationCompat.Action(
-                R.drawable.ic_error, "Dismiss", ignorePendingIntent
+                R.drawable.ic_error, context.getString(R.string.notification_dismiss_action), ignorePendingIntent
         );
         return ignoreReminderAction;
     }
@@ -79,7 +79,7 @@ public class NotificationUtils {
                 markAsDoneIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action doneAction = new NotificationCompat.Action(
-                R.drawable.ic_done, "Done", donePendingIntent
+                R.drawable.ic_done, context.getString(R.string.notification_done_action), donePendingIntent
         );
         return doneAction;
     }
@@ -154,7 +154,7 @@ public class NotificationUtils {
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_stat_markunread_mailbox)
                     .setLargeIcon(getLargeIcon(context))
-                    .setContentTitle("Let's read something new. Shall we?")
+                    .setContentTitle(context.getString(R.string.notification_content_title))
                     .setContentText(postTitle)
                     .setStyle(
                             new NotificationCompat.BigTextStyle().bigText(

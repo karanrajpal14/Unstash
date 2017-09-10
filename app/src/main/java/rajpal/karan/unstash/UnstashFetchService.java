@@ -95,7 +95,7 @@ public class UnstashFetchService extends IntentService {
         try {
             RedditClient redditClient = AuthenticationManager.get().getRedditClient();
             UserContributionPaginator saved = new UserContributionPaginator(redditClient, "saved", redditClient.me().getFullName());
-            saved.setTimePeriod(TimePeriod.DAY);
+            saved.setTimePeriod(TimePeriod.ALL);
             saved.setSorting(Sorting.NEW);
             ContentValues savedPostValues;
             for (Listing<Contribution> items : saved) {
@@ -154,7 +154,6 @@ public class UnstashFetchService extends IntentService {
                     assert checkIfPostPresentCursor != null;
                     checkIfPostPresentCursor.close();
                 }
-
             }
             saved.next(true);
         } catch (Exception e) {

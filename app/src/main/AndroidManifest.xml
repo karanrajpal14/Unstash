@@ -38,7 +38,7 @@
 
         <provider
             android:name=".SavedPostProvider"
-            android:authorities="rajpal.karan.unstash"
+            android:authorities="${applicationId}"
             android:enabled="true"
             android:exported="false"
             android:grantUriPermissions="true"/>

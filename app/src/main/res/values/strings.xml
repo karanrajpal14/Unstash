@@ -8,6 +8,7 @@
     <string name="login_webview_content_description">login screen</string>
 
     <!-- Main Activity Strings -->
+    <string name="main_empty_view_box_content_description">No posts loaded. Please refresh to fetch new posts.</string>
     <string name="main_empty_view_no_posts_loaded_text">No posts loaded. Please refresh to fetch new posts.</string>
     <string name="main_empty_view_refresh_button_text">Refresh</string>
     <string name="main_list_item_thumbnail_content_description">Thumbnail</string>

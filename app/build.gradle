@@ -26,16 +26,20 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            useProguard true
             signingConfig signingConfigs.config
             zipAlignEnabled true
             debuggable false
             multiDexEnabled true
         }
         debug {
+            minifyEnabled false
+            useProguard false
             applicationIdSuffix ".debug"
             multiDexEnabled true
         }
